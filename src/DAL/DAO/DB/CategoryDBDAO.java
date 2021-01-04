@@ -1,33 +1,33 @@
 package DAL.DAO.DB;
 
 import BE.Playlist;
-import BE.Song;
-import BLL.PlaylistManager;
-import DAL.DAO.PlaylistDAOInterface;
+import BE.Movie;
+import BLL.CategoryManager;
+import DAL.DAO.CategoryDAOInterface;
 import DAL.DB.DbConnectionHandler;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlaylistDBDAO implements PlaylistDAOInterface {
+public class CategoryDBDAO implements CategoryDAOInterface {
     protected DbConnectionHandler database;
-    protected PlaylistManager playlistManager;
+    protected CategoryManager categoryManager;
 
     /**
      * Sets the manager.
      *
-     * @param playlistManager the current instance of the manager.
+     * @param categoryManager the current instance of the manager.
      */
     @Override
-    public void setPlaylistManager(PlaylistManager playlistManager) {
-        this.playlistManager = playlistManager;
+    public void setPlaylistManager(CategoryManager categoryManager) {
+        this.categoryManager = categoryManager;
     }
 
     /**
      * Tries to connect to the database.
      */
-    public PlaylistDBDAO() throws SQLException {
+    public CategoryDBDAO() throws SQLException {
         database = DbConnectionHandler.getInstance();
         if (database.getConnection().isClosed()){
             throw new SQLException("no connection to database");
@@ -63,7 +63,7 @@ public class PlaylistDBDAO implements PlaylistDAOInterface {
             }
             return temp;
         } catch (SQLNonTransientConnectionException e) {
-            playlistManager.goLocal();
+            categoryManager.goLocal();
             return temp;
         }
     }
@@ -86,7 +86,7 @@ public class PlaylistDBDAO implements PlaylistDAOInterface {
             st.setString(1, name);
             st.executeUpdate();
         } catch (SQLNonTransientConnectionException e) {
-            playlistManager.goLocal();
+            categoryManager.goLocal();
         }
     }
 
@@ -110,7 +110,7 @@ public class PlaylistDBDAO implements PlaylistDAOInterface {
             var playlist = new Playlist(id, name1);
             return playlist;
         } catch (SQLNonTransientConnectionException e) {
-            playlistManager.goLocal();
+            categoryManager.goLocal();
             return null;
         }
     }
@@ -129,7 +129,7 @@ public class PlaylistDBDAO implements PlaylistDAOInterface {
             st.executeUpdate();
             return;
         } catch (SQLNonTransientConnectionException e) {
-            playlistManager.goLocal();
+            categoryManager.goLocal();
         }
     }
 
@@ -141,8 +141,8 @@ public class PlaylistDBDAO implements PlaylistDAOInterface {
      * @throws  SQLException if it cannot connect to the database or something went wrong.
      */
     @Override
-    public List<Song> loadSongsFromPlaylist(int playlist_id) throws SQLException {
-        var temp = new ArrayList<Song>();
+    public List<Movie> loadSongsFromPlaylist(int playlist_id) throws SQLException {
+        var temp = new ArrayList<Movie>();
         var sql = "SELECT song.*, category.category_name FROM playlist LEFT OUTER JOIN playlist_song ON  playlist.playlist_id = playlist_song.playlist_id LEFT OUTER JOIN song ON playlist_song.song_id = song.song_id LEFT OUTER JOIN category ON  song.category_id = category.category_id WHERE playlist.playlist_id = ?;";
         try (var con = database.getConnection();
              PreparedStatement st = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -157,11 +157,11 @@ public class PlaylistDBDAO implements PlaylistDAOInterface {
                 int category_id = rs.getInt("category_id");
                 String category_name = rs.getString("category_name");
                 if(song_filepath!=null)
-                temp.add(new Song(song_id, song_title, song_artist, song_filepath, category_id, category_name));
+                temp.add(new Movie(song_id, song_title, song_artist, song_filepath, category_id, category_name));
             }
             return temp;
         } catch (SQLNonTransientConnectionException | NullPointerException e) {
-            playlistManager.goLocal();
+            categoryManager.goLocal();
             return temp;
         }
     }
@@ -187,7 +187,7 @@ public class PlaylistDBDAO implements PlaylistDAOInterface {
             st.setInt(2, song_id);
             st.executeUpdate();
         } catch (SQLNonTransientConnectionException e) {
-            playlistManager.goLocal();
+            categoryManager.goLocal();
         }
     }
 
@@ -207,7 +207,7 @@ public class PlaylistDBDAO implements PlaylistDAOInterface {
             st.setInt(2, song_id);
             st.executeUpdate();
         } catch (SQLNonTransientConnectionException | NullPointerException e) {
-            playlistManager.goLocal();
+            categoryManager.goLocal();
         }
     }
 
@@ -229,7 +229,7 @@ public class PlaylistDBDAO implements PlaylistDAOInterface {
                 System.out.println("Could not update playlist: " + playlist.toString());
             }
         } catch (SQLNonTransientConnectionException | NullPointerException e) {
-            playlistManager.goLocal();
+            categoryManager.goLocal();
         }
     }
 
@@ -256,7 +256,7 @@ public class PlaylistDBDAO implements PlaylistDAOInterface {
 
             return totalDuration;
         } catch (SQLNonTransientConnectionException | NullPointerException e) {
-            playlistManager.goLocal();
+            categoryManager.goLocal();
             return 0;
         }
     }
@@ -285,7 +285,7 @@ public class PlaylistDBDAO implements PlaylistDAOInterface {
 
             return totalDuration;
         } catch (SQLNonTransientConnectionException | NullPointerException e) {
-            playlistManager.goLocal();
+            categoryManager.goLocal();
             return 0;
         }
     }

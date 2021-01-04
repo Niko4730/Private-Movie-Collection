@@ -1,16 +1,16 @@
 package DAL.DAO.FILE;
 
 import BE.Playlist;
-import BE.Song;
-import BLL.PlaylistManager;
-import DAL.DAO.PlaylistDAOInterface;
+import BE.Movie;
+import BLL.CategoryManager;
+import DAL.DAO.CategoryDAOInterface;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlaylistLocalDAO implements PlaylistDAOInterface {
-    private PlaylistManager playlistManager;
+public class CategoryLocalDAO implements CategoryDAOInterface {
+    private CategoryManager categoryManager;
     private static final int PLAYLISTNAMESIZE=100;
     private static final String emptyValue=String.format("%-" + PLAYLISTNAMESIZE + "s",-1);
     private static final int emptyIntValue=-1;
@@ -18,8 +18,8 @@ public class PlaylistLocalDAO implements PlaylistDAOInterface {
     private static final String LOCAL_PLAYLIST_SONG = "Data/localPlaylist_song.data";
 
     @Override
-    public void setPlaylistManager(PlaylistManager playlistManager) {
-        this.playlistManager=playlistManager;
+    public void setPlaylistManager(CategoryManager categoryManager) {
+        this.categoryManager = categoryManager;
     }
 
     /**
@@ -150,10 +150,10 @@ public class PlaylistLocalDAO implements PlaylistDAOInterface {
      * @throws  IOException if something when wrong.
      */
     @Override
-    public List<Song> loadSongsFromPlaylist(int playlist_id) throws Exception {
+    public List<Movie> loadSongsFromPlaylist(int playlist_id) throws Exception {
         File file = new File(LOCAL_PLAYLIST_SONG);
-        SongLocalDAO songLocalDAO = new SongLocalDAO();
-        List<Song> tmp = new ArrayList<>();
+        MovieLocalDAO songLocalDAO = new MovieLocalDAO();
+        List<Movie> tmp = new ArrayList<>();
         try(RandomAccessFile raf = new RandomAccessFile(file,"r")){
             while (raf.getFilePointer()<raf.length()) {
                 int playlistId=raf.readInt();

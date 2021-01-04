@@ -9,7 +9,7 @@ public class MusicPlayer {
 
     protected MediaPlayer mediaPlayer;
     protected Media media;
-    protected Song song;
+    protected Movie movie;
 
     /**
      * Get the value of Media.
@@ -23,19 +23,19 @@ public class MusicPlayer {
      * Get the id of song
      * @return the value of song.
      */
-    public Song getSong() {
-        return song;
+    public Movie getSong() {
+        return movie;
     }
 
     /**
      * Set the value of song
-     * @param song new value of song
+     * @param movie new value of song
      */
-    public void setSong(Song song) {
-        if (song != null && this.song != song) {
-            this.song = song;
-            if (!song.getFilePath().isBlank()) {
-                media = new Media(new File(song.getFilePath()).toURI().toString());
+    public void setSong(Movie movie) {
+        if (movie != null && this.movie != movie) {
+            this.movie = movie;
+            if (!movie.getFilePath().isBlank()) {
+                media = new Media(new File(movie.getFilePath()).toURI().toString());
                 mediaPlayer = new MediaPlayer(media);
             }
         }

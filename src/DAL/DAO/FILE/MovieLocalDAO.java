@@ -1,8 +1,8 @@
 package DAL.DAO.FILE;
 
-import BE.Song;
-import BLL.SongManager;
-import DAL.DAO.SongDAOInterface;
+import BE.Movie;
+import BLL.MovieManager;
+import DAL.DAO.MovieDAOInterface;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,8 +13,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SongLocalDAO implements SongDAOInterface {
-    private SongManager songManager;
+public class MovieLocalDAO implements MovieDAOInterface {
+    private MovieManager movieManager;
     private static final String LOCAL_SONG_PATH = "Data/localSongs.data";
     private static final String LOCAL_PLAYLIST_SONG = "Data/localPlaylist_song.data";
     private static final int SONG_NAME_SIZE = 100;
@@ -28,11 +28,11 @@ public class SongLocalDAO implements SongDAOInterface {
     /**
      * sets the song manager.
      *
-     * @param songManager
+     * @param movieManager
      */
     @Override
-    public void setSongManager(SongManager songManager) {
-        this.songManager = songManager;
+    public void setSongManager(MovieManager movieManager) {
+        this.movieManager = movieManager;
     }
 
     /**
@@ -42,9 +42,9 @@ public class SongLocalDAO implements SongDAOInterface {
      * @throws  IOException if something went wrong.
      */
     @Override
-    public List<Song> loadSongs() throws Exception {
+    public List<Movie> loadSongs() throws Exception {
         File file = new File(LOCAL_SONG_PATH);
-        List<Song> tmp = new ArrayList<>();
+        List<Movie> tmp = new ArrayList<>();
         try (RandomAccessFile raf = new RandomAccessFile(file, "r")) {
             while (raf.getFilePointer() < raf.length()) {
                 int song_id = raf.readInt();
@@ -59,7 +59,7 @@ public class SongLocalDAO implements SongDAOInterface {
                     artist.append(raf.readChar());
                 int category_id = raf.readInt();
                 if (!songName.toString().equals(emptyNameValue) && !path.toString().equals(emptyPathValue))
-                    tmp.add(new Song(song_id, songName.toString().trim(), artist.toString().trim(), path.toString().trim(), category_id, getGenres().get(category_id)));
+                    tmp.add(new Movie(song_id, songName.toString().trim(), artist.toString().trim(), path.toString().trim(), category_id, getGenres().get(category_id)));
             }
             return tmp;
         } catch (FileNotFoundException e) {
@@ -71,14 +71,14 @@ public class SongLocalDAO implements SongDAOInterface {
     /**
      * Tries to create a song, overwrites empty values if such exist. Auto increments and adds song if no emptyValues found.
      *
-     * @param   song the song.
+     * @param   movie the song.
      * @throws  IOException if something went wrong.
      */
     @Override
-    public void createSong(Song song) throws IOException {
-        String formattedName = String.format("%-" + SONG_NAME_SIZE + "s", song.getTitle()).substring(0, SONG_NAME_SIZE);
-        String formattedPath = String.format("%-" + SONG_PATH_SIZE + "s", song.getFilePath()).substring(0, SONG_PATH_SIZE);
-        String formattedArtist = String.format("%-" + SONG_ARTIST_SIZE + "s", song.getArtist() == null ? "" : song.getArtist()).substring(0, SONG_PATH_SIZE);
+    public void createSong(Movie movie) throws IOException {
+        String formattedName = String.format("%-" + SONG_NAME_SIZE + "s", movie.getTitle()).substring(0, SONG_NAME_SIZE);
+        String formattedPath = String.format("%-" + SONG_PATH_SIZE + "s", movie.getFilePath()).substring(0, SONG_PATH_SIZE);
+        String formattedArtist = String.format("%-" + SONG_ARTIST_SIZE + "s", movie.getArtist() == null ? "" : movie.getArtist()).substring(0, SONG_PATH_SIZE);
         try (RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_SONG_PATH), "rw")) {
             if (raf.length() == 0) {
                 raf.writeInt(1);
@@ -98,7 +98,7 @@ public class SongLocalDAO implements SongDAOInterface {
                     raf.writeChars(formattedName);
                     raf.writeChars(formattedPath);
                     raf.writeChars(formattedArtist);
-                    raf.writeInt(song.getCategoryId());
+                    raf.writeInt(movie.getCategoryId());
                     return;
                 } else raf.skipBytes(SONG_PATH_SIZE * 2 + SONG_ARTIST_SIZE * 2 + 4);
             }
@@ -109,7 +109,7 @@ public class SongLocalDAO implements SongDAOInterface {
             raf.writeChars(formattedName);
             raf.writeChars(formattedPath);
             raf.writeChars(formattedArtist);
-            raf.writeInt(song.getCategoryId());
+            raf.writeInt(movie.getCategoryId());
         }
     }
 
@@ -121,7 +121,7 @@ public class SongLocalDAO implements SongDAOInterface {
      * @throws  IOException if something went wrong.
      */
     @Override
-    public Song getSong(String name) throws Exception {
+    public Movie getSong(String name) throws Exception {
         try (RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_SONG_PATH), "r")) {
             while (raf.getFilePointer() < raf.length()) {
                 int song_id = raf.readInt();
@@ -136,7 +136,7 @@ public class SongLocalDAO implements SongDAOInterface {
                     artist.append(raf.readChar());
                 int category_id = raf.readInt();
                 if (songName.toString().trim().equals(name))
-                    return new Song(song_id, songName.toString().trim(), artist.toString().trim(), path.toString().trim(), category_id, getGenres().get(category_id));
+                    return new Movie(song_id, songName.toString().trim(), artist.toString().trim(), path.toString().trim(), category_id, getGenres().get(category_id));
             }
             return null;
         }
@@ -149,7 +149,7 @@ public class SongLocalDAO implements SongDAOInterface {
      * @return  A song that has the given name.
      * @throws  IOException if something went wrong.
      */
-    public Song getSong(int id) throws Exception {
+    public Movie getSong(int id) throws Exception {
         try (RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_SONG_PATH), "r")) {
             while (raf.getFilePointer() < raf.length()) {
                 int song_id = raf.readInt();
@@ -164,7 +164,7 @@ public class SongLocalDAO implements SongDAOInterface {
                     artist.append(raf.readChar());
                 int category_id = raf.readInt();
                 if (song_id == id)
-                    return new Song(song_id, songName.toString().trim(), artist.toString().trim(), path.toString().trim(), category_id, getGenres().get(category_id));
+                    return new Movie(song_id, songName.toString().trim(), artist.toString().trim(), path.toString().trim(), category_id, getGenres().get(category_id));
             }
             return null;
         }
@@ -208,7 +208,7 @@ public class SongLocalDAO implements SongDAOInterface {
      * @throws  IOException if something went wrong.
      */
     @Override
-    public void updateSong(Song modified) throws IOException {
+    public void updateSong(Movie modified) throws IOException {
         String formattedName = String.format("%-" + SONG_NAME_SIZE + "s", modified.getTitle()).substring(0, SONG_NAME_SIZE);
         String formattedPath = String.format("%-" + SONG_PATH_SIZE + "s", modified.getFilePath()).substring(0, SONG_PATH_SIZE);
         String formattedArtist = String.format("%-" + SONG_ARTIST_SIZE + "s", modified.getArtist()).substring(0, SONG_PATH_SIZE);
@@ -232,10 +232,10 @@ public class SongLocalDAO implements SongDAOInterface {
      * @throws  IOException if something went wrong.
      */
     @Override
-    public List<Song> searchSong(String searchQuery) throws Exception {
+    public List<Movie> searchSong(String searchQuery) throws Exception {
         if (searchQuery.isEmpty())
             return loadSongs();
-        List<Song> tmp = new ArrayList<>();
+        List<Movie> tmp = new ArrayList<>();
         try (RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_SONG_PATH), "rw")) {
             while (raf.getFilePointer() < raf.length()) {
                 int song_id = raf.readInt();
@@ -250,7 +250,7 @@ public class SongLocalDAO implements SongDAOInterface {
                     artist.append(raf.readChar());
                 int category_id = raf.readInt();
                 if (songName.toString().trim().toLowerCase().contains(searchQuery.trim().toLowerCase()) || path.toString().trim().toLowerCase().contains(searchQuery.trim().toLowerCase()))
-                    tmp.add(new Song(song_id, songName.toString().trim(), artist.toString().trim(), path.toString().trim(), category_id, getGenres().get(category_id)));
+                    tmp.add(new Movie(song_id, songName.toString().trim(), artist.toString().trim(), path.toString().trim(), category_id, getGenres().get(category_id)));
             }
             return tmp;
         }

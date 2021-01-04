@@ -1,8 +1,8 @@
 package DAL.DAO.DB;
 
-import BE.Song;
-import BLL.SongManager;
-import DAL.DAO.SongDAOInterface;
+import BE.Movie;
+import BLL.MovieManager;
+import DAL.DAO.MovieDAOInterface;
 import DAL.DB.DbConnectionHandler;
 
 import java.io.File;
@@ -13,18 +13,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SongDBDAO implements SongDAOInterface {
+public class MovieDBDAO implements MovieDAOInterface {
     protected DbConnectionHandler database;
-    protected SongManager songManager;
+    protected MovieManager movieManager;
 
     /**
      * Sets the manager.
      *
-     * @param songManager the manager
+     * @param movieManager the manager
      */
     @Override
-    public void setSongManager(SongManager songManager) {
-        this.songManager = songManager;
+    public void setSongManager(MovieManager movieManager) {
+        this.movieManager = movieManager;
     }
 
     /**
@@ -32,7 +32,7 @@ public class SongDBDAO implements SongDAOInterface {
      *
      * @throws SQLException if it cant get connection to the database or something went wrong.
      */
-    public SongDBDAO() throws SQLException {
+    public MovieDBDAO() throws SQLException {
         database = DbConnectionHandler.getInstance();
         if (database.getConnection().isClosed()){
             throw new SQLException("no connection to database");
@@ -46,8 +46,8 @@ public class SongDBDAO implements SongDAOInterface {
      * @throws  SQLException if it cant get connection to the database or something went wrong.
      */
     @Override
-    public List<Song> loadSongs() throws SQLException {
-        List<Song> temp = new ArrayList<>();
+    public List<Movie> loadSongs() throws SQLException {
+        List<Movie> temp = new ArrayList<>();
         try (var con = database.getConnection();
              Statement statement = con.createStatement()) {
             ResultSet rs = statement.executeQuery("SELECT song.*, category.category_name FROM song LEFT OUTER JOIN category ON song.category_id = category.category_id;");
@@ -60,11 +60,11 @@ public class SongDBDAO implements SongDAOInterface {
                 int category_id = rs.getInt("category_id");
                 String category_name = rs.getString("category_name");
                 double song_length = rs.getDouble("song_length");
-                temp.add(new Song(song_id, song_title, song_artist, song_filepath, category_id, category_name));
+                temp.add(new Movie(song_id, song_title, song_artist, song_filepath, category_id, category_name));
             }
             return temp;
         } catch (SQLNonTransientConnectionException | NullPointerException e) {
-            songManager.goLocal();
+            movieManager.goLocal();
             return temp;
         }
     }
@@ -73,11 +73,11 @@ public class SongDBDAO implements SongDAOInterface {
     /**
      * tries to create a song.
      *
-     * @param   song the song.
+     * @param   movie the song.
      * @throws  SQLException
      */
     @Override
-    public void createSong(Song song) throws SQLException {
+    public void createSong(Movie movie) throws SQLException {
         var sql = "";
         switch (database.getConnectionType()) {
             case (0) -> sql = "INSERT INTO [dbo].[song] ([song_title], [song_artist], [song_filepath], [category_id], [song_length]) VALUES (?,?,?,?,?)";
@@ -85,14 +85,14 @@ public class SongDBDAO implements SongDAOInterface {
         }
         try (var con = database.getConnection();
              PreparedStatement st = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            st.setString(1, song.getTitle());
-            st.setString(2, song.getArtist());
-            st.setString(3, song.getFilePath());
-            st.setInt(4, song.getCategoryId());
-            st.setDouble(5, (song.getDuration()));
+            st.setString(1, movie.getTitle());
+            st.setString(2, movie.getArtist());
+            st.setString(3, movie.getFilePath());
+            st.setInt(4, movie.getCategoryId());
+            st.setDouble(5, (movie.getDuration()));
             st.executeUpdate();
         } catch (SQLNonTransientConnectionException | NullPointerException e) {
-            songManager.goLocal();
+            movieManager.goLocal();
         }
     }
 
@@ -104,7 +104,7 @@ public class SongDBDAO implements SongDAOInterface {
      * @throws  SQLException if it cant get connection to the database or something went wrong.
      */
     @Override
-    public Song getSong(String name) throws SQLException {
+    public Movie getSong(String name) throws SQLException {
         var sql = "SELECT FROM song WHERE song_name = ?;";
         try (var con = database.getConnection();
              PreparedStatement st = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -117,10 +117,10 @@ public class SongDBDAO implements SongDAOInterface {
             String artist = resultSet.getString("song_artist");
             var category_id = resultSet.getInt("category_id");
             var duration = resultSet.getDouble("song_length");
-            var song = new Song(id, name1, path, artist, category_id, duration);
+            var song = new Movie(id, name1, path, artist, category_id, duration);
             return song;
         } catch (SQLNonTransientConnectionException | NullPointerException e) {
-            songManager.goLocal();
+            movieManager.goLocal();
             return null;
         }
     }
@@ -139,7 +139,7 @@ public class SongDBDAO implements SongDAOInterface {
             st.setInt(1, id);
             st.executeUpdate();
         } catch (SQLNonTransientConnectionException | NullPointerException e) {
-            songManager.goLocal();
+            movieManager.goLocal();
         }
     }
 
@@ -150,7 +150,7 @@ public class SongDBDAO implements SongDAOInterface {
      * @throws  SQLException if it cant get connection to the database or something went wrong.
      */
     @Override
-    public void updateSong(Song modified) throws SQLException {
+    public void updateSong(Movie modified) throws SQLException {
         var sql = "UPDATE song SET song_title = ?, song_filepath = ?, song_artist=?, category_id=?, song_length=? WHERE song_id = ?;";
         try (var con = database.getConnection();
              PreparedStatement st = con.prepareStatement(sql)) {
@@ -162,7 +162,7 @@ public class SongDBDAO implements SongDAOInterface {
             st.setInt(6, modified.getId());
             st.executeUpdate();
         } catch (SQLNonTransientConnectionException | NullPointerException e) {
-            songManager.goLocal();
+            movieManager.goLocal();
         }
     }
 
@@ -173,8 +173,8 @@ public class SongDBDAO implements SongDAOInterface {
      * @return  A list containing songs that match, or an empty list if no song matches.
      */
     @Override
-    public List<Song> searchSong(String searchQuery) {
-        List<Song> resultSongs = new ArrayList<>();
+    public List<Movie> searchSong(String searchQuery) {
+        List<Movie> resultMovies = new ArrayList<>();
         try (var connection = database.getConnection()) {
             String sql = "SELECT * FROM song WHERE LOWER(song_title) LIKE LOWER(?) OR song_id LIKE LOWER(?) OR LOWER(song_filepath) LIKE LOWER(?) OR LOWER(song_artist) LIKE LOWER(?);";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -189,19 +189,19 @@ public class SongDBDAO implements SongDAOInterface {
                     var name = resultSet.getString("song_title");
                     var artist = resultSet.getString("song_artist");
                     var path = resultSet.getString("song_filepath");
-                    var song = new Song(id, name, artist, path, "not done yet");
-                    resultSongs.add(song);
+                    var song = new Movie(id, name, artist, path, "not done yet");
+                    resultMovies.add(song);
                 }
-                return resultSongs;
+                return resultMovies;
             } else {
                 System.out.println(String.format("Couldn't find the song: %s", searchQuery));
             }
         } catch (SQLNonTransientConnectionException | NullPointerException e) {
-            songManager.goLocal();
+            movieManager.goLocal();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        return resultSongs;
+        return resultMovies;
     }
 
     /**
@@ -244,7 +244,7 @@ public class SongDBDAO implements SongDAOInterface {
             }
             return temp;
         } catch (SQLNonTransientConnectionException | NullPointerException e) {
-            songManager.goLocal();
+            movieManager.goLocal();
             return temp;
         }
     }

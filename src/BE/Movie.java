@@ -10,7 +10,7 @@ import javafx.scene.media.MediaPlayer;
 
 import java.io.File;
 
-public class Song {
+public class Movie {
     private SimpleIntegerProperty id;
     private StringProperty title;
     protected StringProperty artist;
@@ -33,7 +33,7 @@ public class Song {
         durationString = new SimpleStringProperty("");
     }
 
-    public Song() {
+    public Movie() {
         initialize();
     }
 
@@ -44,7 +44,7 @@ public class Song {
      * @param title    The song title
      * @param filePath The filepath of the song
      */
-    public Song(int id, String title, String filePath) {
+    public Movie(int id, String title, String filePath) {
         initialize();
         this.id = new SimpleIntegerProperty(id);
         this.title = new SimpleStringProperty(title);
@@ -60,7 +60,7 @@ public class Song {
      * @param title    The song title
      * @param filePath The filepath of the song
      */
-    public Song(String title, String filePath) {
+    public Movie(String title, String filePath) {
         initialize();
         this.id = new SimpleIntegerProperty(-1);
         this.title = new SimpleStringProperty(title);
@@ -78,7 +78,7 @@ public class Song {
      * @param filePath     song filepath
      * @param categoryName song category
      */
-    public Song(int id, String title, String filePath, String categoryName) {
+    public Movie(int id, String title, String filePath, String categoryName) {
         initialize();
         this.id = new SimpleIntegerProperty(id);
         this.title = new SimpleStringProperty(title);
@@ -100,7 +100,7 @@ public class Song {
      * @param filePath     song filepath
      * @param categoryName song categoryName
      */
-    public Song(int id, String title, String artist, String filePath, String categoryName) {
+    public Movie(int id, String title, String artist, String filePath, String categoryName) {
         initialize();
         this.id = new SimpleIntegerProperty(id);
         this.title = new SimpleStringProperty(title);
@@ -119,7 +119,7 @@ public class Song {
      * @param artist   song artist
      * @param filePath song filepath
      */
-    public Song(int id, String title, String filePath, String artist, int categoryId) {
+    public Movie(int id, String title, String filePath, String artist, int categoryId) {
         initialize();
 
         this.id = new SimpleIntegerProperty(id);
@@ -139,7 +139,7 @@ public class Song {
      * @param artist   song artist
      * @param filePath song filepath
      */
-    public Song(int id, String title, String filePath, String artist, int categoryId, double duration) {
+    public Movie(int id, String title, String filePath, String artist, int categoryId, double duration) {
         initialize();
         this.id = new SimpleIntegerProperty(id);
         this.title = new SimpleStringProperty(title);
@@ -160,7 +160,7 @@ public class Song {
      * @param filePath     song filepath
      * @param categoryName song categoryName
      */
-    public Song(int id, String title, String artist, String filePath, int categoryId, String categoryName) {
+    public Movie(int id, String title, String artist, String filePath, int categoryId, String categoryName) {
         initialize();
         this.id = new SimpleIntegerProperty(id);
         this.title = new SimpleStringProperty(title);
@@ -180,7 +180,7 @@ public class Song {
      * @param filePath     song filepath
      * @param categoryName song categoryName
      */
-    public Song(int id, String title, String artist, String filePath, int categoryId, String categoryName, double duration) {
+    public Movie(int id, String title, String artist, String filePath, int categoryId, String categoryName, double duration) {
         initialize();
         this.id = new SimpleIntegerProperty(id);
         this.title = new SimpleStringProperty(title);
