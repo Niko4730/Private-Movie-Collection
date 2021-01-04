@@ -23,3 +23,7 @@
 hs_err_pid*
 #Data/database_settings.txt
 #Data/database.settings
+
+# Custom
+# User-specific stuff
+.idea/workspace.xml
