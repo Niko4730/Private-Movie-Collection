@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c4fb8988-aabc-455e-920b-db2cd3aad9c0" name="Default Changelist" comment="" />
+    <list default="true" id="c4fb8988-aabc-455e-920b-db2cd3aad9c0" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/JavaFX_GUI.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/runConfigurations/JavaFX_GUI.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/GUI/CONTROLLER/MainViewController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GUI/CONTROLLER/MainViewController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/GUI/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GUI/Main.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -20,10 +25,11 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/GUI/View.fxml" />
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.2" />
+    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
   </component>
   <component name="RunManager">
     <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
@@ -47,6 +53,8 @@
       <option name="presentableId" value="Default" />
       <updated>1609750904645</updated>
       <workItem from="1609751905315" duration="302000" />
+      <workItem from="1609753436724" duration="70000" />
+      <workItem from="1609753631057" duration="2268000" />
     </task>
     <servers />
   </component>
