@@ -121,7 +121,6 @@ public class MainViewController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         load();
         initTables();
-        volumeFieldControl();
         selectedSong();
         selectedSongOnPlayList();
         selectedPlaylist();
@@ -149,14 +148,12 @@ public class MainViewController implements Initializable {
     private void initTables() {
         songTableTitleColumn.setCellValueFactory(cellData -> cellData.getValue().titleProperty());
         songTableArtistColumn.setCellValueFactory(cellData -> cellData.getValue().artistProperty());
-        songTableCategoryColumn.setCellValueFactory(cellData -> cellData.getValue().categoryNameProperty());
         songTableTimeColumn.setCellValueFactory(cellData -> cellData.getValue().durationStringProperty());
 
         playlistSongsColumn.setCellValueFactory(cellData -> cellData.getValue() == null ? new SimpleStringProperty("") : cellData.getValue().titleProperty());
 
         playlistNameColumn.setCellValueFactory(cellData -> cellData.getValue().getPlayListNameProperty());
         playlistAmountOfSongsColumn.setCellValueFactory(cellData -> cellData.getValue().getPlaylistSize());
-        playlistTimeColumn.setCellValueFactory(cellData -> cellData.getValue().playlistDurationPropertyString());
     }
 
     /**
@@ -188,9 +185,6 @@ public class MainViewController implements Initializable {
                 currentSong.setText(selectedMovieOnPlayList.getTitle());
                 moviePlaying = selectedMovieOnPlayList;
                 this.songsTable.getSelectionModel().clearSelection();
-                if (playing) {
-                    changeSong();
-                }
             }
         }));
     }
@@ -205,9 +199,6 @@ public class MainViewController implements Initializable {
                 currentSong.setText(selectedMovie.getTitle());
                 moviePlaying = selectedMovie;
                 this.songsOnPlaylistTable.getSelectionModel().clearSelection();
-                if (playing) {
-                    changeSong();
-                }
             }
         }));
     }
@@ -249,47 +240,6 @@ public class MainViewController implements Initializable {
         } catch (Exception exception) {
             System.out.println("could not load playlist table");
         }
-    }
-
-    /**
-     * Makes the volume slider change when the volume field is changed to a valid value.
-     * and the field change when the volume slider changes.
-     */
-    private void volumeFieldControl() {
-        // Default value.
-        volumeSlider.setValue(25);
-        volumeSliderField.setText(String.format("%.0f", volumeSlider.getValue()));
-
-        volumeSliderField.textProperty().addListener(
-                (observableValue, oldValue, newValue) -> {
-                    try {
-                        if (newValue.contains(","))
-                            newValue = newValue.replaceAll(",", ".");
-                        volumeSlider.setValue(Integer.parseInt(newValue));
-                        musicPlayer.setVolume(volumePercentage / 100);
-                    } catch (IllegalArgumentException e) {
-                        //Does nothing when the input is invalid.
-                    }
-                }
-        );
-
-        // Makes the volume field change when the volume slider is changed.
-        volumeSlider.valueProperty().addListener(
-                (observableValue, oldValue, newValue) -> {
-                    volumePercentage = newValue.doubleValue();
-                    volumeSliderField.setText(String.format("%.0f", volumePercentage));
-                    musicPlayer.setVolume(volumePercentage / 100);
-                }
-        );
-    }
-
-    /**
-     * gets the value of the volume slider
-     *
-     * @return the volume
-     */
-    public double getVolumePercentage() {
-        return volumeSlider.getValue() / 100;
     }
 
     /**
@@ -627,95 +577,6 @@ public class MainViewController implements Initializable {
             load();
         } else {
             // ... user chose CANCEL or closed the dialog
-        }
-    }
-
-    /**
-     * Plays from the playlist
-     */
-    public void playButton() {
-        if (selectedMovieOnPlayList != null && selectedMovieOnPlayList.getFilePath()!=null && !playing) {
-            moviePlaying = selectedMovieOnPlayList;
-            musicPlayer.setSong(moviePlaying);
-            musicPlayer.setVolume(getVolumePercentage());
-            musicPlayer.play();
-            playPauseImg.setImage(new Image("GUI/IMG/PauseButton.png"));
-            playing = !playing;
-        } else if (selectedMovie != null && !playing) {
-            moviePlaying = selectedMovie;
-            musicPlayer.setSong(moviePlaying);
-            musicPlayer.setVolume(getVolumePercentage());
-            musicPlayer.play();
-            playPauseImg.setImage(new Image("GUI/IMG/PauseButton.png"));
-            playing = !playing;
-        } else if (moviePlaying != null) {
-            musicPlayer.pause();
-            playPauseImg.setImage(new Image("GUI/IMG/PlayButton.png"));
-            playing = !playing;
-        }
-
-        if (moviePlaying != null && musicPlayer.getMediaPlayer()!=null) {
-            musicPlayer.getMediaPlayer().setOnEndOfMedia(() -> {
-                if (moviePlaying != null && playing) {
-                    if (!autoPlay)
-                        nextButton();
-                    playing = !playing;
-                    musicPlayer.stop();
-                    playButton();
-                    return;
-                }
-            });
-        }
-    }
-
-    public void toggleAutoplay() {
-        autoPlay = !autoPlay;
-        if (autoPlay)
-            repeatPic.setImage(new Image("GUI/IMG/repeatPressed.png"));
-        else
-            repeatPic.setImage(new Image("GUI/IMG/repeatNonPressed.png"));
-    }
-
-    private void changeSong() {
-        playButton();
-        playButton();
-    }
-
-    /**
-     * Goes to the next song on the playlist
-     */
-    public void nextButton() {
-        if (selectedMovieOnPlayList != null) {
-            if (this.songsOnPlaylistTable.getSelectionModel().getFocusedIndex() != this.songsOnPlaylistTable.getItems().size() - 1)
-                this.songsOnPlaylistTable.getSelectionModel().selectBelowCell();
-            else
-                this.songsOnPlaylistTable.getSelectionModel().selectFirst();
-            changeSong();
-        }
-        if (selectedMovie != null) {
-            if (this.songsTable.getSelectionModel().getFocusedIndex() != this.songsTable.getItems().size() - 1)
-                this.songsTable.getSelectionModel().selectBelowCell();
-            else
-                this.songsTable.getSelectionModel().selectFirst();
-            changeSong();
-        }
-    }
-
-    /**
-     * Goes to the last song on the playlist
-     */
-    public void previousButton() {
-        if (selectedMovieOnPlayList != null) {
-            if (this.songsOnPlaylistTable.getSelectionModel().getFocusedIndex() != 0)
-                this.songsOnPlaylistTable.getSelectionModel().selectAboveCell();
-            else this.songsOnPlaylistTable.getSelectionModel().selectLast();
-            changeSong();
-        }
-        if (selectedMovie != null) {
-            if (this.songsTable.getSelectionModel().getFocusedIndex() != 0)
-                this.songsTable.getSelectionModel().selectAboveCell();
-            else this.songsTable.getSelectionModel().selectLast();
-            changeSong();
         }
     }
 
