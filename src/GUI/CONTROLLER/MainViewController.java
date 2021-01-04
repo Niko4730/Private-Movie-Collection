@@ -47,6 +47,8 @@ public class MainViewController implements Initializable {
     @FXML
     private TableView moviesInCategoryTable;
     @FXML
+    private TableColumn<Movie,String> ratingMovieInCategoryColumn;
+    @FXML
     private TableColumn<Movie, String> CategoryMoviesColumn;
     @FXML
     private TableView movieTable;
@@ -134,6 +136,7 @@ public class MainViewController implements Initializable {
         movieTableTimeColumn.setCellValueFactory(cellData -> cellData.getValue().durationStringProperty());
 
         CategoryMoviesColumn.setCellValueFactory(cellData -> cellData.getValue() == null ? new SimpleStringProperty("") : cellData.getValue().titleProperty());
+        ratingMovieInCategoryColumn.setCellValueFactory(cellData -> cellData.getValue() == null ? new SimpleStringProperty("") : cellData.getValue().ratingProperty());
 
         categoryNameColumn.setCellValueFactory(cellData -> cellData.getValue().getcategoryNameProperty());
         categoryAmountOfMoviesColumn.setCellValueFactory(cellData -> cellData.getValue().getCategorySize());
