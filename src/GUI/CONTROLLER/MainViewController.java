@@ -18,11 +18,10 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -31,11 +30,13 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class MainViewController implements Initializable {
     @FXML
+    private AnchorPane allMovies;
+    @FXML
+    private AnchorPane viewAnchorPane;
+    @FXML
+    private BorderPane topBar;
+    @FXML
     private ImageView maximizeBtn;
-    @FXML
-    private GridPane borderGridPane;
-    @FXML
-    private GridPane menuBar;
     @FXML
     private TextField searchField;
     @FXML
@@ -47,7 +48,7 @@ public class MainViewController implements Initializable {
     @FXML
     private TableView moviesInCategoryTable;
     @FXML
-    private TableColumn<Movie,String> ratingMovieInCategoryColumn;
+    private TableColumn<Movie, String> ratingMovieInCategoryColumn;
     @FXML
     private TableColumn<Movie, String> CategoryMoviesColumn;
     @FXML
@@ -66,8 +67,8 @@ public class MainViewController implements Initializable {
     private ObservableList<Movie> movies;
     private ObservableList<Category> categories;
     private ObservableList<Movie> categoryMovies;
+    private boolean allMoviesShown = true;
     private boolean isMaximized = false;
-    private double volumePercentage;
     private static final CategoryManager CATEGORY_MANAGER = new CategoryManager();
     private static final MovieManager MOVIE_MANAGER = new MovieManager();
     private static final MusicPlayer musicPlayer = new MusicPlayer();
@@ -304,7 +305,7 @@ public class MainViewController implements Initializable {
      * @param dialogTitleText The dialog title text
      * @param titleFieldText  The title field text
      * @param mode            The mode
-     * @throws IOException    If something went wrong
+     * @throws IOException If something went wrong
      */
     private void dialog(String labelFieldText, String dialogTitleText, String titleFieldText, int mode) throws IOException {
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("DIALOGUE/AddPlaylist.fxml"));
@@ -385,7 +386,7 @@ public class MainViewController implements Initializable {
      *
      * @param listOfMovies the list of movies you want to change
      * @param movie        the movie
-     * @param pos         the position
+     * @param pos          the position
      * @return A list of movies with the new order
      */
     public List<Movie> moveInCategory(List<Movie> listOfMovies, Movie movie, int pos) {
@@ -597,14 +598,14 @@ public class MainViewController implements Initializable {
     public void setMainViewSize() {
         AtomicReference<Double> x = new AtomicReference<>((double) 0);
         AtomicReference<Double> y = new AtomicReference<>((double) 0);
-        borderGridPane.setOnMousePressed(mouseEvent1 -> {
+        viewAnchorPane.setOnMousePressed(mouseEvent1 -> {
             x.set(mouseEvent1.getSceneX());
             y.set(mouseEvent1.getSceneY());
             int offset = 5;
-            if (y.get() > borderGridPane.getHeight() - offset || x.get() > borderGridPane.getWidth() - offset) {
-                borderGridPane.setOnMouseReleased(mouseEvent2 -> {
-                    main.getPrimaryStage().setHeight(borderGridPane.getHeight() + (mouseEvent2.getSceneY() - y.get()));
-                    main.getPrimaryStage().setWidth(borderGridPane.getWidth() + (mouseEvent2.getSceneX() - x.get()));
+            if (y.get() > viewAnchorPane.getHeight() - offset || x.get() > viewAnchorPane.getWidth() - offset) {
+                viewAnchorPane.setOnMouseReleased(mouseEvent2 -> {
+                    main.getPrimaryStage().setHeight(viewAnchorPane.getHeight() + (mouseEvent2.getSceneY() - y.get()));
+                    main.getPrimaryStage().setWidth(viewAnchorPane.getWidth() + (mouseEvent2.getSceneX() - x.get()));
                     mouseEvent2.consume();
                 });
             }
@@ -617,14 +618,31 @@ public class MainViewController implements Initializable {
     public void moveMainView() {
         AtomicReference<Double> x = new AtomicReference<>((double) 0);
         AtomicReference<Double> y = new AtomicReference<>((double) 0);
-        menuBar.setOnMousePressed(mouseEvent -> {
+        topBar.setOnMousePressed(mouseEvent -> {
             x.set(mouseEvent.getSceneX());
             y.set(mouseEvent.getSceneY());
         });
-        menuBar.setOnMouseDragged(mouseEvent -> {
+        topBar.setOnMouseDragged(mouseEvent -> {
                     main.getPrimaryStage().setX(mouseEvent.getScreenX() - x.get());
                     main.getPrimaryStage().setY(mouseEvent.getScreenY() - y.get());
                 }
         );
+    }
+
+    public void hideAllMoviesTable() {
+        if(allMoviesShown){
+        allMovies.setVisible(false);
+        allMovies.setMinWidth(0);
+        allMovies.setPrefWidth(0);
+        allMovies.setMaxWidth(0);
+        }
+        else{
+            allMovies.setVisible(true);
+
+            allMovies.setMinWidth(205);
+            allMovies.setPrefWidth(400);
+            allMovies.setMaxWidth(5000);
+        }
+        allMoviesShown=!allMoviesShown;
     }
 }
