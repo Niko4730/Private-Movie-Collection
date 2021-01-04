@@ -1,6 +1,6 @@
 package BE;
 
-import BLL.PlaylistManager;
+import BLL.CategoryManager;
 import javafx.beans.property.*;
 
 public class Playlist {
@@ -159,9 +159,9 @@ public class Playlist {
      * @return
      */
     public ObjectProperty<Integer> getPlaylistSize() {
-        PlaylistManager playlistManager = new PlaylistManager();
+        CategoryManager categoryManager = new CategoryManager();
         try {
-            playlistSize.setValue(playlistManager.loadSongsOnPlaylist(this.getPlaylistId()).size());
+            playlistSize.setValue(categoryManager.loadSongsOnPlaylist(this.getPlaylistId()).size());
             return playlistSize;
         } catch (Exception e) {
             e.printStackTrace();

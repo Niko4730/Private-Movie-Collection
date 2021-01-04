@@ -1,18 +1,18 @@
 package DAL.DAO;
 
 import BE.Playlist;
-import BE.Song;
-import BLL.PlaylistManager;
+import BE.Movie;
+import BLL.CategoryManager;
 import java.util.List;
 
-public interface PlaylistDAOInterface {
+public interface CategoryDAOInterface {
 
     /**
      * Sets the playlistManager
      *
-     * @param playlistManager the playlistManager
+     * @param categoryManager the playlistManager
      */
-    void setPlaylistManager(PlaylistManager playlistManager);
+    void setPlaylistManager(CategoryManager categoryManager);
 
     /**
      * Loads the playlists
@@ -56,7 +56,7 @@ public interface PlaylistDAOInterface {
      * @return  A list of songs on the playlist
      * @throws  Exception if something went wrong.
      */
-    List<Song> loadSongsFromPlaylist(int playlist_id) throws Exception;
+    List<Movie> loadSongsFromPlaylist(int playlist_id) throws Exception;
 
     /**
      * Adds a song to the playlist

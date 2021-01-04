@@ -1,6 +1,6 @@
 package GUI.CONTROLLER;
 
-import BE.Song;
+import BE.Movie;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-public class AddSongController extends Component implements Initializable {
+public class AddMovieController extends Component implements Initializable {
     @FXML
     TextField filePathTextField;
     @FXML
@@ -29,7 +29,7 @@ public class AddSongController extends Component implements Initializable {
     Button addButton;
 
     private MainViewController mainViewController;
-    private Song songToAdd;
+    private Movie movieToAdd;
     private Map<Integer, String> genres;
     private String selectedCategory;
 
@@ -93,13 +93,13 @@ public class AddSongController extends Component implements Initializable {
                 if (fileName.endsWith(".m4a"))
                     System.out.println("Note: M4a meta tags for some reason can't seem to read properly. Fields may be empty.");
 
-                songToAdd = new Song();
-                songToAdd.setFilePath(filePath);
-                songToAdd.getMeta();
+                movieToAdd = new Movie();
+                movieToAdd.setFilePath(filePath);
+                movieToAdd.getMeta();
 
                 try {
                     songAdderThread = new Thread(() -> {
-                        while (!songToAdd.getIsInitialized()) {
+                        while (!movieToAdd.getIsInitialized()) {
                             try {
                                 if (ref.current_try < ref.max_tries) {
                                     ref.current_try++;
@@ -115,10 +115,10 @@ public class AddSongController extends Component implements Initializable {
                         // Required for updating GUI stuff from another thread.
                         Platform.runLater(() -> {
                             try {
-                                var title = !songToAdd.getTitle().isBlank() ? songToAdd.getTitle() : fileNameNoExt;
+                                var title = !movieToAdd.getTitle().isBlank() ? movieToAdd.getTitle() : fileNameNoExt;
                                 titleTextField.setText(title);
                                 filePathTextField.setText(filePath);
-                                artistTextField.setText(songToAdd.getArtist());
+                                artistTextField.setText(movieToAdd.getArtist());
                                 System.out.println("Media initialized.");
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -158,11 +158,11 @@ public class AddSongController extends Component implements Initializable {
      */
     public void addSong() {
         try {
-            if (songToAdd != null) {
-                songToAdd.setTitle(titleTextField.getText());
-                songToAdd.setArtist(artistTextField.getText());
-                songToAdd.setCategoryId(getCategoryIdFromName(selectedCategory));
-                mainViewController.getSongManager().createSong(songToAdd);
+            if (movieToAdd != null) {
+                movieToAdd.setTitle(titleTextField.getText());
+                movieToAdd.setArtist(artistTextField.getText());
+                movieToAdd.setCategoryId(getCategoryIdFromName(selectedCategory));
+                mainViewController.getSongManager().createSong(movieToAdd);
                 mainViewController.reloadSongTable();
                 close();
             }

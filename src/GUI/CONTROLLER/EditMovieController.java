@@ -1,6 +1,6 @@
 package GUI.CONTROLLER;
 
-import BE.Song;
+import BE.Movie;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-public class EditSongController extends Component implements Initializable {
+public class EditMovieController extends Component implements Initializable {
     @FXML
     TextField filePathTextField;
     @FXML
@@ -29,8 +29,8 @@ public class EditSongController extends Component implements Initializable {
     Button saveButton;
 
     private MainViewController mainViewController;
-    private Song selectedSong;
-    private Song modifiedSong;
+    private Movie selectedMovie;
+    private Movie modifiedMovie;
     private Map<Integer, String> genres;
     private String selectedCategory;
 
@@ -87,15 +87,15 @@ public class EditSongController extends Component implements Initializable {
     /**
      * Sets the selected song
      *
-     * @param song the selected song
+     * @param movie the selected song
      */
-    public void setSelectedSong(Song song) {
-        if (song != null) {
-            selectedSong = song;
-            titleTextField.setText(selectedSong.getTitle());
-            filePathTextField.setText(selectedSong.getFilePath());
-            artistTextField.setText(selectedSong.getArtist());
-            genreComboBox.getSelectionModel().select(selectedSong.getCategoryName());
+    public void setSelectedSong(Movie movie) {
+        if (movie != null) {
+            selectedMovie = movie;
+            titleTextField.setText(selectedMovie.getTitle());
+            filePathTextField.setText(selectedMovie.getFilePath());
+            artistTextField.setText(selectedMovie.getArtist());
+            genreComboBox.getSelectionModel().select(selectedMovie.getCategoryName());
         }
     }
 
@@ -119,18 +119,18 @@ public class EditSongController extends Component implements Initializable {
                 var fileName = selectedFile.getName();
                 var fileNameNoExt = fileName.lastIndexOf('.') > 0 ? fileName.substring(0, fileName.lastIndexOf('.')) : fileName;
                 var filePath = selectedFile.getAbsolutePath();
-                var artist = selectedSong.getArtist();
+                var artist = selectedMovie.getArtist();
 
                 // Some disclaimer.
                 if (fileName.endsWith(".m4a"))
                     System.out.println("Note: M4a meta tags for some reason can't seem to read properly. Fields may be empty.");
 
-                modifiedSong = new Song();
-                modifiedSong.setFilePath(filePath);
+                modifiedMovie = new Movie();
+                modifiedMovie.setFilePath(filePath);
 
                 try {
                     songEditorThread = new Thread(() -> {
-                        while (!selectedSong.getIsInitialized()) {
+                        while (!selectedMovie.getIsInitialized()) {
                             try {
                                 if (ref.current_try < ref.max_tries) {
                                     ref.current_try++;
@@ -146,7 +146,7 @@ public class EditSongController extends Component implements Initializable {
                         // Required for updating GUI stuff from another thread.
                         Platform.runLater(() -> {
                             try {
-                                var title = !modifiedSong.getTitle().isBlank() ? modifiedSong.getTitle() : fileNameNoExt;
+                                var title = !modifiedMovie.getTitle().isBlank() ? modifiedMovie.getTitle() : fileNameNoExt;
                                 titleTextField.setText(title);
                                 filePathTextField.setText(filePath);
                                 artistTextField.setText(artist);
@@ -174,13 +174,13 @@ public class EditSongController extends Component implements Initializable {
      */
     public void save() {
         try {
-            if (selectedSong != null) {
-                selectedSong.setTitle(titleTextField.getText());
-                selectedSong.setFilePath(filePathTextField.getText());
-                selectedSong.setArtist(artistTextField.getText());
-                selectedSong.setCategoryId(getCategoryIdFromName(selectedCategory));
+            if (selectedMovie != null) {
+                selectedMovie.setTitle(titleTextField.getText());
+                selectedMovie.setFilePath(filePathTextField.getText());
+                selectedMovie.setArtist(artistTextField.getText());
+                selectedMovie.setCategoryId(getCategoryIdFromName(selectedCategory));
 
-                mainViewController.getSongManager().updateSong(selectedSong);
+                mainViewController.getSongManager().updateSong(selectedMovie);
                 mainViewController.reloadSongTable();
                 close();
             }

@@ -2,16 +2,16 @@ package BLL;
 
 import BE.InputAlert;
 import BE.Playlist;
-import BE.Song;
-import DAL.DAO.DB.PlaylistDBDAO;
-import DAL.DAO.FILE.PlaylistLocalDAO;
-import DAL.DAO.PlaylistDAOInterface;
+import BE.Movie;
+import DAL.DAO.DB.CategoryDBDAO;
+import DAL.DAO.FILE.CategoryLocalDAO;
+import DAL.DAO.CategoryDAOInterface;
 import GUI.CONTROLLER.MainViewController;
 
 import java.util.List;
 
-public class PlaylistManager {
-    protected static PlaylistDAOInterface playlistDAO;
+public class CategoryManager {
+    protected static CategoryDAOInterface playlistDAO;
     private static InputAlert inputAlert = new InputAlert();
     protected MainViewController mainController;
 
@@ -19,9 +19,9 @@ public class PlaylistManager {
     //initializes the interface, if no connection to the database, it will try to use the local option.
     static {
         try {
-            playlistDAO = new PlaylistDBDAO();
+            playlistDAO = new CategoryDBDAO();
         } catch (Exception e) {
-            playlistDAO = new PlaylistLocalDAO();
+            playlistDAO = new CategoryLocalDAO();
             inputAlert.showAlert("Couldn't establish connection to the database. Your changes will be done locally.");
         }
     }
@@ -31,7 +31,7 @@ public class PlaylistManager {
      */
     public void goLocal() {
         inputAlert.showAlert("Couldn't establish connection to the database. Your changes will be done locally.");
-        playlistDAO = new PlaylistLocalDAO();
+        playlistDAO = new CategoryLocalDAO();
     }
 
     /**
@@ -39,14 +39,14 @@ public class PlaylistManager {
      *
      * @param playlistDAO new value of PlaylistDAO
      */
-    public void setPlaylistDAO(PlaylistDAOInterface playlistDAO) {
-        PlaylistManager.playlistDAO = playlistDAO;
+    public void setPlaylistDAO(CategoryDAOInterface playlistDAO) {
+        CategoryManager.playlistDAO = playlistDAO;
     }
 
     /**
      *
      */
-    public PlaylistManager() {
+    public CategoryManager() {
         playlistDAO.setPlaylistManager(this);
     }
 
@@ -104,7 +104,7 @@ public class PlaylistManager {
      * @return              a list of songs
      * @throws Exception    if something went wrong
      */
-    public List<Song> loadSongsOnPlaylist(int playlist_id) throws Exception {
+    public List<Movie> loadSongsOnPlaylist(int playlist_id) throws Exception {
         return playlistDAO.loadSongsFromPlaylist(playlist_id);
     }
 

@@ -1,23 +1,23 @@
 package BLL;
 
-import BE.Song;
-import DAL.DAO.DB.SongDBDAO;
-import DAL.DAO.FILE.SongLocalDAO;
-import DAL.DAO.SongDAOInterface;
+import BE.Movie;
+import DAL.DAO.DB.MovieDBDAO;
+import DAL.DAO.FILE.MovieLocalDAO;
+import DAL.DAO.MovieDAOInterface;
 import GUI.CONTROLLER.MainViewController;
 import java.util.List;
 import java.util.Map;
 
-public class SongManager {
-    protected static SongDAOInterface songDAO;
+public class MovieManager {
+    protected static MovieDAOInterface songDAO;
     protected MainViewController mainController;
 
     //initializes the interface, if no connection to the database, it will try to use the local option.
     static {
         try {
-            songDAO = new SongDBDAO();
+            songDAO = new MovieDBDAO();
         } catch (Exception e) {
-            songDAO = new SongLocalDAO();
+            songDAO = new MovieLocalDAO();
         }
     }
 
@@ -25,14 +25,14 @@ public class SongManager {
      * Makes it use the local class.
      */
     public void goLocal() {
-        songDAO = new SongLocalDAO();
+        songDAO = new MovieLocalDAO();
     }
 
 
     /**
      * Constructor
      */
-    public SongManager() {
+    public MovieManager() {
         songDAO.setSongManager(this);
     }
 
@@ -41,8 +41,8 @@ public class SongManager {
      *
      * @param songDAO new value of songDAO
      */
-    public void setSongDAO(SongDAOInterface songDAO) {
-        SongManager.songDAO = songDAO;
+    public void setSongDAO(MovieDAOInterface songDAO) {
+        MovieManager.songDAO = songDAO;
     }
 
     /**
@@ -60,18 +60,18 @@ public class SongManager {
      * @return              a list of the songs
      * @throws Exception    if something went wrong
      */
-    public List<Song> loadSongs() throws Exception {
+    public List<Movie> loadSongs() throws Exception {
         return songDAO.loadSongs();
     }
 
     /**
      * Sends information to create a song
      *
-     * @param song          the new song
+     * @param movie          the new song
      * @throws Exception    if something went wrong
      */
-    public void createSong(Song song) throws Exception {
-        songDAO.createSong(song);
+    public void createSong(Movie movie) throws Exception {
+        songDAO.createSong(movie);
     }
 
     /**
@@ -81,7 +81,7 @@ public class SongManager {
      * @return  the value of song name
      * @throws Exception if something went wrong
      */
-    public Song getSong(String name) throws Exception {
+    public Movie getSong(String name) throws Exception {
         return songDAO.getSong(name);
     }
 
@@ -91,7 +91,7 @@ public class SongManager {
      * @param modified      the modified song
      * @throws Exception    if something went wrong
      */
-    public void updateSong(Song modified) throws Exception {
+    public void updateSong(Movie modified) throws Exception {
         songDAO.updateSong(modified);
     }
 
@@ -112,7 +112,7 @@ public class SongManager {
      * @return              the list that contains the search query
      * @throws Exception    if something went wrong
      */
-    public List<Song> searchSong(String search) throws Exception {
+    public List<Movie> searchSong(String search) throws Exception {
         return songDAO.searchSong(search);
     }
 
