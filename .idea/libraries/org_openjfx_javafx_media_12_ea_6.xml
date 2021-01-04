@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="org.openjfx:javafx-media:12-ea+6" type="repository">
+    <properties maven-id="org.openjfx:javafx-media:12-ea+6">
+      <exclude>
+        <dependency maven-id="org.openjfx:javafx-graphics" />
+      </exclude>
+    </properties>
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/javafx-media-12-ea+6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javafx-media-12-ea+6-win.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
