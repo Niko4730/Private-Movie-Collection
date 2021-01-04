@@ -1,6 +1,6 @@
 package DAL.DAO.FILE;
 
-import BE.Playlist;
+import BE.Category;
 import BE.Movie;
 import BLL.CategoryManager;
 import DAL.DAO.CategoryDAOInterface;
@@ -60,8 +60,8 @@ public class CategoryLocalDAO implements CategoryDAOInterface {
      * @throws  IOException if something went wrong.
      */
     @Override
-    public List<Playlist> loadPlaylist() throws IOException {
-        List<Playlist> tmp = new ArrayList<>();
+    public List<Category> loadPlaylist() throws IOException {
+        List<Category> tmp = new ArrayList<>();
         try(RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_PLAYLIST_PATH),"rw")){
             if(raf.length()==0) {
             raf.writeInt(1);
@@ -74,7 +74,7 @@ public class CategoryLocalDAO implements CategoryDAOInterface {
                     playlistName.append(raf.readChar());
                 }
                 if(!playlistName.toString().equals(emptyValue))
-                tmp.add(new Playlist(playlistId, playlistName.toString().trim()));
+                tmp.add(new Category(playlistId, playlistName.toString().trim()));
             }
             return tmp;
         }
@@ -88,7 +88,7 @@ public class CategoryLocalDAO implements CategoryDAOInterface {
      * @throws  IOException if something went wrong.
      */
     @Override
-    public Playlist getPlaylist(String name) throws IOException {
+    public Category getPlaylist(String name) throws IOException {
         String formattedName = String.format("%-" + PLAYLISTNAMESIZE + "s",name);
         try(RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_PLAYLIST_PATH),"r")){
             while(raf.getFilePointer()<raf.length()){
@@ -98,7 +98,7 @@ public class CategoryLocalDAO implements CategoryDAOInterface {
                     playlistName.append(raf.readChar());
                 }
                 if(playlistName.toString().equals(formattedName))
-                    return new Playlist(playlistId, playlistName.toString());
+                    return new Category(playlistId, playlistName.toString());
             }
             return null;
         }
@@ -107,20 +107,20 @@ public class CategoryLocalDAO implements CategoryDAOInterface {
     /**
      * Tries to overwrite a playlist with emptyValue, and deletes songs all songs from the playlist.
      *
-     * @param   playlist the playlist.
+     * @param   category the playlist.
      * @throws  IOException if something went wrong.
      */
     @Override
-    public void deletePlaylist(Playlist playlist) throws IOException {
+    public void deletePlaylist(Category category) throws IOException {
         try(RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_PLAYLIST_PATH),"rw")){
             while(raf.getFilePointer()<raf.length()){
-                if(raf.readInt()==playlist.getPlaylistId()){
+                if(raf.readInt()== category.getCategoryId()){
                     raf.writeChars(emptyValue);
                     break;
                 }
             }
         }
-        deleteAllFromPlaylist(playlist.getPlaylistId());
+        deleteAllFromPlaylist(category.getCategoryId());
     }
 
     /**
@@ -130,11 +130,11 @@ public class CategoryLocalDAO implements CategoryDAOInterface {
      * @throws  IOException if something went wrong.
      */
     @Override
-    public void updatePlaylist(Playlist modified) throws IOException {
-        String formattedName = String.format("%-" + PLAYLISTNAMESIZE + "s",modified.getPlayListName()).substring(0,PLAYLISTNAMESIZE);
+    public void updatePlaylist(Category modified) throws IOException {
+        String formattedName = String.format("%-" + PLAYLISTNAMESIZE + "s",modified.getCategoryName()).substring(0,PLAYLISTNAMESIZE);
         try(RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_PLAYLIST_PATH),"rw")){
             while(raf.getFilePointer()<raf.length()){
-                if(raf.readInt()==modified.getPlaylistId()){
+                if(raf.readInt()==modified.getCategoryId()){
                     raf.writeChars(formattedName);
                     break;
                 }

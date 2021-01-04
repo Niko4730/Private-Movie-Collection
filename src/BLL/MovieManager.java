@@ -60,7 +60,7 @@ public class MovieManager {
      * @return              a list of the songs
      * @throws Exception    if something went wrong
      */
-    public List<Movie> loadSongs() throws Exception {
+    public List<Movie> loadMovies() throws Exception {
         return songDAO.loadSongs();
     }
 
@@ -70,7 +70,7 @@ public class MovieManager {
      * @param movie          the new song
      * @throws Exception    if something went wrong
      */
-    public void createSong(Movie movie) throws Exception {
+    public void createMovie(Movie movie) throws Exception {
         songDAO.createSong(movie);
     }
 
@@ -101,7 +101,7 @@ public class MovieManager {
      * @param id            the song id
      * @throws Exception    if something went wrong
      */
-    public void deleteSong(int id) throws Exception {
+    public void deleteMovie(int id) throws Exception {
         songDAO.deleteSong(id);
     }
 
@@ -112,7 +112,7 @@ public class MovieManager {
      * @return              the list that contains the search query
      * @throws Exception    if something went wrong
      */
-    public List<Movie> searchSong(String search) throws Exception {
+    public List<Movie> searchMovie(String search) throws Exception {
         return songDAO.searchSong(search);
     }
 

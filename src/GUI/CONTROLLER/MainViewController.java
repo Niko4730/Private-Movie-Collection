@@ -2,7 +2,7 @@ package GUI.CONTROLLER;
 
 import BE.InputAlert;
 import BE.MusicPlayer;
-import BE.Playlist;
+import BE.Category;
 import BE.Movie;
 import BLL.CategoryManager;
 import BLL.MovieManager;
@@ -18,11 +18,10 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -31,58 +30,45 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class MainViewController implements Initializable {
     @FXML
-    private ImageView playPauseImg;
+    private AnchorPane allMovies;
     @FXML
-    private ImageView repeatPic;
+    private AnchorPane viewAnchorPane;
+    @FXML
+    private BorderPane topBar;
     @FXML
     private ImageView maximizeBtn;
     @FXML
-    private GridPane borderGridPane;
-    @FXML
-    private GridPane menuBar;
-    @FXML
-    private Slider volumeSlider;
-    @FXML
     private TextField searchField;
     @FXML
-    private TableView playlistTable;
+    private TableView categoryTable;
     @FXML
-    private TableColumn<Playlist, String> playlistNameColumn;
+    private TableColumn<Category, String> categoryNameColumn;
     @FXML
-    private TableColumn<Playlist, Integer> playlistAmountOfSongsColumn;
+    private TableColumn<Category, Integer> categoryAmountOfMoviesColumn;
     @FXML
-    private TableView songsOnPlaylistTable;
+    private TableView moviesInCategoryTable;
     @FXML
-    private TableColumn<Movie, String> playlistSongsColumn;
+    private TableColumn<Movie, String> ratingMovieInCategoryColumn;
     @FXML
-    private TableColumn<Playlist, String> playlistTimeColumn;
+    private TableColumn<Movie, String> CategoryMoviesColumn;
     @FXML
-    private TableView songsTable;
+    private TableView movieTable;
     @FXML
-    private TableColumn<Movie, String> songTableTitleColumn;
+    private TableColumn<Movie, String> movieTableTitleColumn;
     @FXML
-    private TableColumn<Movie, String> songTableArtistColumn;
+    private TableColumn<Movie, String> movieTableRatingColumn;
     @FXML
-    private TableColumn<Movie, String> songTableCategoryColumn;
-    @FXML
-    private TableColumn<Movie, String> songTableTimeColumn;
-    @FXML
-    private Label currentSong;
-    @FXML
-    private TextField volumeSliderField;
-    private Movie moviePlaying;
+    private TableColumn<Movie, String> movieTableTimeColumn;
     private Movie selectedMovie;
-    private Movie selectedMovieOnPlayList;
-    private Playlist selectedPlaylist;
+    private Movie selectedMovieInCategory;
+    private Category selectedCategory;
     private Main main;
     private Stage windowStage = new Stage();
     private ObservableList<Movie> movies;
-    private ObservableList<Playlist> playlists;
-    private ObservableList<Movie> playlistMovies;
-    private boolean playing = false;
+    private ObservableList<Category> categories;
+    private ObservableList<Movie> categoryMovies;
+    private boolean allMoviesShown = true;
     private boolean isMaximized = false;
-    private boolean autoPlay = false;
-    private double volumePercentage;
     private static final CategoryManager CATEGORY_MANAGER = new CategoryManager();
     private static final MovieManager MOVIE_MANAGER = new MovieManager();
     private static final MusicPlayer musicPlayer = new MusicPlayer();
@@ -96,11 +82,11 @@ public class MainViewController implements Initializable {
     }
 
     /**
-     * Gets the song manager
+     * Gets the movie manager
      *
-     * @return the songManager
+     * @return the movieManager
      */
-    public MovieManager getSongManager() {
+    public MovieManager getMovieManager() {
         return MOVIE_MANAGER;
     }
 
@@ -121,9 +107,9 @@ public class MainViewController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         load();
         initTables();
-        selectedSong();
-        selectedSongOnPlayList();
-        selectedPlaylist();
+        selectedMovie();
+        selectedMovieInCategory();
+        selectedCategory();
         setMainViewSize();
         moveMainView();
     }
@@ -133,10 +119,10 @@ public class MainViewController implements Initializable {
      */
     public void load() {
         try {
-            this.playlists = FXCollections.observableArrayList(CATEGORY_MANAGER.loadPlaylists());
-            reloadPlaylistTable();
-            this.movies = FXCollections.observableArrayList(MOVIE_MANAGER.loadSongs());
-            reloadSongTable();
+            this.categories = FXCollections.observableArrayList(CATEGORY_MANAGER.loadCategories());
+            reloadCategoryTable();
+            this.movies = FXCollections.observableArrayList(MOVIE_MANAGER.loadMovies());
+            reloadMovieTable();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -146,27 +132,28 @@ public class MainViewController implements Initializable {
      * Puts the proper values into the tables
      */
     private void initTables() {
-        songTableTitleColumn.setCellValueFactory(cellData -> cellData.getValue().titleProperty());
-        songTableArtistColumn.setCellValueFactory(cellData -> cellData.getValue().artistProperty());
-        songTableTimeColumn.setCellValueFactory(cellData -> cellData.getValue().durationStringProperty());
+        movieTableTitleColumn.setCellValueFactory(cellData -> cellData.getValue().titleProperty());
+        movieTableRatingColumn.setCellValueFactory(cellData -> cellData.getValue().ratingProperty());
+        movieTableTimeColumn.setCellValueFactory(cellData -> cellData.getValue().durationStringProperty());
 
-        playlistSongsColumn.setCellValueFactory(cellData -> cellData.getValue() == null ? new SimpleStringProperty("") : cellData.getValue().titleProperty());
+        CategoryMoviesColumn.setCellValueFactory(cellData -> cellData.getValue() == null ? new SimpleStringProperty("") : cellData.getValue().titleProperty());
+        ratingMovieInCategoryColumn.setCellValueFactory(cellData -> cellData.getValue() == null ? new SimpleStringProperty("") : cellData.getValue().ratingProperty());
 
-        playlistNameColumn.setCellValueFactory(cellData -> cellData.getValue().getPlayListNameProperty());
-        playlistAmountOfSongsColumn.setCellValueFactory(cellData -> cellData.getValue().getPlaylistSize());
+        categoryNameColumn.setCellValueFactory(cellData -> cellData.getValue().getcategoryNameProperty());
+        categoryAmountOfMoviesColumn.setCellValueFactory(cellData -> cellData.getValue().getCategorySize());
     }
 
     /**
-     * Changes selected playlist to the playlist clicked in the playlistTable
+     * Changes selected category to the category clicked in the categoryTable
      */
-    private void selectedPlaylist() {
-        this.playlistTable.getSelectionModel().selectedItemProperty().addListener(((observableValue, oldValue, newValue) -> {
-            this.selectedPlaylist = (Playlist) newValue;
-            if (selectedPlaylist != null) {
+    private void selectedCategory() {
+        this.categoryTable.getSelectionModel().selectedItemProperty().addListener(((observableValue, oldValue, newValue) -> {
+            this.selectedCategory = (Category) newValue;
+            if (selectedCategory != null) {
                 try {
-                    if (CATEGORY_MANAGER.loadSongsOnPlaylist(selectedPlaylist.getPlaylistId()) != null)
-                        this.playlistMovies = FXCollections.observableArrayList(CATEGORY_MANAGER.loadSongsOnPlaylist(selectedPlaylist.getPlaylistId()));
-                    songsOnPlaylistTable.setItems(playlistMovies);
+                    if (CATEGORY_MANAGER.loadMoviesInCategory(selectedCategory.getCategoryId()) != null)
+                        this.categoryMovies = FXCollections.observableArrayList(CATEGORY_MANAGER.loadMoviesInCategory(selectedCategory.getCategoryId()));
+                    moviesInCategoryTable.setItems(categoryMovies);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -176,69 +163,65 @@ public class MainViewController implements Initializable {
 
 
     /**
-     * Changes selected song  on playlist to the song clicked in the songsOnPlaylistTable
+     * Changes selected movie in the category to the movie clicked on the moviesInCategoryTable
      */
-    private void selectedSongOnPlayList() {
-        this.songsOnPlaylistTable.getSelectionModel().selectedItemProperty().addListener(((observableValue, oldValue, newValue) -> {
-            this.selectedMovieOnPlayList = (Movie) newValue;
-            if (selectedMovieOnPlayList != null) {
-                currentSong.setText(selectedMovieOnPlayList.getTitle());
-                moviePlaying = selectedMovieOnPlayList;
-                this.songsTable.getSelectionModel().clearSelection();
+    private void selectedMovieInCategory() {
+        this.moviesInCategoryTable.getSelectionModel().selectedItemProperty().addListener(((observableValue, oldValue, newValue) -> {
+            this.selectedMovieInCategory = (Movie) newValue;
+            if (selectedMovieInCategory != null) {
+                this.movieTable.getSelectionModel().clearSelection();
             }
         }));
     }
 
     /**
-     * Changes selected song to the song clicked in the songsTable
+     * Changes selected movie to the movie clicked in the movieTable
      */
-    private void selectedSong() {
-        this.songsTable.getSelectionModel().selectedItemProperty().addListener(((observableValue, oldValue, newValue) -> {
+    private void selectedMovie() {
+        this.movieTable.getSelectionModel().selectedItemProperty().addListener(((observableValue, oldValue, newValue) -> {
             this.selectedMovie = (Movie) newValue;
             if (selectedMovie != null) {
-                currentSong.setText(selectedMovie.getTitle());
-                moviePlaying = selectedMovie;
-                this.songsOnPlaylistTable.getSelectionModel().clearSelection();
+                this.moviesInCategoryTable.getSelectionModel().clearSelection();
             }
         }));
     }
 
     /**
-     * Reloads the song table
+     * Reloads the movie table
      */
-    public void reloadSongTable() {
+    public void reloadMovieTable() {
         try {
-            int index = songsTable.getSelectionModel().getFocusedIndex();
-            this.songsTable.setItems(FXCollections.observableList(MOVIE_MANAGER.loadSongs()));
-            songsTable.getSelectionModel().select(index);
+            int index = movieTable.getSelectionModel().getFocusedIndex();
+            this.movieTable.setItems(FXCollections.observableList(MOVIE_MANAGER.loadMovies()));
+            movieTable.getSelectionModel().select(index);
         } catch (Exception exception) {
-            System.out.println("could not load song table");
+            System.out.println("could not load movie table");
         }
     }
 
     /**
-     * Reloads the songs on the selected playlist
+     * Reloads the movies in the selected category
      */
-    private void reloadSongsOnPlaylist() {
+    private void reloadMoviesInCategory() {
         try {
-            int index = songsOnPlaylistTable.getSelectionModel().getFocusedIndex();
-            this.songsOnPlaylistTable.setItems(FXCollections.observableList(CATEGORY_MANAGER.loadSongsOnPlaylist(selectedPlaylist.getPlaylistId())));
-            songsOnPlaylistTable.getSelectionModel().select(index);
+            int index = moviesInCategoryTable.getSelectionModel().getFocusedIndex();
+            this.moviesInCategoryTable.setItems(FXCollections.observableList(CATEGORY_MANAGER.loadMoviesInCategory(selectedCategory.getCategoryId())));
+            moviesInCategoryTable.getSelectionModel().select(index);
         } catch (Exception exception) {
-            System.out.println("could not load songs on playlist table");
+            System.out.println("could not load movie in the category table");
         }
     }
 
     /**
-     * Reloads The playlist table
+     * Reloads The category table
      */
-    private void reloadPlaylistTable() {
+    private void reloadCategoryTable() {
         try {
-            int index = playlistTable.getSelectionModel().getFocusedIndex();
-            this.playlistTable.setItems(FXCollections.observableList(CATEGORY_MANAGER.loadPlaylists()));
-            playlistTable.getSelectionModel().select(index);
+            int index = categoryTable.getSelectionModel().getFocusedIndex();
+            this.categoryTable.setItems(FXCollections.observableList(CATEGORY_MANAGER.loadCategories()));
+            categoryTable.getSelectionModel().select(index);
         } catch (Exception exception) {
-            System.out.println("could not load playlist table");
+            System.out.println("could not load category table");
         }
     }
 
@@ -252,11 +235,11 @@ public class MainViewController implements Initializable {
     }
 
     /**
-     * Changes songsTable, whenever the searchField changes.
+     * Changes movieTable, whenever the searchField changes.
      */
     public void search() {
         try {
-            this.songsTable.setItems(FXCollections.observableList(MOVIE_MANAGER.searchSong(searchField.getText())));
+            this.movieTable.setItems(FXCollections.observableList(MOVIE_MANAGER.searchMovie(searchField.getText())));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -271,45 +254,45 @@ public class MainViewController implements Initializable {
     }
 
     /**
-     * Adds a new playlist.
+     * Adds a new category.
      */
-    public void addPlayListButton() throws IOException {
-        dialog("playlist name:", "Add playlist", "", 1);
+    public void addCategoryButton() throws IOException {
+        dialog("category name:", "Add category", "", 1);
     }
 
     /**
-     * Creates a new playlist
+     * Creates a new category
      *
-     * @param playlist the new playlist
+     * @param category the new category
      */
-    public void addPlaylist(Playlist playlist) {
+    public void addCategory(Category category) {
         try {
-            CATEGORY_MANAGER.createPlaylist(playlist.getPlayListName());
-            reloadPlaylistTable();
+            CATEGORY_MANAGER.createCategory(category.getCategoryName());
+            reloadCategoryTable();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     /**
-     * Edits the selected playlist.
+     * Edits the selected category.
      */
-    public void editPlaylistButton() throws IOException {
-        if (selectedPlaylist != null) {
-            dialog("playlist name:", "Edit playlist", selectedPlaylist.getPlayListName(), 2);
+    public void editCategoryButton() throws IOException {
+        if (selectedCategory != null) {
+            dialog("category name:", "Edit category", selectedCategory.getCategoryName(), 2);
         }
     }
 
     /**
-     * Edits the selected playlist.
+     * Edits the selected category.
      *
      * @param newTitle new title
      */
-    public void editPlaylist(String newTitle) {
+    public void editCategory(String newTitle) {
         try {
-            selectedPlaylist.setPlayListName(newTitle);
-            CATEGORY_MANAGER.updatePlaylist(selectedPlaylist);
-            reloadPlaylistTable();
+            selectedCategory.setCategoryName(newTitle);
+            CATEGORY_MANAGER.updateCategory(selectedCategory);
+            reloadCategoryTable();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -322,7 +305,7 @@ public class MainViewController implements Initializable {
      * @param dialogTitleText The dialog title text
      * @param titleFieldText  The title field text
      * @param mode            The mode
-     * @throws IOException    If something went wrong
+     * @throws IOException If something went wrong
      */
     private void dialog(String labelFieldText, String dialogTitleText, String titleFieldText, int mode) throws IOException {
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("DIALOGUE/AddPlaylist.fxml"));
@@ -342,15 +325,15 @@ public class MainViewController implements Initializable {
     }
 
     /**
-     * Deletes the selected playlist.
+     * Deletes the selected category.
      */
-    public void deletePlaylistButton() {
-        var result = InputAlert.showMessageBox("Are you sure?", String.format("Deleting %s", selectedPlaylist.getPlayListName()),
+    public void deleteCategoryButton() {
+        var result = InputAlert.showMessageBox("Are you sure?", String.format("Deleting %s", selectedCategory.getCategoryName()),
                 "You cannot undo this action once it's done!", Alert.AlertType.CONFIRMATION);
         if (result.get() == ButtonType.OK) {
             try {
-                CATEGORY_MANAGER.deletePlaylist(selectedPlaylist);
-                reloadSongsOnPlaylist();
+                CATEGORY_MANAGER.deleteCategory(selectedCategory);
+                reloadMoviesInCategory();
                 load();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -359,23 +342,23 @@ public class MainViewController implements Initializable {
     }
 
     /**
-     * Adds Song to the current playlist.
+     * Adds movie to the current category.
      */
-    public void addToPlaylistButton() {
-        if (selectedPlaylist != null) {
+    public void addToCategoryButton() {
+        if (selectedCategory != null) {
             try {
-                for (Movie movie : Collections.unmodifiableList(CATEGORY_MANAGER.loadSongsOnPlaylist(selectedPlaylist.getPlaylistId()))) {
+                for (Movie movie : Collections.unmodifiableList(CATEGORY_MANAGER.loadMoviesInCategory(selectedCategory.getCategoryId()))) {
                     if (movie.getId() == selectedMovie.getId()) {
-                        if (songsTable.getSelectionModel().getFocusedIndex() == songsTable.getItems().size() - 1) {
-                            songsTable.getSelectionModel().select(0);
+                        if (movieTable.getSelectionModel().getFocusedIndex() == movieTable.getItems().size() - 1) {
+                            movieTable.getSelectionModel().select(0);
                         } else
-                            songsTable.getSelectionModel().select(songsTable.getSelectionModel().getFocusedIndex() + 1);
+                            movieTable.getSelectionModel().select(movieTable.getSelectionModel().getFocusedIndex() + 1);
                         return;
                     }
                 }
-                CATEGORY_MANAGER.addSongsToPlaylist(selectedPlaylist.getPlaylistId(), selectedMovie.getId());
-                reloadSongsOnPlaylist();
-                reloadPlaylistTable();
+                CATEGORY_MANAGER.addMoviesToCategory(selectedCategory.getCategoryId(), selectedMovie.getId());
+                reloadMoviesInCategory();
+                reloadCategoryTable();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -383,30 +366,30 @@ public class MainViewController implements Initializable {
     }
 
     /**
-     * Moves a song up on the current playlist.
+     * Moves a movie up on the current category.
      */
-    public void moveSongUpOnPlaylistButton() {
-        this.playlistMovies = FXCollections.observableArrayList(moveOnPlaylist(songsOnPlaylistTable.getItems(), selectedMovieOnPlayList, -1));
-        this.songsOnPlaylistTable.setItems(playlistMovies);
+    public void moveMovieUpInCategoryButton() {
+        this.categoryMovies = FXCollections.observableArrayList(moveInCategory(moviesInCategoryTable.getItems(), selectedMovieInCategory, -1));
+        this.moviesInCategoryTable.setItems(categoryMovies);
     }
 
     /**
-     * Moves a song down on the current playlist
+     * Moves a movie down on the current category
      */
-    public void moveSongDownOnPlaylistButton() {
-        this.playlistMovies = FXCollections.observableArrayList(moveOnPlaylist(songsOnPlaylistTable.getItems(), selectedMovieOnPlayList, 1));
-        this.songsOnPlaylistTable.setItems(playlistMovies);
+    public void moveMovieDownInCategoryButton() {
+        this.categoryMovies = FXCollections.observableArrayList(moveInCategory(moviesInCategoryTable.getItems(), selectedMovieInCategory, 1));
+        this.moviesInCategoryTable.setItems(categoryMovies);
     }
 
     /**
-     * Changes the position on the playlist
+     * Changes the position on the category
      *
-     * @param listOfMovies the list of song you want to change
-     * @param movie        the song
-     * @param pos         the position
-     * @return A playlist with the new order
+     * @param listOfMovies the list of movies you want to change
+     * @param movie        the movie
+     * @param pos          the position
+     * @return A list of movies with the new order
      */
-    public List<Movie> moveOnPlaylist(List<Movie> listOfMovies, Movie movie, int pos) {
+    public List<Movie> moveInCategory(List<Movie> listOfMovies, Movie movie, int pos) {
         LinkedList<Movie> linkedMovies = new LinkedList<>(listOfMovies);
         int index = linkedMovies.indexOf(movie) + pos;
         if (linkedMovies.size() == 2) {
@@ -430,20 +413,20 @@ public class MainViewController implements Initializable {
     }
 
     /**
-     * Saves the playlists
+     * Saves the category
      */
-    public void savePlaylist() {
-        if (songsOnPlaylistTable.getItems() != null) {
-            for (Movie movie : playlistMovies) {
+    public void saveCategory() {
+        if (moviesInCategoryTable.getItems() != null) {
+            for (Movie movie : categoryMovies) {
                 try {
-                    CATEGORY_MANAGER.deleteSongFromPlaylist(selectedPlaylist.getPlaylistId(), movie.getId());
+                    CATEGORY_MANAGER.deleteMovieFromCategory(selectedCategory.getCategoryId(), movie.getId());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-            for (Movie movie : playlistMovies) {
+            for (Movie movie : categoryMovies) {
                 try {
-                    CATEGORY_MANAGER.addSongsToPlaylist(selectedPlaylist.getPlaylistId(), movie.getId());
+                    CATEGORY_MANAGER.addMoviesToCategory(selectedCategory.getCategoryId(), movie.getId());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -452,24 +435,24 @@ public class MainViewController implements Initializable {
     }
 
     /**
-     * Shuffles the playlists
+     * Shuffles the categories
      */
     @FXML
-    private void shufflePlaylist() {
-        Collections.shuffle(playlistMovies);
+    private void shuffleCategory() {
+        Collections.shuffle(categoryMovies);
     }
 
     /**
-     * Removes the selected song from the current playlist.
+     * Removes the selected movie from the current category.
      */
-    public void removeFromPlaylistButton() {
-        if (selectedPlaylist != null && selectedMovieOnPlayList != null) {
+    public void removeFromCategoryButton() {
+        if (selectedCategory != null && selectedMovieInCategory != null) {
             try {
-                int index = songsOnPlaylistTable.getSelectionModel().getFocusedIndex();
-                CATEGORY_MANAGER.deleteSongFromPlaylist(selectedPlaylist.getPlaylistId(), selectedMovieOnPlayList.getId());
-                reloadSongsOnPlaylist();
-                reloadPlaylistTable();
-                songsOnPlaylistTable.getSelectionModel().select(index > 0 ? index - 1 : index);
+                int index = moviesInCategoryTable.getSelectionModel().getFocusedIndex();
+                CATEGORY_MANAGER.deleteMovieFromCategory(selectedCategory.getCategoryId(), selectedMovieInCategory.getId());
+                reloadMoviesInCategory();
+                reloadCategoryTable();
+                moviesInCategoryTable.getSelectionModel().select(index > 0 ? index - 1 : index);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -477,9 +460,9 @@ public class MainViewController implements Initializable {
     }
 
     /**
-     * Adds a new song
+     * Adds a new movie
      */
-    public void newSongButton() {
+    public void newMovieButton() {
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("DIALOGUE/AddSong.fxml"));
         AnchorPane dialog = null;
         try {
@@ -500,20 +483,20 @@ public class MainViewController implements Initializable {
     }
 
     /**
-     * Creates a song
+     * Creates a movie
      *
-     * @param movie the song
+     * @param movie the movie
      */
-    public void createSong(Movie movie) {
+    public void createMovie(Movie movie) {
         try {
-            MOVIE_MANAGER.createSong(movie);
+            MOVIE_MANAGER.createMovie(movie);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     /**
-     * Adds multiple songs at once.
+     * Adds multiple movies at once.
      */
     public void bulkAddButton() {
         FileChooser fileChooser = new FileChooser();
@@ -524,7 +507,7 @@ public class MainViewController implements Initializable {
             try {
                 if (!selectedFiles.isEmpty()) {
                     for (File selectedFile : selectedFiles)
-                        MOVIE_MANAGER.createSong(new Movie(selectedFile.getName().substring(0, selectedFile.getName().indexOf('.')), selectedFile.getPath()));
+                        MOVIE_MANAGER.createMovie(new Movie(selectedFile.getName().substring(0, selectedFile.getName().indexOf('.')), selectedFile.getPath()));
                     load();
                 }
             } catch (Exception e) {
@@ -536,9 +519,9 @@ public class MainViewController implements Initializable {
     }
 
     /**
-     * Edits the selected song
+     * Edits the selected movie
      */
-    public void editSongButton() {
+    public void editMovieButton() {
         if (selectedMovie != null) {
             FXMLLoader loader = new FXMLLoader(Main.class.getResource("DIALOGUE/EditSong.fxml"));
             AnchorPane dialog = null;
@@ -547,7 +530,7 @@ public class MainViewController implements Initializable {
                 EditMovieController controller = loader.getController();
                 controller.setMainController(this);
                 controller.setGenreComboBox(MOVIE_MANAGER.getGenres());
-                controller.setSelectedSong(selectedMovie);
+                controller.setSelectedMovie(selectedMovie);
                 windowStage = new Stage();
                 windowStage.setScene(new Scene(dialog));
                 windowStage.initModality(Modality.APPLICATION_MODAL);
@@ -557,20 +540,20 @@ public class MainViewController implements Initializable {
                 e.printStackTrace();
             }
         } else {
-            InputAlert.showMessageBox("No song selected", "Cannot modify something that doesn't exist!", "Please select a song.", Alert.AlertType.ERROR);
+            InputAlert.showMessageBox("No movie selected", "Cannot modify something that doesn't exist!", "Please select a movie.", Alert.AlertType.ERROR);
         }
     }
 
     /**
-     * Deletes the selected song
+     * Deletes the selected movie
      */
-    public void deleteSongButton() {
-        var result = InputAlert.showMessageBox("Do you want to delete this song?", String.format("Deleting %s", selectedMovie.getTitle()),
+    public void deleteMovieButton() {
+        var result = InputAlert.showMessageBox("Do you want to delete this movie?", String.format("Deleting %s", selectedMovie.getTitle()),
                 "You cannot undo this action once it's done!", Alert.AlertType.CONFIRMATION);
         if (result.get() == ButtonType.OK) {
             try {
-                MOVIE_MANAGER.deleteSong(selectedMovie.getId());
-                reloadSongsOnPlaylist();
+                MOVIE_MANAGER.deleteMovie(selectedMovie.getId());
+                reloadMoviesInCategory();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -615,14 +598,14 @@ public class MainViewController implements Initializable {
     public void setMainViewSize() {
         AtomicReference<Double> x = new AtomicReference<>((double) 0);
         AtomicReference<Double> y = new AtomicReference<>((double) 0);
-        borderGridPane.setOnMousePressed(mouseEvent1 -> {
+        viewAnchorPane.setOnMousePressed(mouseEvent1 -> {
             x.set(mouseEvent1.getSceneX());
             y.set(mouseEvent1.getSceneY());
             int offset = 5;
-            if (y.get() > borderGridPane.getHeight() - offset || x.get() > borderGridPane.getWidth() - offset) {
-                borderGridPane.setOnMouseReleased(mouseEvent2 -> {
-                    main.getPrimaryStage().setHeight(borderGridPane.getHeight() + (mouseEvent2.getSceneY() - y.get()));
-                    main.getPrimaryStage().setWidth(borderGridPane.getWidth() + (mouseEvent2.getSceneX() - x.get()));
+            if (y.get() > viewAnchorPane.getHeight() - offset || x.get() > viewAnchorPane.getWidth() - offset) {
+                viewAnchorPane.setOnMouseReleased(mouseEvent2 -> {
+                    main.getPrimaryStage().setHeight(viewAnchorPane.getHeight() + (mouseEvent2.getSceneY() - y.get()));
+                    main.getPrimaryStage().setWidth(viewAnchorPane.getWidth() + (mouseEvent2.getSceneX() - x.get()));
                     mouseEvent2.consume();
                 });
             }
@@ -635,14 +618,31 @@ public class MainViewController implements Initializable {
     public void moveMainView() {
         AtomicReference<Double> x = new AtomicReference<>((double) 0);
         AtomicReference<Double> y = new AtomicReference<>((double) 0);
-        menuBar.setOnMousePressed(mouseEvent -> {
+        topBar.setOnMousePressed(mouseEvent -> {
             x.set(mouseEvent.getSceneX());
             y.set(mouseEvent.getSceneY());
         });
-        menuBar.setOnMouseDragged(mouseEvent -> {
+        topBar.setOnMouseDragged(mouseEvent -> {
                     main.getPrimaryStage().setX(mouseEvent.getScreenX() - x.get());
                     main.getPrimaryStage().setY(mouseEvent.getScreenY() - y.get());
                 }
         );
+    }
+
+    public void hideAllMoviesTable() {
+        if(allMoviesShown){
+        allMovies.setVisible(false);
+        allMovies.setMinWidth(0);
+        allMovies.setPrefWidth(0);
+        allMovies.setMaxWidth(0);
+        }
+        else{
+            allMovies.setVisible(true);
+
+            allMovies.setMinWidth(205);
+            allMovies.setPrefWidth(400);
+            allMovies.setMaxWidth(5000);
+        }
+        allMoviesShown=!allMoviesShown;
     }
 }

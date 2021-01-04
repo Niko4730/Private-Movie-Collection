@@ -1,6 +1,6 @@
 package GUI.CONTROLLER;
 
-import BE.Playlist;
+import BE.Category;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -62,10 +62,10 @@ public class AddCategoryController {
         if (titleField != null && !titleField.getText().isEmpty()) {
             switch (mode) {
                 case (1) -> {
-                    mainMainViewController.addPlaylist(new Playlist(titleField.getText()));
+                    mainMainViewController.addCategory(new Category(titleField.getText()));
                 }
                 case (2) -> {
-                    mainMainViewController.editPlaylist(titleField.getText());
+                    mainMainViewController.editCategory(titleField.getText());
                 }
             }
             mainMainViewController.getWindowStage().close();

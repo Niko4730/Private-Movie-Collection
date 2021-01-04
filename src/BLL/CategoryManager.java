@@ -1,7 +1,7 @@
 package BLL;
 
 import BE.InputAlert;
-import BE.Playlist;
+import BE.Category;
 import BE.Movie;
 import DAL.DAO.DB.CategoryDBDAO;
 import DAL.DAO.FILE.CategoryLocalDAO;
@@ -64,7 +64,7 @@ public class CategoryManager {
      *
      * @return Playlists
      */
-    public List<Playlist> loadPlaylists() throws Exception {
+    public List<Category> loadCategories() throws Exception {
         return playlistDAO.loadPlaylist();
     }
 
@@ -74,7 +74,7 @@ public class CategoryManager {
      * @param name          the playlist name
      * @throws Exception    if something went wrong
      */
-    public void createPlaylist(String name) throws Exception {
+    public void createCategory(String name) throws Exception {
         playlistDAO.createPlaylist(name);
     }
 
@@ -85,18 +85,18 @@ public class CategoryManager {
      * @return              the value of name
      * @throws Exception    if something went wrong
      */
-    public Playlist getPlaylist(String name) throws Exception {
+    public Category getPlaylist(String name) throws Exception {
         return playlistDAO.getPlaylist(name);
     }
 
     /**
      * Sends information to delete playlist
      *
-     * @param playlist      the playlist
+     * @param category      the playlist
      * @throws Exception    if something went wrong.
      */
-    public void deletePlaylist(Playlist playlist) throws Exception {
-        playlistDAO.deletePlaylist(playlist);
+    public void deleteCategory(Category category) throws Exception {
+        playlistDAO.deletePlaylist(category);
     }
 
     /**
@@ -104,7 +104,7 @@ public class CategoryManager {
      * @return              a list of songs
      * @throws Exception    if something went wrong
      */
-    public List<Movie> loadSongsOnPlaylist(int playlist_id) throws Exception {
+    public List<Movie> loadMoviesInCategory(int playlist_id) throws Exception {
         return playlistDAO.loadSongsFromPlaylist(playlist_id);
     }
 
@@ -115,7 +115,7 @@ public class CategoryManager {
      * @param song_id       the id of the song
      * @throws Exception    if something went wrong.
      */
-    public void addSongsToPlaylist(int playlist_id, int song_id) throws Exception {
+    public void addMoviesToCategory(int playlist_id, int song_id) throws Exception {
         playlistDAO.AddSongToPlaylist(playlist_id, song_id);
     }
 
@@ -126,17 +126,17 @@ public class CategoryManager {
      * @param song_id       the id of the song
      * @throws Exception    if something went wrong.
      */
-    public void deleteSongFromPlaylist(int playlist_id, int song_id) throws Exception {
+    public void deleteMovieFromCategory(int playlist_id, int song_id) throws Exception {
         playlistDAO.deleteFromPlaylist(playlist_id, song_id);
     }
 
     /**
      * Sends information to update playlist
      *
-     * @param playlist      the playlist
+     * @param category      the playlist
      * @throws Exception    if something went wrong.
      */
-    public void updatePlaylist(Playlist playlist) throws Exception {
-        playlistDAO.updatePlaylist(playlist);
+    public void updateCategory(Category category) throws Exception {
+        playlistDAO.updatePlaylist(category);
     }
 }

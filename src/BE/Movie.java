@@ -334,7 +334,7 @@ public class Movie {
      *
      * @return artist
      */
-    public StringProperty artistProperty() {
+    public StringProperty ratingProperty() {
         return this.artist;
     }
 

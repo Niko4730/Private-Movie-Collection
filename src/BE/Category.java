@@ -3,7 +3,7 @@ package BE;
 import BLL.CategoryManager;
 import javafx.beans.property.*;
 
-public class Playlist {
+public class Category {
 
     private int playlistId;
     private String playListName;
@@ -17,9 +17,9 @@ public class Playlist {
      *
      * @param playListName
      */
-    public Playlist(String playListName) {
+    public Category(String playListName) {
         initialize();
-        setPlayListName(playListName);
+        setCategoryName(playListName);
     }
 
     /**
@@ -28,10 +28,10 @@ public class Playlist {
      * @param id
      * @param playListName
      */
-    public Playlist(int id, String playListName) {
+    public Category(int id, String playListName) {
         initialize();
         setPlaylistId(id);
-        setPlayListName(playListName);
+        setCategoryName(playListName);
     }
 
     /**
@@ -40,10 +40,10 @@ public class Playlist {
      * @param playListName
      * @param totalDuration
      */
-    public Playlist(int id, String playListName, double totalDuration) {
+    public Category(int id, String playListName, double totalDuration) {
         initialize();
         setPlaylistId(id);
-        setPlayListName(playListName);
+        setCategoryName(playListName);
         setPlaylistDurationProperty(totalDuration);
         setPlaylistDurationStringProperty(totalDuration);
     }
@@ -62,7 +62,7 @@ public class Playlist {
      *
      * @return the value of name
      */
-    public String getPlayListName() {
+    public String getCategoryName() {
         return playListName;
     }
 
@@ -71,7 +71,7 @@ public class Playlist {
      *
      * @return the value of name property
      */
-    public StringProperty getPlayListNameProperty() {
+    public StringProperty getcategoryNameProperty() {
         return playListNameProperty;
     }
 
@@ -80,7 +80,7 @@ public class Playlist {
      *
      * @param playListName new value of name
      */
-    public void setPlayListName(String playListName) {
+    public void setCategoryName(String playListName) {
         this.playListName = playListName;
         this.playListNameProperty.setValue(playListName);
     }
@@ -90,7 +90,7 @@ public class Playlist {
      *
      * @return the value of id
      */
-    public int getPlaylistId() {
+    public int getCategoryId() {
         return playlistId;
     }
 
@@ -158,10 +158,10 @@ public class Playlist {
      * Get the total amount of songs in the playlist.
      * @return
      */
-    public ObjectProperty<Integer> getPlaylistSize() {
+    public ObjectProperty<Integer> getCategorySize() {
         CategoryManager categoryManager = new CategoryManager();
         try {
-            playlistSize.setValue(categoryManager.loadSongsOnPlaylist(this.getPlaylistId()).size());
+            playlistSize.setValue(categoryManager.loadMoviesInCategory(this.getCategoryId()).size());
             return playlistSize;
         } catch (Exception e) {
             e.printStackTrace();

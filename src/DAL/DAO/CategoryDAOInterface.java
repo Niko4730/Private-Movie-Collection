@@ -1,6 +1,6 @@
 package DAL.DAO;
 
-import BE.Playlist;
+import BE.Category;
 import BE.Movie;
 import BLL.CategoryManager;
 import java.util.List;
@@ -20,7 +20,7 @@ public interface CategoryDAOInterface {
      * @return  A list of playlists
      * @throws  Exception if something went wrong.
      */
-    List<Playlist> loadPlaylist() throws Exception;
+    List<Category> loadPlaylist() throws Exception;
 
     /**
      * Creates a playlist
@@ -38,16 +38,16 @@ public interface CategoryDAOInterface {
      * @throws  Exception if something went wrong.
      */
 
-    Playlist getPlaylist(String name) throws Exception;
+    Category getPlaylist(String name) throws Exception;
 
     /**
      * Deletes a playlist
      *
-     * @param   playlist the playlist
+     * @param   category the playlist
      * @throws  Exception if something went wrong.
      */
 
-    void deletePlaylist(Playlist playlist) throws Exception;
+    void deletePlaylist(Category category) throws Exception;
 
     /**
      * Loads the songs on the playlist
@@ -81,8 +81,8 @@ public interface CategoryDAOInterface {
     /**
      * Updates a playlist to with new parameters
      *
-     * @param   playlist    the modified playlist
+     * @param   category    the modified playlist
      * @throws  Exception   if something went wrong.
      */
-    void updatePlaylist(Playlist playlist) throws Exception;
+    void updatePlaylist(Category category) throws Exception;
 }

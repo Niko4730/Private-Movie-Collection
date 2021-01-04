@@ -1,6 +1,6 @@
 package DAL.DAO.DB;
 
-import BE.Playlist;
+import BE.Category;
 import BE.Movie;
 import BLL.CategoryManager;
 import DAL.DAO.CategoryDAOInterface;
@@ -41,8 +41,8 @@ public class CategoryDBDAO implements CategoryDAOInterface {
      * @throws  SQLException if it cant get connection to the database or something went wrong.
      */
     @Override
-    public List<Playlist> loadPlaylist() throws SQLException {
-        var temp = new ArrayList<Playlist>();
+    public List<Category> loadPlaylist() throws SQLException {
+        var temp = new ArrayList<Category>();
 
         try (var con = database.getConnection();
              Statement statement = con.createStatement()) {
@@ -50,13 +50,13 @@ public class CategoryDBDAO implements CategoryDAOInterface {
             while (rs.next()) {
                 int id = rs.getInt("playlist_id");
                 String name = rs.getString("playlist_name");
-                temp.add(new Playlist(id, name));
+                temp.add(new Category(id, name));
             }
 
             for (int i = 0; i < temp.size(); i++) {
                 var playlist = temp.get(i);
                 if (playlist != null) {
-                    var totalLength = getTotalDurationOfPlaylist(playlist.getPlaylistId());
+                    var totalLength = getTotalDurationOfPlaylist(playlist.getCategoryId());
                     playlist.setPlaylistDurationProperty(totalLength);
                     playlist.setPlaylistDurationStringProperty(totalLength);
                 }
@@ -98,7 +98,7 @@ public class CategoryDBDAO implements CategoryDAOInterface {
      * @throws  SQLException if it cannot connect to the database or something went wrong.
      */
     @Override
-    public Playlist getPlaylist(String name) throws SQLException {
+    public Category getPlaylist(String name) throws SQLException {
         var sql = "SELECT FROM playlist WHERE playlist_name = ?;";
         try (var con = database.getConnection();
              PreparedStatement st = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -107,7 +107,7 @@ public class CategoryDBDAO implements CategoryDAOInterface {
             var resultSet = st.getResultSet();
             var id = resultSet.getInt("playlist_id");
             var name1 = resultSet.getString("playlist_name");
-            var playlist = new Playlist(id, name1);
+            var playlist = new Category(id, name1);
             return playlist;
         } catch (SQLNonTransientConnectionException e) {
             categoryManager.goLocal();
@@ -118,14 +118,14 @@ public class CategoryDBDAO implements CategoryDAOInterface {
     /**
      * Tries to delete a playlist from the database, does nothing if a playlist with name doesnt exist.
      *
-     * @param   playlist the playlist
+     * @param   category the playlist
      * @throws  SQLException if it cannot connect to the database or something went wrong.
      */
     @Override
-    public void deletePlaylist(Playlist playlist) throws SQLException {
+    public void deletePlaylist(Category category) throws SQLException {
         var sql = "DELETE FROM playlist WHERE playlist_name = ?;";
         try (var con = database.getConnection(); PreparedStatement st = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            st.setString(1, playlist.getPlayListName());
+            st.setString(1, category.getCategoryName());
             st.executeUpdate();
             return;
         } catch (SQLNonTransientConnectionException e) {
@@ -215,18 +215,18 @@ public class CategoryDBDAO implements CategoryDAOInterface {
     /**
      * Changes the name of the playlist if a match is found.
      *
-     * @param   playlist a Playlist with the new name, and the original id.
+     * @param   category a Playlist with the new name, and the original id.
      * @throws  SQLException if it cannot connect to the database or something went wrong.
      */
     @Override
-    public void updatePlaylist(Playlist playlist) throws SQLException {
+    public void updatePlaylist(Category category) throws SQLException {
         String sql = "UPDATE playlist SET playlist_name=? WHERE playlist_id=?;";
         try (var con = database.getConnection();
              PreparedStatement preparedStatement = con.prepareStatement(sql)) {
-            preparedStatement.setString(1, playlist.getPlayListName());
-            preparedStatement.setInt(2, playlist.getPlaylistId());
+            preparedStatement.setString(1, category.getCategoryName());
+            preparedStatement.setInt(2, category.getCategoryId());
             if (preparedStatement.executeUpdate() != 1) {
-                System.out.println("Could not update playlist: " + playlist.toString());
+                System.out.println("Could not update playlist: " + category.toString());
             }
         } catch (SQLNonTransientConnectionException | NullPointerException e) {
             categoryManager.goLocal();
@@ -236,16 +236,16 @@ public class CategoryDBDAO implements CategoryDAOInterface {
     /**
      * Get the total duration of a given playlist.
      *
-     * @param   playlist the playlist
+     * @param   category the playlist
      * @return  the total duration
      * @throws  SQLException if something went wrong.
      */
-    public double getTotalDurationOfPlaylist(Playlist playlist) throws SQLException {
+    public double getTotalDurationOfPlaylist(Category category) throws SQLException {
         String sql = "SELECT song.*, category.category_name FROM playlist LEFT OUTER JOIN playlist_song ON  playlist.playlist_id = playlist_song.playlist_id LEFT OUTER JOIN song ON playlist_song.song_id = song.song_id LEFT OUTER JOIN category ON  song.category_id = category.category_id WHERE playlist.playlist_id = ?;";
         double totalDuration = 0;
         try (var con = database.getConnection();
              PreparedStatement st = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            st.setInt(1, playlist.getPlaylistId());
+            st.setInt(1, category.getCategoryId());
             st.execute();
 
             ResultSet rs = st.getResultSet();

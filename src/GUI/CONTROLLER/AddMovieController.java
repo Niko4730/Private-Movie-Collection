@@ -162,8 +162,8 @@ public class AddMovieController extends Component implements Initializable {
                 movieToAdd.setTitle(titleTextField.getText());
                 movieToAdd.setArtist(artistTextField.getText());
                 movieToAdd.setCategoryId(getCategoryIdFromName(selectedCategory));
-                mainViewController.getSongManager().createSong(movieToAdd);
-                mainViewController.reloadSongTable();
+                mainViewController.getMovieManager().createMovie(movieToAdd);
+                mainViewController.reloadMovieTable();
                 close();
             }
         } catch (Exception e) {

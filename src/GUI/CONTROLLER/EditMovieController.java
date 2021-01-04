@@ -89,7 +89,7 @@ public class EditMovieController extends Component implements Initializable {
      *
      * @param movie the selected song
      */
-    public void setSelectedSong(Movie movie) {
+    public void setSelectedMovie(Movie movie) {
         if (movie != null) {
             selectedMovie = movie;
             titleTextField.setText(selectedMovie.getTitle());
@@ -180,8 +180,8 @@ public class EditMovieController extends Component implements Initializable {
                 selectedMovie.setArtist(artistTextField.getText());
                 selectedMovie.setCategoryId(getCategoryIdFromName(selectedCategory));
 
-                mainViewController.getSongManager().updateSong(selectedMovie);
-                mainViewController.reloadSongTable();
+                mainViewController.getMovieManager().updateSong(selectedMovie);
+                mainViewController.reloadMovieTable();
                 close();
             }
         } catch (Exception e) {
