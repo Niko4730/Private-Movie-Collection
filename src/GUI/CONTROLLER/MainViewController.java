@@ -1,9 +1,6 @@
 package GUI.CONTROLLER;
 
-import BE.InputAlert;
-import BE.MusicPlayer;
-import BE.Category;
-import BE.Movie;
+import BE.*;
 import BLL.CategoryManager;
 import BLL.MovieManager;
 import GUI.Main;
@@ -29,6 +26,10 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class MainViewController implements Initializable {
+    @FXML
+    private ImageView movieImg;
+    @FXML
+    private BorderPane lowerPane;
     @FXML
     private AnchorPane allMovies;
     @FXML
@@ -72,6 +73,7 @@ public class MainViewController implements Initializable {
     private static final CategoryManager CATEGORY_MANAGER = new CategoryManager();
     private static final MovieManager MOVIE_MANAGER = new MovieManager();
     private static final MusicPlayer musicPlayer = new MusicPlayer();
+    private static final ConvenientUtils CONVENIENT_UTILS = new ConvenientUtils();
 
     /**
      * Constructor
@@ -112,6 +114,7 @@ public class MainViewController implements Initializable {
         selectedCategory();
         setMainViewSize();
         moveMainView();
+        hideLowerPane();
     }
 
     /**
@@ -169,6 +172,7 @@ public class MainViewController implements Initializable {
         this.moviesInCategoryTable.getSelectionModel().selectedItemProperty().addListener(((observableValue, oldValue, newValue) -> {
             this.selectedMovieInCategory = (Movie) newValue;
             if (selectedMovieInCategory != null) {
+                //showLowerPane();
                 this.movieTable.getSelectionModel().clearSelection();
             }
         }));
@@ -181,6 +185,7 @@ public class MainViewController implements Initializable {
         this.movieTable.getSelectionModel().selectedItemProperty().addListener(((observableValue, oldValue, newValue) -> {
             this.selectedMovie = (Movie) newValue;
             if (selectedMovie != null) {
+                //showLowerPane();
                 this.moviesInCategoryTable.getSelectionModel().clearSelection();
             }
         }));
@@ -292,7 +297,6 @@ public class MainViewController implements Initializable {
         try {
             selectedCategory.setCategoryName(newTitle);
             CATEGORY_MANAGER.updateCategory(selectedCategory);
-            reloadCategoryTable();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -333,8 +337,8 @@ public class MainViewController implements Initializable {
         if (result.get() == ButtonType.OK) {
             try {
                 CATEGORY_MANAGER.deleteCategory(selectedCategory);
+                categories.remove(selectedCategory);
                 reloadMoviesInCategory();
-                load();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -369,7 +373,7 @@ public class MainViewController implements Initializable {
      * Moves a movie up on the current category.
      */
     public void moveMovieUpInCategoryButton() {
-        this.categoryMovies = FXCollections.observableArrayList(moveInCategory(moviesInCategoryTable.getItems(), selectedMovieInCategory, -1));
+        this.categoryMovies = FXCollections.observableArrayList(CONVENIENT_UTILS.moveInCategory(moviesInCategoryTable.getItems(), selectedMovieInCategory, -1));
         this.moviesInCategoryTable.setItems(categoryMovies);
     }
 
@@ -377,69 +381,8 @@ public class MainViewController implements Initializable {
      * Moves a movie down on the current category
      */
     public void moveMovieDownInCategoryButton() {
-        this.categoryMovies = FXCollections.observableArrayList(moveInCategory(moviesInCategoryTable.getItems(), selectedMovieInCategory, 1));
+        this.categoryMovies = FXCollections.observableArrayList(CONVENIENT_UTILS.moveInCategory(moviesInCategoryTable.getItems(), selectedMovieInCategory, 1));
         this.moviesInCategoryTable.setItems(categoryMovies);
-    }
-
-    /**
-     * Changes the position on the category
-     *
-     * @param listOfMovies the list of movies you want to change
-     * @param movie        the movie
-     * @param pos          the position
-     * @return A list of movies with the new order
-     */
-    public List<Movie> moveInCategory(List<Movie> listOfMovies, Movie movie, int pos) {
-        LinkedList<Movie> linkedMovies = new LinkedList<>(listOfMovies);
-        int index = linkedMovies.indexOf(movie) + pos;
-        if (linkedMovies.size() == 2) {
-            linkedMovies.addLast(linkedMovies.get(0));
-            linkedMovies.remove(linkedMovies.getFirst());
-        }
-        if (linkedMovies.size() > 2) {
-            if (index < 0) {
-                linkedMovies.removeFirstOccurrence(movie);
-                linkedMovies.addLast(movie);
-            } else if (index >= linkedMovies.size()) {
-                linkedMovies.removeLastOccurrence(movie);
-                linkedMovies.addFirst(movie);
-            }
-            if (index >= 0 && index < linkedMovies.size()) {
-                linkedMovies.remove(movie);
-                linkedMovies.add(index, movie);
-            }
-        }
-        return linkedMovies;
-    }
-
-    /**
-     * Saves the category
-     */
-    public void saveCategory() {
-        if (moviesInCategoryTable.getItems() != null) {
-            for (Movie movie : categoryMovies) {
-                try {
-                    CATEGORY_MANAGER.deleteMovieFromCategory(selectedCategory.getCategoryId(), movie.getId());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            for (Movie movie : categoryMovies) {
-                try {
-                    CATEGORY_MANAGER.addMoviesToCategory(selectedCategory.getCategoryId(), movie.getId());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    /**
-     * Shuffles the categories
-     */
-    @FXML
-    private void shuffleCategory() {
-        Collections.shuffle(categoryMovies);
     }
 
     /**
@@ -450,8 +393,8 @@ public class MainViewController implements Initializable {
             try {
                 int index = moviesInCategoryTable.getSelectionModel().getFocusedIndex();
                 CATEGORY_MANAGER.deleteMovieFromCategory(selectedCategory.getCategoryId(), selectedMovieInCategory.getId());
-                reloadMoviesInCategory();
-                reloadCategoryTable();
+                categoryMovies.remove(selectedMovie);
+                selectedCategory.setPlaylistSize(selectedCategory.getCategorySize().getValue()-1);
                 moviesInCategoryTable.getSelectionModel().select(index > 0 ? index - 1 : index);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -553,7 +496,7 @@ public class MainViewController implements Initializable {
         if (result.get() == ButtonType.OK) {
             try {
                 MOVIE_MANAGER.deleteMovie(selectedMovie.getId());
-                reloadMoviesInCategory();
+                movies.remove(selectedMovie);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -601,14 +544,15 @@ public class MainViewController implements Initializable {
         viewAnchorPane.setOnMousePressed(mouseEvent1 -> {
             x.set(mouseEvent1.getSceneX());
             y.set(mouseEvent1.getSceneY());
+            mouseEvent1.consume();
             int offset = 5;
-            if (y.get() > viewAnchorPane.getHeight() - offset || x.get() > viewAnchorPane.getWidth() - offset) {
                 viewAnchorPane.setOnMouseReleased(mouseEvent2 -> {
+                    if (y.get() > viewAnchorPane.getHeight() - offset || x.get() > viewAnchorPane.getWidth() - offset) {
                     main.getPrimaryStage().setHeight(viewAnchorPane.getHeight() + (mouseEvent2.getSceneY() - y.get()));
                     main.getPrimaryStage().setWidth(viewAnchorPane.getWidth() + (mouseEvent2.getSceneX() - x.get()));
                     mouseEvent2.consume();
+                    }
                 });
-            }
         });
     }
 
@@ -644,5 +588,27 @@ public class MainViewController implements Initializable {
             allMovies.setMaxWidth(5000);
         }
         allMoviesShown=!allMoviesShown;
+    }
+
+    private void hideLowerPane() {
+        lowerPane.setVisible(false);
+        lowerPane.setMaxHeight(0);
+        lowerPane.setMinHeight(0);
+        lowerPane.setPrefHeight(0);
+    }
+
+    private void showLowerPane(){
+        lowerPane.setVisible(true);
+        lowerPane.setMaxHeight(215);
+        lowerPane.setMinHeight(215);
+        lowerPane.setPrefHeight(215);
+    }
+
+    public void viewMovieOrWhatever() {
+    }
+
+    public void imgChange() {
+        movieImg.setImage(new Image(""));
+        System.out.println("WOW THE IMAGE CHANGED... or is yet to be implemented");
     }
 }

@@ -12,6 +12,10 @@ public class Category {
     protected SimpleStringProperty categoryDurationStringProperty;
     private ObjectProperty<Integer> categorySize = new SimpleObjectProperty<>();
 
+    public void setPlaylistSize(Integer playlistSize) {
+        this.playlistSize.set(playlistSize);
+    }
+
     /**
      * Constructor with categoryName
      * Carlo tjek det her
