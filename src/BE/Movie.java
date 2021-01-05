@@ -15,6 +15,7 @@ public class Movie {
     private SimpleIntegerProperty id;
     private StringProperty title;
     protected StringProperty rating;
+    protected SimpleIntegerProperty ratingId;
     protected SimpleDoubleProperty duration;
     protected SimpleStringProperty durationString;
     protected StringProperty filePath;
@@ -22,7 +23,7 @@ public class Movie {
     protected SimpleStringProperty categoryName;
     protected Media media;
     protected boolean isInitialized;
-    protected SimpleIntegerProperty ratingId;
+   
 
     private void initialize() {
         this.id = new SimpleIntegerProperty(-1);
