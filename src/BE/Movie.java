@@ -23,12 +23,13 @@ public class Movie {
     protected SimpleStringProperty categoryName;
     protected Media media;
     protected boolean isInitialized;
-   
+
 
     private void initialize() {
         this.id = new SimpleIntegerProperty(-1);
         this.title = new SimpleStringProperty("");
         this.rating = new SimpleStringProperty("");
+        this.ratingId = new SimpleIntegerProperty(-1);
         this.filePath = new SimpleStringProperty("");
         this.categoryId = new SimpleIntegerProperty(-1);
         this.categoryName = new SimpleStringProperty("");
