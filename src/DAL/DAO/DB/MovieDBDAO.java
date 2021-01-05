@@ -81,7 +81,7 @@ public class MovieDBDAO implements MovieDAOInterface {
         var sql = "";
         switch (database.getConnectionType()) {
             case (0) -> sql = "INSERT INTO [dbo].[movie] ([movie_title], [movie_rating], [movie_filepath], [category_id], [movie_length]) VALUES (?,?,?,?,?)";
-            case (1) -> sql = "INSERT INTO movie (movie_title, movie_artist, movie_filepath, category_id, movie_length) VALUES(?,?,?,?,?);";
+            case (1) -> sql = "INSERT INTO movie (movie_title, movie_rating, movie_filepath, category_id, movie_length) VALUES(?,?,?,?,?);";
         }
         try (var con = database.getConnection();
              PreparedStatement st = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -194,7 +194,7 @@ public class MovieDBDAO implements MovieDAOInterface {
                 }
                 return resultMovies;
             } else {
-                System.out.println(String.format("Couldn't find the song: %s", searchQuery));
+                System.out.println(String.format("Couldn't find the movie: %s", searchQuery));
             }
         } catch (SQLNonTransientConnectionException | NullPointerException e) {
             movieManager.goLocal();

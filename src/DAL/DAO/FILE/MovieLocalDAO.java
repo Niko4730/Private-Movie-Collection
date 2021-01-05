@@ -149,7 +149,7 @@ public class MovieLocalDAO implements MovieDAOInterface {
      * @return  A song that has the given name.
      * @throws  IOException if something went wrong.
      */
-    public Movie getSong(int id) throws Exception {
+    public Movie getMovie(int id) throws Exception {
         try (RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_MOVIE_PATH), "r")) {
             while (raf.getFilePointer() < raf.length()) {
                 int movie_id = raf.readInt();

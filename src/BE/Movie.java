@@ -8,6 +8,7 @@ import javafx.collections.MapChangeListener;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
+
 import java.io.File;
 
 public class Movie {
@@ -21,6 +22,7 @@ public class Movie {
     protected SimpleStringProperty categoryName;
     protected Media media;
     protected boolean isInitialized;
+    protected SimpleIntegerProperty ratingId;
 
     private void initialize() {
         this.id = new SimpleIntegerProperty(-1);
@@ -96,15 +98,15 @@ public class Movie {
      *
      * @param id           song id
      * @param title        song title
-     * @param genre       song artist
+     * @param rating       song artist
      * @param filePath     song filepath
      * @param categoryName song categoryName
      */
-    public Movie(int id, String title, String genre, String filePath, String categoryName) {
+    public Movie(int id, String title, String rating, String filePath, String categoryName) {
         initialize();
         this.id = new SimpleIntegerProperty(id);
         this.title = new SimpleStringProperty(title);
-        this.rating = new SimpleStringProperty(genre);
+        this.rating = new SimpleStringProperty(rating);
         this.filePath = new SimpleStringProperty(filePath);
         this.categoryId = new SimpleIntegerProperty(-1);
         this.categoryName = new SimpleStringProperty(categoryName);
@@ -156,15 +158,15 @@ public class Movie {
      *
      * @param id           song id
      * @param title        song title
-     * @param genre       song artist
+     * @param rating       song artist
      * @param filePath     song filepath
      * @param categoryName song categoryName
      */
-    public Movie(int id, String title, String genre, String filePath, int categoryId, String categoryName) {
+    public Movie(int id, String title, String rating, String filePath, int categoryId, String categoryName) {
         initialize();
         this.id = new SimpleIntegerProperty(id);
         this.title = new SimpleStringProperty(title);
-        this.rating = new SimpleStringProperty(genre);
+        this.rating = new SimpleStringProperty(rating);
         this.filePath = new SimpleStringProperty(filePath);
         this.categoryId = new SimpleIntegerProperty(categoryId);
         this.categoryName = new SimpleStringProperty(categoryName);
@@ -252,6 +254,11 @@ public class Movie {
      */
     public void setId(int id) {
         this.id.set(id);
+    }
+
+    public void setRatingId(int id)
+    {
+        this.ratingId.set(id);
     }
 
     /**
@@ -438,4 +445,6 @@ public class Movie {
                 "rating=" + rating +
                 '}';
     }
+
+
 }
