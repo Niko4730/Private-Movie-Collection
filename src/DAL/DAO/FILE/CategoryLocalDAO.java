@@ -11,9 +11,9 @@ import java.util.List;
 
 public class CategoryLocalDAO implements CategoryDAOInterface {
     private CategoryManager categoryManager;
-    private static final int CATEGORYNAMESIZE=100;
-    private static final String emptyValue=String.format("%-" + CATEGORYNAMESIZE + "s",-1);
-    private static final int emptyIntValue=-1;
+    private static final int CATEGORYNAMESIZE = 100;
+    private static final String emptyValue = String.format("%-" + CATEGORYNAMESIZE + "s", -1);
+    private static final int emptyIntValue = -1;
     private static final String LOCAL_CATEGORY_PATH = "Data/localPlaylists.data";
     private static final String LOCAL_CATEGORY_MOVIE = "Data/localPlaylist_song.data";
 
@@ -25,36 +25,27 @@ public class CategoryLocalDAO implements CategoryDAOInterface {
     /**
      * Tries to make a playlist with the given name.
      *
-     * @param   name the name of the playlist.
-     * @throws  IOException if something went wrong.
+     * @param name the name of the playlist.
+     * @throws IOException if something went wrong.
      */
     @Override
-<<<<<<< Updated upstream
-    public void createPlaylist(String name) throws IOException {
-=======
     public void createCategory(String name) throws IOException {
->>>>>>> Stashed changes
-        String formattedName = String.format("%-" + CATEGORYNAMESIZE + "s",name).substring(0,CATEGORYNAMESIZE);
-        try(RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_CATEGORY_PATH),"rw")){
-            while(raf.getFilePointer()<raf.length()){
+        String formattedName = String.format("%-" + CATEGORYNAMESIZE + "s", name).substring(0, CATEGORYNAMESIZE);
+        try (RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_CATEGORY_PATH), "rw")) {
+            while (raf.getFilePointer() < raf.length()) {
                 StringBuilder categoryName = new StringBuilder();
                 raf.skipBytes(4);
-                for(int i=0;i<CATEGORYNAMESIZE;i++){
-<<<<<<< Updated upstream
-                playlistName.append(raf.readChar());
-                if(playlistName.toString().equals(emptyValue)){
-=======
-                categoryName.append(raf.readChar());
-                if(categoryName.toString().equals(emptyValue)){
->>>>>>> Stashed changes
-                    raf.seek(raf.getFilePointer()-CATEGORYNAMESIZE*2);
-                    raf.writeChars(formattedName);
-                    return;
-                }
+                for (int i = 0; i < CATEGORYNAMESIZE; i++) {
+                    categoryName.append(raf.readChar());
+                    if (categoryName.toString().equals(emptyValue)) {
+                        raf.seek(raf.getFilePointer() - CATEGORYNAMESIZE * 2);
+                        raf.writeChars(formattedName);
+                        return;
+                    }
                 }
             }
-            raf.seek(raf.getFilePointer()-(CATEGORYNAMESIZE*2)-4);
-            int index = raf.readInt()+1;
+            raf.seek(raf.getFilePointer() - (CATEGORYNAMESIZE * 2) - 4);
+            int index = raf.readInt() + 1;
             raf.seek(raf.length());
             raf.writeInt(index);
             raf.writeChars(formattedName);
@@ -65,32 +56,26 @@ public class CategoryLocalDAO implements CategoryDAOInterface {
      * Tries to load categories, ignores playlists with emptyValue, creates file if the file does not exist.
      * makes sure there is a file to overwrite, when creating a playlist.
      *
-     * @return  A list of categories, an empty list if no categories exist.
-     * @throws  IOException if something went wrong.
+     * @return A list of categories, an empty list if no categories exist.
+     * @throws IOException if something went wrong.
      */
     @Override
     public List<Category> loadCategories() throws IOException {
         List<Category> tmp = new ArrayList<>();
-        try(RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_CATEGORY_PATH),"rw")){
-            if(raf.length()==0) {
-            raf.writeInt(1);
-            raf.writeChars(emptyValue);
-            raf.seek(0);}
-            while(raf.getFilePointer()<raf.length()){
-<<<<<<< Updated upstream
-                int playlistId=raf.readInt();
-                StringBuilder playlistName= new StringBuilder();
-                for(int i=0;i<CATEGORYNAMESIZE;i++){
-                    playlistName.append(raf.readChar());
-=======
-                int categoryId=raf.readInt();
-                StringBuilder categoryName= new StringBuilder();
-                for(int i=0;i<CATEGORYNAMESIZE;i++){
+        try (RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_CATEGORY_PATH), "rw")) {
+            if (raf.length() == 0) {
+                raf.writeInt(1);
+                raf.writeChars(emptyValue);
+                raf.seek(0);
+            }
+            while (raf.getFilePointer() < raf.length()) {
+                int categoryId = raf.readInt();
+                StringBuilder categoryName = new StringBuilder();
+                for (int i = 0; i < CATEGORYNAMESIZE; i++) {
                     categoryName.append(raf.readChar());
->>>>>>> Stashed changes
                 }
-                if(!categoryName.toString().equals(emptyValue))
-                tmp.add(new Category(categoryId, categoryName.toString().trim()));
+                if (!categoryName.toString().equals(emptyValue))
+                    tmp.add(new Category(categoryId, categoryName.toString().trim()));
             }
             return tmp;
         }
@@ -99,32 +84,21 @@ public class CategoryLocalDAO implements CategoryDAOInterface {
     /**
      * Tries to get a category.
      *
-     * @param   name The name of the category.
-     * @return  a category or null if none found.
-     * @throws  IOException if something went wrong.
+     * @param name The name of the category.
+     * @return a category or null if none found.
+     * @throws IOException if something went wrong.
      */
     @Override
-<<<<<<< Updated upstream
-    public Category getPlaylist(String name) throws IOException {
-        String formattedName = String.format("%-" + CATEGORYNAMESIZE + "s",name);
-        try(RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_CATEGORY_PATH),"r")){
-            while(raf.getFilePointer()<raf.length()){
-                int playlistId=raf.readInt();
-                StringBuilder playlistName= new StringBuilder();
-                for(int i=0;i<CATEGORYNAMESIZE;i++){
-                    playlistName.append(raf.readChar());
-=======
     public Category getCategory(String name) throws IOException {
-        String formattedName = String.format("%-" + CATEGORYNAMESIZE + "s",name);
-        try(RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_CATEGORY_PATH),"r")){
-            while(raf.getFilePointer()<raf.length()){
-                int categoryId=raf.readInt();
-                StringBuilder categoryName= new StringBuilder();
-                for(int i=0;i<CATEGORYNAMESIZE;i++){
+        String formattedName = String.format("%-" + CATEGORYNAMESIZE + "s", name);
+        try (RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_CATEGORY_PATH), "r")) {
+            while (raf.getFilePointer() < raf.length()) {
+                int categoryId = raf.readInt();
+                StringBuilder categoryName = new StringBuilder();
+                for (int i = 0; i < CATEGORYNAMESIZE; i++) {
                     categoryName.append(raf.readChar());
->>>>>>> Stashed changes
                 }
-                if(categoryName.toString().equals(formattedName))
+                if (categoryName.toString().equals(formattedName))
                     return new Category(categoryId, categoryName.toString());
             }
             return null;
@@ -134,18 +108,14 @@ public class CategoryLocalDAO implements CategoryDAOInterface {
     /**
      * Tries to overwrite a category with emptyValue, and deletes songs all songs from the category.
      *
-     * @param   category the playlist.
-     * @throws  IOException if something went wrong.
+     * @param category the playlist.
+     * @throws IOException if something went wrong.
      */
     @Override
-<<<<<<< Updated upstream
-    public void deletePlaylist(Category category) throws IOException {
-=======
     public void deleteCategory(Category category) throws IOException {
->>>>>>> Stashed changes
-        try(RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_CATEGORY_PATH),"rw")){
-            while(raf.getFilePointer()<raf.length()){
-                if(raf.readInt()== category.getCategoryId()){
+        try (RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_CATEGORY_PATH), "rw")) {
+            while (raf.getFilePointer() < raf.length()) {
+                if (raf.readInt() == category.getCategoryId()) {
                     raf.writeChars(emptyValue);
                     break;
                 }
@@ -157,19 +127,15 @@ public class CategoryLocalDAO implements CategoryDAOInterface {
     /**
      * Overwrites the old name, with the new modified name from the category.
      *
-     * @param   modified the modified category.
-     * @throws  IOException if something went wrong.
+     * @param modified the modified category.
+     * @throws IOException if something went wrong.
      */
     @Override
-<<<<<<< Updated upstream
-    public void updatePlaylist(Category modified) throws IOException {
-=======
     public void updateCategory(Category modified) throws IOException {
->>>>>>> Stashed changes
-        String formattedName = String.format("%-" + CATEGORYNAMESIZE + "s",modified.getCategoryName()).substring(0,CATEGORYNAMESIZE);
-        try(RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_CATEGORY_PATH),"rw")){
-            while(raf.getFilePointer()<raf.length()){
-                if(raf.readInt()==modified.getCategoryId()){
+        String formattedName = String.format("%-" + CATEGORYNAMESIZE + "s", modified.getCategoryName()).substring(0, CATEGORYNAMESIZE);
+        try (RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_CATEGORY_PATH), "rw")) {
+            while (raf.getFilePointer() < raf.length()) {
+                if (raf.readInt() == modified.getCategoryId()) {
                     raf.writeChars(formattedName);
                     break;
                 }
@@ -180,38 +146,25 @@ public class CategoryLocalDAO implements CategoryDAOInterface {
     /**
      * Tries to load songs from the playlist with category id.
      *
-     * @param   category_id the id of the category you want to load.
-     * @return  A list of Movies in the Category, a empty list if there and no songs in the category.
-     * @throws  IOException if something when wrong.
+     * @param category_id the id of the category you want to load.
+     * @return A list of Movies in the Category, a empty list if there and no songs in the category.
+     * @throws IOException if something when wrong.
      */
     @Override
-<<<<<<< Updated upstream
-    public List<Movie> loadSongsFromPlaylist(int playlist_id) throws Exception {
-        File file = new File(LOCAL_CATEGORY_MOVIE);
-        MovieLocalDAO songLocalDAO = new MovieLocalDAO();
-        List<Movie> tmp = new ArrayList<>();
-        try(RandomAccessFile raf = new RandomAccessFile(file,"r")){
-            while (raf.getFilePointer()<raf.length()) {
-                int playlistId=raf.readInt();
-                if(playlistId==playlist_id)
-                    tmp.add(songLocalDAO.getMovie(raf.readInt()));
-=======
     public List<Movie> loadMoviesFromCategory(int category_id) throws Exception {
         File file = new File(LOCAL_CATEGORY_MOVIE);
         MovieLocalDAO movieLocalDAO = new MovieLocalDAO();
         List<Movie> tmp = new ArrayList<>();
-        try(RandomAccessFile raf = new RandomAccessFile(file,"r")){
-            while (raf.getFilePointer()<raf.length()) {
-                int categoryId=raf.readInt();
-                if(categoryId==category_id)
-                    tmp.add(movieLocalDAO.getSong(raf.readInt()));
->>>>>>> Stashed changes
+        try (RandomAccessFile raf = new RandomAccessFile(file, "r")) {
+            while (raf.getFilePointer() < raf.length()) {
+                int categoryId = raf.readInt();
+                if (categoryId == category_id)
+                    tmp.add(movieLocalDAO.getMovie(raf.readInt()));
                 else
                     raf.skipBytes(4);
             }
             return tmp;
-        }
-        catch (FileNotFoundException e){
+        } catch (FileNotFoundException e) {
             file.createNewFile();
             return tmp;
         }
@@ -220,31 +173,21 @@ public class CategoryLocalDAO implements CategoryDAOInterface {
     /**
      * Tries to add a song to a category, if it finds an emptyIntValue, it overwrites instead of writing at the file end.
      *
-<<<<<<< Updated upstream
-     * @param   category_id the id of the playlist
-     * @param   movie_id the id of the song
-     * @throws  IOException if something went wrong.
-     */
-    @Override
-    public void AddSongToPlaylist(int category_id, int movie_id) throws IOException {
-=======
-     * @param   category_id the id of the category
-     * @param   movie_id the id of the movie
-     * @throws  IOException if something went wrong.
+     * @param category_id the id of the category
+     * @param movie_id    the id of the movie
+     * @throws IOException if something went wrong.
      */
     @Override
     public void AddMovieToCategory(int category_id, int movie_id) throws IOException {
->>>>>>> Stashed changes
         File file = new File(LOCAL_CATEGORY_MOVIE);
-        try(RandomAccessFile raf = new RandomAccessFile(file,"rw")){
-            while(raf.getFilePointer()<raf.length()){
-                if(raf.readInt()==emptyIntValue){
-                    raf.seek(raf.getFilePointer()-4);
+        try (RandomAccessFile raf = new RandomAccessFile(file, "rw")) {
+            while (raf.getFilePointer() < raf.length()) {
+                if (raf.readInt() == emptyIntValue) {
+                    raf.seek(raf.getFilePointer() - 4);
                     raf.writeInt(category_id);
                     raf.writeInt(movie_id);
                     return;
-                }
-                else raf.skipBytes(4);
+                } else raf.skipBytes(4);
             }
             raf.seek(raf.length());
             raf.writeInt(category_id);
@@ -255,49 +198,40 @@ public class CategoryLocalDAO implements CategoryDAOInterface {
     /**
      * Overwrites a song and category id with emptyIntValue.
      *
-     * @param   category_id the id of the category
-     * @param   movie_id the id of the movie
-     * @throws  IOException if something went wrong.
+     * @param category_id the id of the category
+     * @param movie_id    the id of the movie
+     * @throws IOException if something went wrong.
      */
     @Override
-<<<<<<< Updated upstream
-    public void deleteFromPlaylist(int playlist_id, int song_id) throws IOException {
-=======
     public void deleteFromCategory(int category_id, int movie_id) throws IOException {
->>>>>>> Stashed changes
-        try(RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_CATEGORY_MOVIE),"rw")){
-            while (raf.getFilePointer()<raf.length()){
+        try (RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_CATEGORY_MOVIE), "rw")) {
+            while (raf.getFilePointer() < raf.length()) {
                 int categoryId = raf.readInt();
-                int movieId=raf.readInt();
-                if(categoryId==category_id && movieId==movie_id){
-                    raf.seek(raf.getFilePointer()-8);
+                int movieId = raf.readInt();
+                if (categoryId == category_id && movieId == movie_id) {
+                    raf.seek(raf.getFilePointer() - 8);
                     raf.writeInt(emptyIntValue);
                     raf.writeInt(emptyIntValue);
                     break;
                 }
+            }
         }
-    }
     }
 
     /**
      * Tries to overwrite all matches of category_id with emptyIntValue
      *
-     * @param   category_id the id of the category you want to clear of movies.
-     * @throws  IOException if something went wrong.
+     * @param category_id the id of the category you want to clear of movies.
+     * @throws IOException if something went wrong.
      */
-<<<<<<< Updated upstream
-    private void deleteAllFromPlaylist(int playlist_id) throws IOException {
-=======
     private void deleteAllFromCategory(int category_id) throws IOException {
->>>>>>> Stashed changes
-        try(RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_CATEGORY_MOVIE),"rw")){
-            while (raf.getFilePointer()<raf.length()){
-                if(raf.readInt()==category_id){
-                    raf.seek(raf.getFilePointer()-4);
+        try (RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_CATEGORY_MOVIE), "rw")) {
+            while (raf.getFilePointer() < raf.length()) {
+                if (raf.readInt() == category_id) {
+                    raf.seek(raf.getFilePointer() - 4);
                     raf.writeInt(emptyIntValue);
                     raf.writeInt(emptyIntValue);
-                }
-                else raf.skipBytes(4);
+                } else raf.skipBytes(4);
             }
         }
     }
