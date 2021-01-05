@@ -118,7 +118,7 @@ public class AddMovieController extends Component implements Initializable {
                                 var title = !movieToAdd.getTitle().isBlank() ? movieToAdd.getTitle() : fileNameNoExt;
                                 titleTextField.setText(title);
                                 filePathTextField.setText(filePath);
-                                artistTextField.setText(movieToAdd.getArtist());
+                                artistTextField.setText(movieToAdd.getRating());
                                 System.out.println("Media initialized.");
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -160,7 +160,7 @@ public class AddMovieController extends Component implements Initializable {
         try {
             if (movieToAdd != null) {
                 movieToAdd.setTitle(titleTextField.getText());
-                movieToAdd.setArtist(artistTextField.getText());
+                movieToAdd.setRating(artistTextField.getText());
                 movieToAdd.setCategoryId(getCategoryIdFromName(selectedCategory));
                 mainViewController.getMovieManager().createMovie(movieToAdd);
                 mainViewController.reloadMovieTable();

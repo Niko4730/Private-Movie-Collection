@@ -94,7 +94,7 @@ public class EditMovieController extends Component implements Initializable {
             selectedMovie = movie;
             titleTextField.setText(selectedMovie.getTitle());
             filePathTextField.setText(selectedMovie.getFilePath());
-            artistTextField.setText(selectedMovie.getArtist());
+            artistTextField.setText(selectedMovie.getRating());
             genreComboBox.getSelectionModel().select(selectedMovie.getCategoryName());
         }
     }
@@ -119,7 +119,7 @@ public class EditMovieController extends Component implements Initializable {
                 var fileName = selectedFile.getName();
                 var fileNameNoExt = fileName.lastIndexOf('.') > 0 ? fileName.substring(0, fileName.lastIndexOf('.')) : fileName;
                 var filePath = selectedFile.getAbsolutePath();
-                var artist = selectedMovie.getArtist();
+                var artist = selectedMovie.getRating();
 
                 // Some disclaimer.
                 if (fileName.endsWith(".m4a"))
@@ -177,10 +177,10 @@ public class EditMovieController extends Component implements Initializable {
             if (selectedMovie != null) {
                 selectedMovie.setTitle(titleTextField.getText());
                 selectedMovie.setFilePath(filePathTextField.getText());
-                selectedMovie.setArtist(artistTextField.getText());
+                selectedMovie.setRating(artistTextField.getText());
                 selectedMovie.setCategoryId(getCategoryIdFromName(selectedCategory));
 
-                mainViewController.getMovieManager().updateSong(selectedMovie);
+                mainViewController.getMovieManager().updateMovie(selectedMovie);
                 mainViewController.reloadMovieTable();
                 close();
             }
