@@ -12,7 +12,7 @@ public interface MovieDAOInterface {
      *
      * @param movieManager the song manager
      */
-    void setSongManager(MovieManager movieManager);
+    void setMovieManager(MovieManager movieManager);
 
     /**
      * Loads all songs
@@ -20,7 +20,7 @@ public interface MovieDAOInterface {
      * @return  A list of songs
      * @throws  Exception If something went wrong
      */
-    List<Movie> loadSongs() throws Exception;
+    List<Movie> loadMovies() throws Exception;
 
     /**
      * Creates a new song
@@ -28,7 +28,7 @@ public interface MovieDAOInterface {
      * @param   movie the new song
      * @throws  Exception If something went wrong
      */
-    void createSong(Movie movie) throws Exception;
+    void createMovie(Movie movie) throws Exception;
 
     /**
      * Gets a song
@@ -37,7 +37,7 @@ public interface MovieDAOInterface {
      * @return  the song
      * @throws  Exception If something went wrong
      */
-    Movie getSong(String name) throws Exception;
+    Movie getMovie(String name) throws Exception;
 
     /**
      * Deletes a song
@@ -45,7 +45,7 @@ public interface MovieDAOInterface {
      * @param   id the id of the song you want to delete
      * @throws  Exception If something went wrong
      */
-    void deleteSong(int id) throws Exception;
+    void deleteMovie(int id) throws Exception;
 
     /**
      * modifies a song
@@ -53,7 +53,7 @@ public interface MovieDAOInterface {
      * @param   modified     the modified song
      * @throws  Exception    if something went wrong
      */
-    void updateSong(Movie modified) throws Exception;
+    void updateMovie(Movie modified) throws Exception;
 
     /**
      * Searches for a string
@@ -62,7 +62,7 @@ public interface MovieDAOInterface {
      * @return                  a list of songs, that matches the searchQuery
      * @throws  Exception       if something went wrong
      */
-    List<Movie> searchSong(String searchQuery) throws Exception;
+    List<Movie> searchMovie(String searchQuery) throws Exception;
 
     /**
      * Gets the map of genres

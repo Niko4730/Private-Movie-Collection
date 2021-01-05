@@ -11,11 +11,11 @@ import java.util.List;
 
 public class CategoryLocalDAO implements CategoryDAOInterface {
     private CategoryManager categoryManager;
-    private static final int PLAYLISTNAMESIZE=100;
-    private static final String emptyValue=String.format("%-" + PLAYLISTNAMESIZE + "s",-1);
+    private static final int CATEGORYNAMESIZE=100;
+    private static final String emptyValue=String.format("%-" + CATEGORYNAMESIZE + "s",-1);
     private static final int emptyIntValue=-1;
-    private static final String LOCAL_PLAYLIST_PATH = "Data/localPlaylists.data";
-    private static final String LOCAL_PLAYLIST_SONG = "Data/localPlaylist_song.data";
+    private static final String LOCAL_CATEGORY_PATH = "Data/localPlaylists.data";
+    private static final String LOCAL_CATEGORY_MOVIE = "Data/localPlaylist_song.data";
 
     @Override
     public void setPlaylistManager(CategoryManager categoryManager) {
@@ -30,21 +30,21 @@ public class CategoryLocalDAO implements CategoryDAOInterface {
      */
     @Override
     public void createPlaylist(String name) throws IOException {
-        String formattedName = String.format("%-" + PLAYLISTNAMESIZE + "s",name).substring(0,PLAYLISTNAMESIZE);
-        try(RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_PLAYLIST_PATH),"rw")){
+        String formattedName = String.format("%-" + CATEGORYNAMESIZE + "s",name).substring(0,CATEGORYNAMESIZE);
+        try(RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_CATEGORY_PATH),"rw")){
             while(raf.getFilePointer()<raf.length()){
                 StringBuilder playlistName = new StringBuilder();
                 raf.skipBytes(4);
-                for(int i=0;i<PLAYLISTNAMESIZE;i++){
+                for(int i=0;i<CATEGORYNAMESIZE;i++){
                 playlistName.append(raf.readChar());
                 if(playlistName.toString().equals(emptyValue)){
-                    raf.seek(raf.getFilePointer()-PLAYLISTNAMESIZE*2);
+                    raf.seek(raf.getFilePointer()-CATEGORYNAMESIZE*2);
                     raf.writeChars(formattedName);
                     return;
                 }
                 }
             }
-            raf.seek(raf.getFilePointer()-(PLAYLISTNAMESIZE*2)-4);
+            raf.seek(raf.getFilePointer()-(CATEGORYNAMESIZE*2)-4);
             int index = raf.readInt()+1;
             raf.seek(raf.length());
             raf.writeInt(index);
@@ -62,7 +62,7 @@ public class CategoryLocalDAO implements CategoryDAOInterface {
     @Override
     public List<Category> loadPlaylist() throws IOException {
         List<Category> tmp = new ArrayList<>();
-        try(RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_PLAYLIST_PATH),"rw")){
+        try(RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_CATEGORY_PATH),"rw")){
             if(raf.length()==0) {
             raf.writeInt(1);
             raf.writeChars(emptyValue);
@@ -70,7 +70,7 @@ public class CategoryLocalDAO implements CategoryDAOInterface {
             while(raf.getFilePointer()<raf.length()){
                 int playlistId=raf.readInt();
                 StringBuilder playlistName= new StringBuilder();
-                for(int i=0;i<PLAYLISTNAMESIZE;i++){
+                for(int i=0;i<CATEGORYNAMESIZE;i++){
                     playlistName.append(raf.readChar());
                 }
                 if(!playlistName.toString().equals(emptyValue))
@@ -89,12 +89,12 @@ public class CategoryLocalDAO implements CategoryDAOInterface {
      */
     @Override
     public Category getPlaylist(String name) throws IOException {
-        String formattedName = String.format("%-" + PLAYLISTNAMESIZE + "s",name);
-        try(RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_PLAYLIST_PATH),"r")){
+        String formattedName = String.format("%-" + CATEGORYNAMESIZE + "s",name);
+        try(RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_CATEGORY_PATH),"r")){
             while(raf.getFilePointer()<raf.length()){
                 int playlistId=raf.readInt();
                 StringBuilder playlistName= new StringBuilder();
-                for(int i=0;i<PLAYLISTNAMESIZE;i++){
+                for(int i=0;i<CATEGORYNAMESIZE;i++){
                     playlistName.append(raf.readChar());
                 }
                 if(playlistName.toString().equals(formattedName))
@@ -112,7 +112,7 @@ public class CategoryLocalDAO implements CategoryDAOInterface {
      */
     @Override
     public void deletePlaylist(Category category) throws IOException {
-        try(RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_PLAYLIST_PATH),"rw")){
+        try(RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_CATEGORY_PATH),"rw")){
             while(raf.getFilePointer()<raf.length()){
                 if(raf.readInt()== category.getCategoryId()){
                     raf.writeChars(emptyValue);
@@ -131,8 +131,8 @@ public class CategoryLocalDAO implements CategoryDAOInterface {
      */
     @Override
     public void updatePlaylist(Category modified) throws IOException {
-        String formattedName = String.format("%-" + PLAYLISTNAMESIZE + "s",modified.getCategoryName()).substring(0,PLAYLISTNAMESIZE);
-        try(RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_PLAYLIST_PATH),"rw")){
+        String formattedName = String.format("%-" + CATEGORYNAMESIZE + "s",modified.getCategoryName()).substring(0,CATEGORYNAMESIZE);
+        try(RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_CATEGORY_PATH),"rw")){
             while(raf.getFilePointer()<raf.length()){
                 if(raf.readInt()==modified.getCategoryId()){
                     raf.writeChars(formattedName);
@@ -151,14 +151,14 @@ public class CategoryLocalDAO implements CategoryDAOInterface {
      */
     @Override
     public List<Movie> loadSongsFromPlaylist(int playlist_id) throws Exception {
-        File file = new File(LOCAL_PLAYLIST_SONG);
+        File file = new File(LOCAL_CATEGORY_MOVIE);
         MovieLocalDAO songLocalDAO = new MovieLocalDAO();
         List<Movie> tmp = new ArrayList<>();
         try(RandomAccessFile raf = new RandomAccessFile(file,"r")){
             while (raf.getFilePointer()<raf.length()) {
                 int playlistId=raf.readInt();
                 if(playlistId==playlist_id)
-                    tmp.add(songLocalDAO.getSong(raf.readInt()));
+                    tmp.add(songLocalDAO.getMovie(raf.readInt()));
                 else
                     raf.skipBytes(4);
             }
@@ -173,26 +173,26 @@ public class CategoryLocalDAO implements CategoryDAOInterface {
     /**
      * Tries to add a song to a playlist, if it finds an emptyIntValue, it overwrites instead of writing at the file end.
      *
-     * @param   playlist_id the id of the playlist
-     * @param   song_id the id of the song
+     * @param   category_id the id of the playlist
+     * @param   movie_id the id of the song
      * @throws  IOException if something went wrong.
      */
     @Override
-    public void AddSongToPlaylist(int playlist_id, int song_id) throws IOException {
-        File file = new File(LOCAL_PLAYLIST_SONG);
+    public void AddSongToPlaylist(int category_id, int movie_id) throws IOException {
+        File file = new File(LOCAL_CATEGORY_MOVIE);
         try(RandomAccessFile raf = new RandomAccessFile(file,"rw")){
             while(raf.getFilePointer()<raf.length()){
                 if(raf.readInt()==emptyIntValue){
                     raf.seek(raf.getFilePointer()-4);
-                    raf.writeInt(playlist_id);
-                    raf.writeInt(song_id);
+                    raf.writeInt(category_id);
+                    raf.writeInt(movie_id);
                     return;
                 }
                 else raf.skipBytes(4);
             }
             raf.seek(raf.length());
-            raf.writeInt(playlist_id);
-            raf.writeInt(song_id);
+            raf.writeInt(category_id);
+            raf.writeInt(movie_id);
         }
     }
 
@@ -205,7 +205,7 @@ public class CategoryLocalDAO implements CategoryDAOInterface {
      */
     @Override
     public void deleteFromPlaylist(int playlist_id, int song_id) throws IOException {
-        try(RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_PLAYLIST_SONG),"rw")){
+        try(RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_CATEGORY_MOVIE),"rw")){
             while (raf.getFilePointer()<raf.length()){
                 int playlistId = raf.readInt();
                 int songId=raf.readInt();
@@ -226,7 +226,7 @@ public class CategoryLocalDAO implements CategoryDAOInterface {
      * @throws  IOException if something went wrong.
      */
     private void deleteAllFromPlaylist(int playlist_id) throws IOException {
-        try(RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_PLAYLIST_SONG),"rw")){
+        try(RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_CATEGORY_MOVIE),"rw")){
             while (raf.getFilePointer()<raf.length()){
                 if(raf.readInt()==playlist_id){
                     raf.seek(raf.getFilePointer()-4);
