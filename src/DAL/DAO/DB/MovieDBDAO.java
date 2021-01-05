@@ -23,7 +23,7 @@ public class MovieDBDAO implements MovieDAOInterface {
      * @param movieManager the manager
      */
     @Override
-    public void setSongManager(MovieManager movieManager) {
+    public void setMovieManager(MovieManager movieManager) {
         this.movieManager = movieManager;
     }
 
@@ -46,21 +46,21 @@ public class MovieDBDAO implements MovieDAOInterface {
      * @throws  SQLException if it cant get connection to the database or something went wrong.
      */
     @Override
-    public List<Movie> loadSongs() throws SQLException {
+    public List<Movie> loadMovies() throws SQLException {
         List<Movie> temp = new ArrayList<>();
         try (var con = database.getConnection();
              Statement statement = con.createStatement()) {
-            ResultSet rs = statement.executeQuery("SELECT song.*, category.category_name FROM song LEFT OUTER JOIN category ON song.category_id = category.category_id;");
+            ResultSet rs = statement.executeQuery("SELECT movie.*, category.category_name FROM movie LEFT OUTER JOIN category ON movie.category_id = category.category_id;");
 
             while (rs.next()) {
-                int song_id = rs.getInt("song_id");
-                String song_title = rs.getString("song_title");
-                String song_artist = rs.getString("song_artist");
-                String song_filepath = rs.getString("song_filepath");
+                int movie_id = rs.getInt("movie_id");
+                String movie_title = rs.getString("movie_title");
+                String movie_artist = rs.getString("movie_rating");
+                String movie_filepath = rs.getString("movie_filepath");
                 int category_id = rs.getInt("category_id");
                 String category_name = rs.getString("category_name");
-                double song_length = rs.getDouble("song_length");
-                temp.add(new Movie(song_id, song_title, song_artist, song_filepath, category_id, category_name));
+                double movie_length = rs.getDouble("movie_length");
+                temp.add(new Movie(movie_id, movie_title, movie_artist, movie_filepath, category_id, category_name));
             }
             return temp;
         } catch (SQLNonTransientConnectionException | NullPointerException e) {
@@ -77,16 +77,16 @@ public class MovieDBDAO implements MovieDAOInterface {
      * @throws  SQLException
      */
     @Override
-    public void createSong(Movie movie) throws SQLException {
+    public void createMovie(Movie movie) throws SQLException {
         var sql = "";
         switch (database.getConnectionType()) {
-            case (0) -> sql = "INSERT INTO [dbo].[song] ([song_title], [song_artist], [song_filepath], [category_id], [song_length]) VALUES (?,?,?,?,?)";
-            case (1) -> sql = "INSERT INTO song (song_title, song_artist, song_filepath, category_id, song_length) VALUES(?,?,?,?,?);";
+            case (0) -> sql = "INSERT INTO [dbo].[movie] ([movie_title], [movie_rating], [movie_filepath], [category_id], [movie_length]) VALUES (?,?,?,?,?)";
+            case (1) -> sql = "INSERT INTO movie (movie_title, movie_artist, movie_filepath, category_id, movie_length) VALUES(?,?,?,?,?);";
         }
         try (var con = database.getConnection();
              PreparedStatement st = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             st.setString(1, movie.getTitle());
-            st.setString(2, movie.getArtist());
+            st.setString(2, movie.getRating());
             st.setString(3, movie.getFilePath());
             st.setInt(4, movie.getCategoryId());
             st.setDouble(5, (movie.getDuration()));
@@ -104,21 +104,21 @@ public class MovieDBDAO implements MovieDAOInterface {
      * @throws  SQLException if it cant get connection to the database or something went wrong.
      */
     @Override
-    public Movie getSong(String name) throws SQLException {
-        var sql = "SELECT FROM song WHERE song_name = ?;";
+    public Movie getMovie(String name) throws SQLException {
+        var sql = "SELECT FROM movie WHERE movie_name = ?;";
         try (var con = database.getConnection();
              PreparedStatement st = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             st.setString(1, name);
             st.executeUpdate();
             var resultSet = st.getResultSet();
-            var id = resultSet.getInt("song_id");
-            var name1 = resultSet.getString("song_name");
-            var path = resultSet.getString("song_filepath");
-            String artist = resultSet.getString("song_artist");
+            var id = resultSet.getInt("movie_id");
+            var name1 = resultSet.getString("movie_name");
+            var path = resultSet.getString("movie_filepath");
+            String rating = resultSet.getString("movie_rating");
             var category_id = resultSet.getInt("category_id");
-            var duration = resultSet.getDouble("song_length");
-            var song = new Movie(id, name1, path, artist, category_id, duration);
-            return song;
+            var duration = resultSet.getDouble("movie_length");
+            var movie = new Movie(id, name1, path, rating, category_id, duration);
+            return movie;
         } catch (SQLNonTransientConnectionException | NullPointerException e) {
             movieManager.goLocal();
             return null;
@@ -132,8 +132,8 @@ public class MovieDBDAO implements MovieDAOInterface {
      * @throws  SQLException if it cant get connection to the database or something went wrong.
      */
     @Override
-    public void deleteSong(int id) throws SQLException {
-        var sql = "DELETE FROM song WHERE song_id = ?;";
+    public void deleteMovie(int id) throws SQLException {
+        var sql = "DELETE FROM movie WHERE movie_id = ?;";
         try (var con = database.getConnection();
              PreparedStatement st = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             st.setInt(1, id);
@@ -150,13 +150,13 @@ public class MovieDBDAO implements MovieDAOInterface {
      * @throws  SQLException if it cant get connection to the database or something went wrong.
      */
     @Override
-    public void updateSong(Movie modified) throws SQLException {
-        var sql = "UPDATE song SET song_title = ?, song_filepath = ?, song_artist=?, category_id=?, song_length=? WHERE song_id = ?;";
+    public void updateMovie(Movie modified) throws SQLException {
+        var sql = "UPDATE movie SET movie_title = ?, movie_filepath = ?, movie_rating=?, category_id=?, movie_length=? WHERE movie_id = ?;";
         try (var con = database.getConnection();
              PreparedStatement st = con.prepareStatement(sql)) {
             st.setString(1, modified.getTitle());
             st.setString(2, modified.getFilePath());
-            st.setString(3, modified.getArtist());
+            st.setString(3, modified.getRating());
             st.setInt(4, modified.getCategoryId());
             st.setDouble(5, modified.getDuration());
             st.setInt(6, modified.getId());
@@ -173,10 +173,10 @@ public class MovieDBDAO implements MovieDAOInterface {
      * @return  A list containing songs that match, or an empty list if no song matches.
      */
     @Override
-    public List<Movie> searchSong(String searchQuery) {
+    public List<Movie> searchMovie(String searchQuery) {
         List<Movie> resultMovies = new ArrayList<>();
         try (var connection = database.getConnection()) {
-            String sql = "SELECT * FROM song WHERE LOWER(song_title) LIKE LOWER(?) OR song_id LIKE LOWER(?) OR LOWER(song_filepath) LIKE LOWER(?) OR LOWER(song_artist) LIKE LOWER(?);";
+            String sql = "SELECT * FROM movie WHERE LOWER(movie_title) LIKE LOWER(?) OR movie_id LIKE LOWER(?) OR LOWER(movie_filepath) LIKE LOWER(?) OR LOWER(movie_rating) LIKE LOWER(?);";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, "%" + searchQuery + "%");
             preparedStatement.setString(2, "%" + searchQuery + "%");
@@ -185,12 +185,12 @@ public class MovieDBDAO implements MovieDAOInterface {
             if (preparedStatement.execute()) {
                 ResultSet resultSet = preparedStatement.getResultSet();
                 while (resultSet.next()) {
-                    var id = resultSet.getInt("song_id");
-                    var name = resultSet.getString("song_title");
-                    var artist = resultSet.getString("song_artist");
-                    var path = resultSet.getString("song_filepath");
-                    var song = new Movie(id, name, artist, path, "not done yet");
-                    resultMovies.add(song);
+                    var id = resultSet.getInt("movie_id");
+                    var name = resultSet.getString("movie_title");
+                    var rating = resultSet.getString("movie_rating");
+                    var path = resultSet.getString("movie_filepath");
+                    var movie = new Movie(id, name, rating, path, "not done yet");
+                    resultMovies.add(movie);
                 }
                 return resultMovies;
             } else {

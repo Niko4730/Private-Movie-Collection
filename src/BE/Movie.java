@@ -13,7 +13,7 @@ import java.io.File;
 public class Movie {
     private SimpleIntegerProperty id;
     private StringProperty title;
-    protected StringProperty artist;
+    protected StringProperty rating;
     protected SimpleDoubleProperty duration;
     protected SimpleStringProperty durationString;
     protected StringProperty filePath;
@@ -25,7 +25,7 @@ public class Movie {
     private void initialize() {
         this.id = new SimpleIntegerProperty(-1);
         this.title = new SimpleStringProperty("");
-        this.artist = new SimpleStringProperty("");
+        this.rating = new SimpleStringProperty("");
         this.filePath = new SimpleStringProperty("");
         this.categoryId = new SimpleIntegerProperty(-1);
         this.categoryName = new SimpleStringProperty("");
@@ -48,7 +48,7 @@ public class Movie {
         initialize();
         this.id = new SimpleIntegerProperty(id);
         this.title = new SimpleStringProperty(title);
-        this.artist = new SimpleStringProperty();
+        this.rating = new SimpleStringProperty();
         this.filePath = new SimpleStringProperty(filePath);
         this.categoryId = new SimpleIntegerProperty(-1);
         getMeta();
@@ -64,7 +64,7 @@ public class Movie {
         initialize();
         this.id = new SimpleIntegerProperty(-1);
         this.title = new SimpleStringProperty(title);
-        this.artist = new SimpleStringProperty();
+        this.rating = new SimpleStringProperty();
         this.filePath = new SimpleStringProperty(filePath);
         this.categoryId = new SimpleIntegerProperty(-1);
         getMeta();
@@ -82,7 +82,7 @@ public class Movie {
         initialize();
         this.id = new SimpleIntegerProperty(id);
         this.title = new SimpleStringProperty(title);
-        this.artist = new SimpleStringProperty();
+        this.rating = new SimpleStringProperty();
         this.filePath = new SimpleStringProperty(filePath);
         this.categoryId = new SimpleIntegerProperty(-1);
         this.categoryName = new SimpleStringProperty(categoryName);
@@ -96,15 +96,15 @@ public class Movie {
      *
      * @param id           song id
      * @param title        song title
-     * @param artist       song artist
+     * @param genre       song artist
      * @param filePath     song filepath
      * @param categoryName song categoryName
      */
-    public Movie(int id, String title, String artist, String filePath, String categoryName) {
+    public Movie(int id, String title, String genre, String filePath, String categoryName) {
         initialize();
         this.id = new SimpleIntegerProperty(id);
         this.title = new SimpleStringProperty(title);
-        this.artist = new SimpleStringProperty(artist);
+        this.rating = new SimpleStringProperty(genre);
         this.filePath = new SimpleStringProperty(filePath);
         this.categoryId = new SimpleIntegerProperty(-1);
         this.categoryName = new SimpleStringProperty(categoryName);
@@ -116,15 +116,15 @@ public class Movie {
      *
      * @param id       song id
      * @param title    song title
-     * @param artist   song artist
+     * @param rating   song artist
      * @param filePath song filepath
      */
-    public Movie(int id, String title, String filePath, String artist, int categoryId) {
+    public Movie(int id, String title, String filePath, String rating, int categoryId) {
         initialize();
 
         this.id = new SimpleIntegerProperty(id);
         this.title = new SimpleStringProperty(title);
-        this.artist = new SimpleStringProperty(artist);
+        this.rating = new SimpleStringProperty(rating);
         this.filePath = new SimpleStringProperty(filePath);
         this.categoryId = new SimpleIntegerProperty(categoryId);
         this.categoryName = new SimpleStringProperty();
@@ -136,14 +136,14 @@ public class Movie {
      *
      * @param id       song id
      * @param title    song title
-     * @param artist   song artist
+     * @param rating   song artist
      * @param filePath song filepath
      */
-    public Movie(int id, String title, String filePath, String artist, int categoryId, double duration) {
+    public Movie(int id, String title, String filePath, String rating, int categoryId, double duration) {
         initialize();
         this.id = new SimpleIntegerProperty(id);
         this.title = new SimpleStringProperty(title);
-        this.artist = new SimpleStringProperty(artist);
+        this.rating = new SimpleStringProperty(rating);
         this.filePath = new SimpleStringProperty(filePath);
         this.categoryId = new SimpleIntegerProperty(categoryId);
         this.categoryName = new SimpleStringProperty();
@@ -156,15 +156,15 @@ public class Movie {
      *
      * @param id           song id
      * @param title        song title
-     * @param artist       song artist
+     * @param genre       song artist
      * @param filePath     song filepath
      * @param categoryName song categoryName
      */
-    public Movie(int id, String title, String artist, String filePath, int categoryId, String categoryName) {
+    public Movie(int id, String title, String genre, String filePath, int categoryId, String categoryName) {
         initialize();
         this.id = new SimpleIntegerProperty(id);
         this.title = new SimpleStringProperty(title);
-        this.artist = new SimpleStringProperty(artist);
+        this.rating = new SimpleStringProperty(genre);
         this.filePath = new SimpleStringProperty(filePath);
         this.categoryId = new SimpleIntegerProperty(categoryId);
         this.categoryName = new SimpleStringProperty(categoryName);
@@ -176,15 +176,15 @@ public class Movie {
      *
      * @param id           song id
      * @param title        song title
-     * @param artist       song artist
+     * @param rating       song artist
      * @param filePath     song filepath
      * @param categoryName song categoryName
      */
-    public Movie(int id, String title, String artist, String filePath, int categoryId, String categoryName, double duration) {
+    public Movie(int id, String title, String rating, String filePath, int categoryId, String categoryName, double duration) {
         initialize();
         this.id = new SimpleIntegerProperty(id);
         this.title = new SimpleStringProperty(title);
-        this.artist = new SimpleStringProperty(artist);
+        this.rating = new SimpleStringProperty(rating);
         this.filePath = new SimpleStringProperty(filePath);
         this.categoryId = new SimpleIntegerProperty(categoryId);
         this.categoryName = new SimpleStringProperty(categoryName);
@@ -210,8 +210,8 @@ public class Movie {
 
                 media.getMetadata().addListener((MapChangeListener.Change<? extends String, ? extends Object> c) -> {
                     if (c.wasAdded()) {
-                        if ("artist".equals(c.getKey()) && getArtist()!=null && getArtist().isEmpty()) {
-                            setArtist(c.getValueAdded().toString());
+                        if ("rating".equals(c.getKey()) && getRating()!=null && getRating().isEmpty()) {
+                            setRating(c.getValueAdded().toString());
                         }
                         if ("title".equals(c.getKey()) && getTitle().isEmpty()) {
                             setTitle(c.getValueAdded().toString());
@@ -320,14 +320,7 @@ public class Movie {
         this.duration.set(duration);
     }
 
-    /**
-     * Get the value of Artist
-     *
-     * @return the value of Artist
-     */
-    public String getArtist() {
-        return this.artist.get();
-    }
+
 
     /**
      * Gets the artist property
@@ -335,17 +328,10 @@ public class Movie {
      * @return artist
      */
     public StringProperty ratingProperty() {
-        return this.artist;
+        return this.rating;
     }
 
-    /**
-     * Sets the value of Artist
-     *
-     * @param artist new value of Artist
-     */
-    public void setArtist(String artist) {
-        this.artist.set(artist);
-    }
+
 
     /**
      * Gets the value of Title
@@ -436,5 +422,20 @@ public class Movie {
      */
     public boolean getIsInitialized() {
         return isInitialized;
+    }
+
+    public String getRating() {
+        return rating.get();
+    }
+
+    public void setRating(String rating) {
+        this.rating.set(rating);
+    }
+
+    @Override
+    public String toString() {
+        return "Movie{" +
+                "rating=" + rating +
+                '}';
     }
 }

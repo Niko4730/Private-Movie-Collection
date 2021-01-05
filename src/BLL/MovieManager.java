@@ -9,15 +9,15 @@ import java.util.List;
 import java.util.Map;
 
 public class MovieManager {
-    protected static MovieDAOInterface songDAO;
+    protected static MovieDAOInterface movieDAO;
     protected MainViewController mainController;
 
     //initializes the interface, if no connection to the database, it will try to use the local option.
     static {
         try {
-            songDAO = new MovieDBDAO();
+            movieDAO = new MovieDBDAO();
         } catch (Exception e) {
-            songDAO = new MovieLocalDAO();
+            movieDAO = new MovieLocalDAO();
         }
     }
 
@@ -25,7 +25,7 @@ public class MovieManager {
      * Makes it use the local class.
      */
     public void goLocal() {
-        songDAO = new MovieLocalDAO();
+        movieDAO = new MovieLocalDAO();
     }
 
 
@@ -33,16 +33,16 @@ public class MovieManager {
      * Constructor
      */
     public MovieManager() {
-        songDAO.setSongManager(this);
+        movieDAO.setMovieManager(this);
     }
 
     /**
      * Sets the value of songDAO
      *
-     * @param songDAO new value of songDAO
+     * @param movieDAO new value of songDAO
      */
-    public void setSongDAO(MovieDAOInterface songDAO) {
-        MovieManager.songDAO = songDAO;
+    public void setMovieDAO(MovieDAOInterface movieDAO) {
+        MovieManager.movieDAO = movieDAO;
     }
 
     /**
@@ -61,7 +61,7 @@ public class MovieManager {
      * @throws Exception    if something went wrong
      */
     public List<Movie> loadMovies() throws Exception {
-        return songDAO.loadSongs();
+        return movieDAO.loadMovies();
     }
 
     /**
@@ -71,7 +71,7 @@ public class MovieManager {
      * @throws Exception    if something went wrong
      */
     public void createMovie(Movie movie) throws Exception {
-        songDAO.createSong(movie);
+        movieDAO.createMovie(movie);
     }
 
     /**
@@ -81,8 +81,8 @@ public class MovieManager {
      * @return  the value of song name
      * @throws Exception if something went wrong
      */
-    public Movie getSong(String name) throws Exception {
-        return songDAO.getSong(name);
+    public Movie getMovie(String name) throws Exception {
+        return movieDAO.getMovie(name);
     }
 
     /**
@@ -91,8 +91,8 @@ public class MovieManager {
      * @param modified      the modified song
      * @throws Exception    if something went wrong
      */
-    public void updateSong(Movie modified) throws Exception {
-        songDAO.updateSong(modified);
+    public void updateMovie(Movie modified) throws Exception {
+        movieDAO.updateMovie(modified);
     }
 
     /**
@@ -102,7 +102,7 @@ public class MovieManager {
      * @throws Exception    if something went wrong
      */
     public void deleteMovie(int id) throws Exception {
-        songDAO.deleteSong(id);
+        movieDAO.deleteMovie(id);
     }
 
     /**
@@ -113,7 +113,7 @@ public class MovieManager {
      * @throws Exception    if something went wrong
      */
     public List<Movie> searchMovie(String search) throws Exception {
-        return songDAO.searchSong(search);
+        return movieDAO.searchMovie(search);
     }
 
     /**
@@ -122,6 +122,6 @@ public class MovieManager {
      * @throws Exception    if something went wrong
      */
     public Map<Integer, String> getGenres() throws Exception {
-        return songDAO.getGenres();
+        return movieDAO.getGenres();
     }
 }
