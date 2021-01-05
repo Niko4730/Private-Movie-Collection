@@ -10,6 +10,7 @@ import GUI.Main;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -17,6 +18,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
@@ -29,6 +31,10 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class MainViewController implements Initializable {
+    @FXML
+    private ImageView movieImg;
+    @FXML
+    private BorderPane lowerPane;
     @FXML
     private AnchorPane allMovies;
     @FXML
@@ -112,6 +118,21 @@ public class MainViewController implements Initializable {
         selectedCategory();
         setMainViewSize();
         moveMainView();
+        showLowerPane();
+    }
+
+    private void hideLowerPane() {
+        lowerPane.setVisible(false);
+        lowerPane.setMaxHeight(0);
+        lowerPane.setMinHeight(0);
+        lowerPane.setPrefHeight(0);
+    }
+
+    private void showLowerPane(){
+        lowerPane.setVisible(true);
+        lowerPane.setMaxHeight(215);
+        lowerPane.setMinHeight(215);
+        lowerPane.setPrefHeight(215);
     }
 
     /**
@@ -169,6 +190,7 @@ public class MainViewController implements Initializable {
         this.moviesInCategoryTable.getSelectionModel().selectedItemProperty().addListener(((observableValue, oldValue, newValue) -> {
             this.selectedMovieInCategory = (Movie) newValue;
             if (selectedMovieInCategory != null) {
+                showLowerPane();
                 this.movieTable.getSelectionModel().clearSelection();
             }
         }));
@@ -181,6 +203,7 @@ public class MainViewController implements Initializable {
         this.movieTable.getSelectionModel().selectedItemProperty().addListener(((observableValue, oldValue, newValue) -> {
             this.selectedMovie = (Movie) newValue;
             if (selectedMovie != null) {
+                showLowerPane();
                 this.moviesInCategoryTable.getSelectionModel().clearSelection();
             }
         }));
@@ -601,14 +624,15 @@ public class MainViewController implements Initializable {
         viewAnchorPane.setOnMousePressed(mouseEvent1 -> {
             x.set(mouseEvent1.getSceneX());
             y.set(mouseEvent1.getSceneY());
+            mouseEvent1.consume();
             int offset = 5;
-            if (y.get() > viewAnchorPane.getHeight() - offset || x.get() > viewAnchorPane.getWidth() - offset) {
                 viewAnchorPane.setOnMouseReleased(mouseEvent2 -> {
+                    if (y.get() > viewAnchorPane.getHeight() - offset || x.get() > viewAnchorPane.getWidth() - offset) {
                     main.getPrimaryStage().setHeight(viewAnchorPane.getHeight() + (mouseEvent2.getSceneY() - y.get()));
                     main.getPrimaryStage().setWidth(viewAnchorPane.getWidth() + (mouseEvent2.getSceneX() - x.get()));
                     mouseEvent2.consume();
+                    }
                 });
-            }
         });
     }
 
@@ -644,5 +668,13 @@ public class MainViewController implements Initializable {
             allMovies.setMaxWidth(5000);
         }
         allMoviesShown=!allMoviesShown;
+    }
+
+    public void viewMovieOrWhatever() {
+    }
+
+    public void imgChange() {
+        movieImg.setImage(new Image(""));
+        System.out.println("WOW THE IMAGE CHANGED");
     }
 }

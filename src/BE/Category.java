@@ -12,6 +12,8 @@ public class Category {
     protected SimpleStringProperty playlistDurationStringProperty;
     private ObjectProperty<Integer> playlistSize = new SimpleObjectProperty<>();
 
+
+
     /**
      * Constructor with playlistName
      *

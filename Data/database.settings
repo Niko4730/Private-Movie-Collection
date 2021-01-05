@@ -1,10 +1,10 @@
 #0 - MSSQL
 #1 - MySQL
-ConnectionType=0
-Server=10.176.111.31
-Database=mytunesDennisCarloChristian
-User=CSe20A_6
-Password=WowThatsAGoodPassWord1337
+ConnectionType=1
+Server=localhost
+Database=ccdnprivatemoviecollection
+User=root
+Password=
 #1433 - MSSQL
 #3306 - MySQL
-Port=1433
+Port=3306
