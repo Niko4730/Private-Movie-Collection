@@ -181,7 +181,6 @@ public class EditMovieController extends Component implements Initializable {
                 selectedMovie.setCategoryId(getCategoryIdFromName(selectedCategory));
 
                 mainViewController.getMovieManager().updateMovie(selectedMovie);
-                mainViewController.reloadMovieTable();
                 close();
             }
         } catch (Exception e) {
