@@ -5,60 +5,60 @@ import javafx.beans.property.*;
 
 public class Category {
 
-    private int playlistId;
-    private String playListName;
-    private StringProperty playListNameProperty;
-    protected SimpleDoubleProperty playlistDurationProperty;
-    protected SimpleStringProperty playlistDurationStringProperty;
-    private ObjectProperty<Integer> playlistSize = new SimpleObjectProperty<>();
+    private int categoryId;
+    private String categoryName;
+    private StringProperty categoryNameProperty;
+    protected SimpleDoubleProperty categoryDurationProperty;
+    protected SimpleStringProperty categoryDurationStringProperty;
+    private ObjectProperty<Integer> categorySize = new SimpleObjectProperty<>();
 
     public void setPlaylistSize(Integer playlistSize) {
         this.playlistSize.set(playlistSize);
     }
 
     /**
-     * Constructor with playlistName
+     * Constructor with categoryName
      * Carlo tjek det her
-     * @param playListName
+     * @param categoryName
      */
-    public Category(String playListName) {
+    public Category(String categoryName) {
         initialize();
-        setCategoryName(playListName);
+        setCategoryName(categoryName);
     }
 
     /**
-     * Constructor with id and playlistName
+     * Constructor with id and categoryName
      *
      * @param id
-     * @param playListName
+     * @param categoryName
      */
-    public Category(int id, String playListName) {
+    public Category(int id, String categoryName) {
         initialize();
         setPlaylistId(id);
-        setCategoryName(playListName);
+        setCategoryName(categoryName);
     }
 
     /**
-     * Constructor with id, playlist name and total duration.
+     * Constructor with id, category name and total duration.
      * @param id
-     * @param playListName
+     * @param categoryName
      * @param totalDuration
      */
-    public Category(int id, String playListName, double totalDuration) {
+    public Category(int id, String categoryName, double totalDuration) {
         initialize();
         setPlaylistId(id);
-        setCategoryName(playListName);
-        setPlaylistDurationProperty(totalDuration);
-        setPlaylistDurationStringProperty(totalDuration);
+        setCategoryName(categoryName);
+        setCategoryDurationProperty(totalDuration);
+        setCategoryDurationStringProperty(totalDuration);
     }
 
     /**
      * initializes the variables
      */
     private void initialize() {
-        playListNameProperty = new SimpleStringProperty();
-        playlistDurationProperty = new SimpleDoubleProperty();
-        playlistDurationStringProperty = new SimpleStringProperty();
+        categoryNameProperty = new SimpleStringProperty();
+        categoryDurationProperty = new SimpleDoubleProperty();
+        categoryDurationStringProperty = new SimpleStringProperty();
     }
 
     /**
@@ -67,7 +67,7 @@ public class Category {
      * @return the value of name
      */
     public String getCategoryName() {
-        return playListName;
+        return categoryName;
     }
 
     /**
@@ -76,17 +76,17 @@ public class Category {
      * @return the value of name property
      */
     public StringProperty getcategoryNameProperty() {
-        return playListNameProperty;
+        return categoryNameProperty;
     }
 
     /**
      * Set the value of name.
      *
-     * @param playListName new value of name
+     * @param categoryName new value of name
      */
-    public void setCategoryName(String playListName) {
-        this.playListName = playListName;
-        this.playListNameProperty.setValue(playListName);
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+        this.categoryNameProperty.setValue(categoryName);
     }
 
     /**
@@ -95,67 +95,67 @@ public class Category {
      * @return the value of id
      */
     public int getCategoryId() {
-        return playlistId;
+        return categoryId;
     }
 
     /**
      * Set the value of id
      *
-     * @param playlistId new value of id
+     * @param categoryId new value of id
      */
-    public void setPlaylistId(int playlistId) {
-        this.playlistId = playlistId;
+    public void setPlaylistId(int categoryId) {
+        this.categoryId = categoryId;
     }
 
     /**
-     * Get the playlist duration string property.
+     * Get the category duration string property.
      * @return
      */
-    public SimpleStringProperty playlistDurationPropertyString() {
-        return playlistDurationStringProperty;
+    public SimpleStringProperty categoryDurationPropertyString() {
+        return categoryDurationStringProperty;
     }
 
     /**
-     * Set the playlist string property. Time gets automatically formatted.
+     * Set the category string property. Time gets automatically formatted.
      * @param duration
      */
-    public void setPlaylistDurationStringProperty(double duration) {
+    public void setCategoryDurationStringProperty(double duration) {
         var min = (int) duration;
         var sec = (int) duration / 60;
         String str = String.format("%d:%02d", min, sec);
-        playlistDurationStringProperty.set(str);
+        categoryDurationStringProperty.set(str);
     }
 
     /**
-     * Get the playlist duration property.
+     * Get the category duration property.
      * @return
      */
-    public SimpleDoubleProperty playlistDurationProperty() {
-        return playlistDurationProperty;
+    public SimpleDoubleProperty categoryDurationProperty() {
+        return categoryDurationProperty;
     }
 
     /**
-     * Set the playlist duration property.
+     * Set the category duration property.
      * @param duration
      */
-    public void setPlaylistDurationProperty(double duration) {
-        playlistDurationProperty.set(duration);
+    public void setCategoryDurationProperty(double duration) {
+        categoryDurationProperty.set(duration);
     }
 
     /**
-     * Get the total duration of the playlist.
+     * Get the total duration of the category.
      * @return
      */
     public double getTotalDuration() {
-        return playlistDurationProperty.get();
+        return categoryDurationProperty.get();
     }
 
     /**
-     * Get the formatted total duration of the playlist for GUI.
+     * Get the formatted total duration of the category for GUI.
      * @return
      */
     public String getTotalDurationString() {
-        return playlistDurationStringProperty.get();
+        return categoryDurationStringProperty.get();
     }
 
     /**
@@ -165,8 +165,8 @@ public class Category {
     public ObjectProperty<Integer> getCategorySize() {
         CategoryManager categoryManager = new CategoryManager();
         try {
-            playlistSize.setValue(categoryManager.loadMoviesInCategory(this.getCategoryId()).size());
-            return playlistSize;
+            categorySize.setValue(categoryManager.loadMoviesInCategory(this.getCategoryId()).size());
+            return categorySize;
         } catch (Exception e) {
             e.printStackTrace();
             return new SimpleObjectProperty<>(0);

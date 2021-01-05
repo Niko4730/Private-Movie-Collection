@@ -8,81 +8,81 @@ import java.util.List;
 public interface CategoryDAOInterface {
 
     /**
-     * Sets the playlistManager
+     * Sets the categoryManager
      *
      * @param categoryManager the playlistManager
      */
-    void setPlaylistManager(CategoryManager categoryManager);
+    void setCategoryManager(CategoryManager categoryManager);
 
     /**
-     * Loads the playlists
+     * Loads the category
      *
-     * @return  A list of playlists
+     * @return  A list of categories
      * @throws  Exception if something went wrong.
      */
-    List<Category> loadPlaylist() throws Exception;
+    List<Category> loadCategories() throws Exception;
 
     /**
-     * Creates a playlist
+     * Creates a category
      *
-     * @param   name the name of the playlist
+     * @param   name the name of the category
      * @throws  Exception if something went wrong.
      */
-    void createPlaylist(String name) throws Exception;
+    void createCategory(String name) throws Exception;
 
     /**
-     * Gets a playlist
+     * Gets a category
      *
-     * @param   name the name of the playlist
-     * @return  the requested playlist.
-     * @throws  Exception if something went wrong.
-     */
-
-    Category getPlaylist(String name) throws Exception;
-
-    /**
-     * Deletes a playlist
-     *
-     * @param   category the playlist
+     * @param   name the name of the category
+     * @return  the requested category.
      * @throws  Exception if something went wrong.
      */
 
-    void deletePlaylist(Category category) throws Exception;
+    Category getCategory(String name) throws Exception;
 
     /**
-     * Loads the songs on the playlist
+     * Deletes a category
      *
-     * @param   playlist_id the id of the playlist
-     * @return  A list of songs on the playlist
-     * @throws  Exception if something went wrong.
-     */
-    List<Movie> loadSongsFromPlaylist(int playlist_id) throws Exception;
-
-    /**
-     * Adds a song to the playlist
-     *
-     * @param   playlist_id the playlist you want to add a song to
-     * @param   song_id the song you want to add
+     * @param   category the category
      * @throws  Exception if something went wrong.
      */
 
-    void AddSongToPlaylist(int playlist_id,int song_id) throws Exception;
+    void deleteCategory(Category category) throws Exception;
 
     /**
-     * Removes a song from the playlist
+     * Loads the songs on the category
      *
-     * @param   playlist_id the id of the playlist you want to remove the song from
-     * @param   song_id the id of the song you want to remove
+     * @param   category_id the id of the category
+     * @return  A list of songs on the category
+     * @throws  Exception if something went wrong.
+     */
+    List<Movie> loadMoviesFromCategory(int category_id) throws Exception;
+
+    /**
+     * Adds a movie to the category
+     *
+     * @param   category_id the category you want to add a movie to
+     * @param   movie_id the song you want to add
      * @throws  Exception if something went wrong.
      */
 
-    void deleteFromPlaylist(int playlist_id,int song_id) throws Exception;
+    void AddMovieToCategory(int category_id,int movie_id) throws Exception;
 
     /**
-     * Updates a playlist to with new parameters
+     * Removes a song from the category
      *
-     * @param   category    the modified playlist
+     * @param   category_id the id of the category you want to remove the movie from
+     * @param   movie_id the id of the song you want to remove
+     * @throws  Exception if something went wrong.
+     */
+
+    void deleteFromCategory(int category_id,int movie_id) throws Exception;
+
+    /**
+     * Updates a category to with new parameters
+     *
+     * @param   category    the modified category
      * @throws  Exception   if something went wrong.
      */
-    void updatePlaylist(Category category) throws Exception;
+    void updateCategory(Category category) throws Exception;
 }
