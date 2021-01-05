@@ -14,7 +14,7 @@ public class Category {
 
     /**
      * Constructor with playlistName
-     *
+     * Carlo tjek det her
      * @param playListName
      */
     public Category(String playListName) {
