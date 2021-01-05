@@ -15,15 +15,15 @@ import java.util.Map;
 
 public class MovieLocalDAO implements MovieDAOInterface {
     private MovieManager movieManager;
-    private static final String LOCAL_SONG_PATH = "Data/localSongs.data";
-    private static final String LOCAL_PLAYLIST_SONG = "Data/localPlaylist_song.data";
-    private static final int SONG_NAME_SIZE = 100;
-    private static final int SONG_PATH_SIZE = 100;
-    private static final int SONG_ARTIST_SIZE = 100;
+    private static final String LOCAL_MOVIE_PATH = "Data/localMovies.data";
+    private static final String LOCAL_CATEGORY_MOVIE = "Data/localCategory_movie.data";
+    private static final int MOVIE_NAME_SIZE = 100;
+    private static final int MOVIE_PATH_SIZE = 100;
+    private static final int MOVIE_RATING_SIZE = 100;
     private static final int emptyIntValue = -1;
-    private static final String emptyNameValue = String.format("%-" + SONG_NAME_SIZE + "s", emptyIntValue);
-    private static final String emptyPathValue = String.format("%-" + SONG_PATH_SIZE + "s", emptyIntValue);
-    private static final String emptyArtistValue = String.format("%-" + SONG_ARTIST_SIZE + "s", emptyIntValue);
+    private static final String emptyNameValue = String.format("%-" + MOVIE_NAME_SIZE + "s", emptyIntValue);
+    private static final String emptyPathValue = String.format("%-" + MOVIE_PATH_SIZE + "s", emptyIntValue);
+    private static final String emptyRatingValue = String.format("%-" + MOVIE_RATING_SIZE + "s", emptyIntValue);
 
     /**
      * sets the song manager.
@@ -31,7 +31,7 @@ public class MovieLocalDAO implements MovieDAOInterface {
      * @param movieManager
      */
     @Override
-    public void setSongManager(MovieManager movieManager) {
+    public void setMovieManager(MovieManager movieManager) {
         this.movieManager = movieManager;
     }
 
@@ -42,24 +42,24 @@ public class MovieLocalDAO implements MovieDAOInterface {
      * @throws  IOException if something went wrong.
      */
     @Override
-    public List<Movie> loadSongs() throws Exception {
-        File file = new File(LOCAL_SONG_PATH);
+    public List<Movie> loadMovies() throws Exception {
+        File file = new File(LOCAL_MOVIE_PATH);
         List<Movie> tmp = new ArrayList<>();
         try (RandomAccessFile raf = new RandomAccessFile(file, "r")) {
             while (raf.getFilePointer() < raf.length()) {
                 int song_id = raf.readInt();
-                StringBuilder songName = new StringBuilder();
+                StringBuilder movieName = new StringBuilder();
                 StringBuilder path = new StringBuilder();
                 StringBuilder artist = new StringBuilder();
-                for (int i = 0; i < SONG_NAME_SIZE; i++)
-                    songName.append(raf.readChar());
-                for (int i = 0; i < SONG_PATH_SIZE; i++)
+                for (int i = 0; i < MOVIE_NAME_SIZE; i++)
+                    movieName.append(raf.readChar());
+                for (int i = 0; i < MOVIE_PATH_SIZE; i++)
                     path.append(raf.readChar());
-                for (int i = 0; i < SONG_ARTIST_SIZE; i++)
+                for (int i = 0; i < MOVIE_RATING_SIZE; i++)
                     artist.append(raf.readChar());
                 int category_id = raf.readInt();
-                if (!songName.toString().equals(emptyNameValue) && !path.toString().equals(emptyPathValue))
-                    tmp.add(new Movie(song_id, songName.toString().trim(), artist.toString().trim(), path.toString().trim(), category_id, getGenres().get(category_id)));
+                if (!movieName.toString().equals(emptyNameValue) && !path.toString().equals(emptyPathValue))
+                    tmp.add(new Movie(song_id, movieName.toString().trim(), artist.toString().trim(), path.toString().trim(), category_id, getGenres().get(category_id)));
             }
             return tmp;
         } catch (FileNotFoundException e) {
@@ -75,40 +75,40 @@ public class MovieLocalDAO implements MovieDAOInterface {
      * @throws  IOException if something went wrong.
      */
     @Override
-    public void createSong(Movie movie) throws IOException {
-        String formattedName = String.format("%-" + SONG_NAME_SIZE + "s", movie.getTitle()).substring(0, SONG_NAME_SIZE);
-        String formattedPath = String.format("%-" + SONG_PATH_SIZE + "s", movie.getFilePath()).substring(0, SONG_PATH_SIZE);
-        String formattedArtist = String.format("%-" + SONG_ARTIST_SIZE + "s", movie.getArtist() == null ? "" : movie.getArtist()).substring(0, SONG_PATH_SIZE);
-        try (RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_SONG_PATH), "rw")) {
+    public void createMovie(Movie movie) throws IOException {
+        String formattedName = String.format("%-" + MOVIE_NAME_SIZE + "s", movie.getTitle()).substring(0, MOVIE_NAME_SIZE);
+        String formattedPath = String.format("%-" + MOVIE_PATH_SIZE + "s", movie.getFilePath()).substring(0, MOVIE_PATH_SIZE);
+        String formattedRating = String.format("%-" + MOVIE_RATING_SIZE + "s", movie.getRating() == null ? "" : movie.getRating()).substring(0, MOVIE_PATH_SIZE);
+        try (RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_MOVIE_PATH), "rw")) {
             if (raf.length() == 0) {
                 raf.writeInt(1);
                 raf.writeChars(emptyNameValue);
                 raf.writeChars(emptyPathValue);
-                raf.writeChars(emptyArtistValue);
+                raf.writeChars(emptyRatingValue);
                 raf.writeInt(emptyIntValue);
                 raf.seek(0);
             }
             while (raf.getFilePointer() < raf.length()) {
-                StringBuilder songName = new StringBuilder();
+                StringBuilder movieName = new StringBuilder();
                 raf.skipBytes(4);
-                for (int i = 0; i < SONG_NAME_SIZE; i++)
-                    songName.append(raf.readChar());
-                if (songName.toString().equals(emptyNameValue)) {
-                    raf.seek(raf.getFilePointer() - SONG_NAME_SIZE * 2);
+                for (int i = 0; i < MOVIE_NAME_SIZE; i++)
+                    movieName.append(raf.readChar());
+                if (movieName.toString().equals(emptyNameValue)) {
+                    raf.seek(raf.getFilePointer() - MOVIE_NAME_SIZE * 2);
                     raf.writeChars(formattedName);
                     raf.writeChars(formattedPath);
-                    raf.writeChars(formattedArtist);
+                    raf.writeChars(formattedRating);
                     raf.writeInt(movie.getCategoryId());
                     return;
-                } else raf.skipBytes(SONG_PATH_SIZE * 2 + SONG_ARTIST_SIZE * 2 + 4);
+                } else raf.skipBytes(MOVIE_PATH_SIZE * 2 + MOVIE_RATING_SIZE * 2 + 4);
             }
-            raf.seek(raf.length() - (SONG_NAME_SIZE * 2) - (SONG_PATH_SIZE * 2) - (SONG_ARTIST_SIZE * 2) - 8);
+            raf.seek(raf.length() - (MOVIE_NAME_SIZE * 2) - (MOVIE_PATH_SIZE * 2) - (MOVIE_RATING_SIZE * 2) - 8);
             int index = raf.readInt() + 1;
             raf.seek(raf.length());
             raf.writeInt(index);
             raf.writeChars(formattedName);
             raf.writeChars(formattedPath);
-            raf.writeChars(formattedArtist);
+            raf.writeChars(formattedRating);
             raf.writeInt(movie.getCategoryId());
         }
     }
@@ -121,22 +121,22 @@ public class MovieLocalDAO implements MovieDAOInterface {
      * @throws  IOException if something went wrong.
      */
     @Override
-    public Movie getSong(String name) throws Exception {
-        try (RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_SONG_PATH), "r")) {
+    public Movie getMovie(String name) throws Exception {
+        try (RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_MOVIE_PATH), "r")) {
             while (raf.getFilePointer() < raf.length()) {
-                int song_id = raf.readInt();
-                StringBuilder songName = new StringBuilder();
+                int movie_id = raf.readInt();
+                StringBuilder movieName = new StringBuilder();
                 StringBuilder path = new StringBuilder();
-                StringBuilder artist = new StringBuilder();
-                for (int i = 0; i < SONG_NAME_SIZE; i++)
-                    songName.append(raf.readChar());
-                for (int i = 0; i < SONG_PATH_SIZE; i++)
+                StringBuilder rating = new StringBuilder();
+                for (int i = 0; i < MOVIE_NAME_SIZE; i++)
+                    movieName.append(raf.readChar());
+                for (int i = 0; i < MOVIE_PATH_SIZE; i++)
                     path.append(raf.readChar());
-                for (int i = 0; i < SONG_ARTIST_SIZE; i++)
-                    artist.append(raf.readChar());
+                for (int i = 0; i < MOVIE_RATING_SIZE; i++)
+                    rating.append(raf.readChar());
                 int category_id = raf.readInt();
-                if (songName.toString().trim().equals(name))
-                    return new Movie(song_id, songName.toString().trim(), artist.toString().trim(), path.toString().trim(), category_id, getGenres().get(category_id));
+                if (movieName.toString().trim().equals(name))
+                    return new Movie(movie_id, movieName.toString().trim(), rating.toString().trim(), path.toString().trim(), category_id, getGenres().get(category_id));
             }
             return null;
         }
@@ -149,22 +149,22 @@ public class MovieLocalDAO implements MovieDAOInterface {
      * @return  A song that has the given name.
      * @throws  IOException if something went wrong.
      */
-    public Movie getSong(int id) throws Exception {
-        try (RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_SONG_PATH), "r")) {
+    public Movie getMovie(int id) throws Exception {
+        try (RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_MOVIE_PATH), "r")) {
             while (raf.getFilePointer() < raf.length()) {
-                int song_id = raf.readInt();
-                StringBuilder songName = new StringBuilder();
+                int movie_id = raf.readInt();
+                StringBuilder movieName = new StringBuilder();
                 StringBuilder path = new StringBuilder();
-                StringBuilder artist = new StringBuilder();
-                for (int i = 0; i < SONG_NAME_SIZE; i++)
-                    songName.append(raf.readChar());
-                for (int i = 0; i < SONG_PATH_SIZE; i++)
+                StringBuilder rating = new StringBuilder();
+                for (int i = 0; i < MOVIE_NAME_SIZE; i++)
+                    movieName.append(raf.readChar());
+                for (int i = 0; i < MOVIE_PATH_SIZE; i++)
                     path.append(raf.readChar());
-                for (int i = 0; i < SONG_ARTIST_SIZE; i++)
-                    artist.append(raf.readChar());
+                for (int i = 0; i < MOVIE_RATING_SIZE; i++)
+                    rating.append(raf.readChar());
                 int category_id = raf.readInt();
-                if (song_id == id)
-                    return new Movie(song_id, songName.toString().trim(), artist.toString().trim(), path.toString().trim(), category_id, getGenres().get(category_id));
+                if (movie_id == id)
+                    return new Movie(movie_id, movieName.toString().trim(), rating.toString().trim(), path.toString().trim(), category_id, getGenres().get(category_id));
             }
             return null;
         }
@@ -177,19 +177,19 @@ public class MovieLocalDAO implements MovieDAOInterface {
      * @throws  IOException if something went wrong.
      */
     @Override
-    public void deleteSong(int id) throws IOException {
-        try (RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_SONG_PATH), "rw")) {
+    public void deleteMovie(int id) throws IOException {
+        try (RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_MOVIE_PATH), "rw")) {
             while (raf.getFilePointer() < raf.length()) {
                 if (raf.readInt() == id) {
                     raf.writeChars(emptyNameValue);
                     raf.writeChars(emptyPathValue);
-                    raf.writeChars(emptyArtistValue);
+                    raf.writeChars(emptyRatingValue);
                     raf.writeInt(emptyIntValue);
-                } else raf.skipBytes(SONG_NAME_SIZE * 2 + SONG_PATH_SIZE * 2 + SONG_ARTIST_SIZE * 2 + 4);
+                } else raf.skipBytes(MOVIE_NAME_SIZE * 2 + MOVIE_PATH_SIZE * 2 + MOVIE_RATING_SIZE * 2 + 4);
             }
         }
 
-        try (RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_PLAYLIST_SONG), "rw")) {
+        try (RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_CATEGORY_MOVIE), "rw")) {
             while (raf.getFilePointer() < raf.length()) {
                 raf.skipBytes(4);
                 if (raf.readInt() == id) {
@@ -208,18 +208,18 @@ public class MovieLocalDAO implements MovieDAOInterface {
      * @throws  IOException if something went wrong.
      */
     @Override
-    public void updateSong(Movie modified) throws IOException {
-        String formattedName = String.format("%-" + SONG_NAME_SIZE + "s", modified.getTitle()).substring(0, SONG_NAME_SIZE);
-        String formattedPath = String.format("%-" + SONG_PATH_SIZE + "s", modified.getFilePath()).substring(0, SONG_PATH_SIZE);
-        String formattedArtist = String.format("%-" + SONG_ARTIST_SIZE + "s", modified.getArtist()).substring(0, SONG_PATH_SIZE);
-        try (RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_SONG_PATH), "rw")) {
+    public void updateMovie(Movie modified) throws IOException {
+        String formattedName = String.format("%-" + MOVIE_NAME_SIZE + "s", modified.getTitle()).substring(0, MOVIE_NAME_SIZE);
+        String formattedPath = String.format("%-" + MOVIE_PATH_SIZE + "s", modified.getFilePath()).substring(0, MOVIE_PATH_SIZE);
+        String formattedArtist = String.format("%-" + MOVIE_RATING_SIZE + "s", modified.getRating()).substring(0, MOVIE_PATH_SIZE);
+        try (RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_MOVIE_PATH), "rw")) {
             while (raf.getFilePointer() < raf.length()) {
                 if (raf.readInt() == modified.getId()) {
                     raf.writeChars(formattedName);
                     raf.writeChars(formattedPath);
                     raf.writeChars(formattedArtist);
                     raf.writeInt(modified.getId());
-                } else raf.skipBytes(SONG_NAME_SIZE * 2 + SONG_PATH_SIZE * 2 + SONG_ARTIST_SIZE * 2 + 4);
+                } else raf.skipBytes(MOVIE_NAME_SIZE * 2 + MOVIE_PATH_SIZE * 2 + MOVIE_RATING_SIZE * 2 + 4);
             }
         }
     }
@@ -232,25 +232,25 @@ public class MovieLocalDAO implements MovieDAOInterface {
      * @throws  IOException if something went wrong.
      */
     @Override
-    public List<Movie> searchSong(String searchQuery) throws Exception {
+    public List<Movie> searchMovie(String searchQuery) throws Exception {
         if (searchQuery.isEmpty())
-            return loadSongs();
+            return loadMovies();
         List<Movie> tmp = new ArrayList<>();
-        try (RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_SONG_PATH), "rw")) {
+        try (RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_MOVIE_PATH), "rw")) {
             while (raf.getFilePointer() < raf.length()) {
-                int song_id = raf.readInt();
-                StringBuilder songName = new StringBuilder();
+                int movie_id = raf.readInt();
+                StringBuilder movieName = new StringBuilder();
                 StringBuilder path = new StringBuilder();
-                StringBuilder artist = new StringBuilder();
-                for (int i = 0; i < SONG_NAME_SIZE; i++)
-                    songName.append(raf.readChar());
-                for (int i = 0; i < SONG_PATH_SIZE; i++)
+                StringBuilder rating = new StringBuilder();
+                for (int i = 0; i < MOVIE_NAME_SIZE; i++)
+                    movieName.append(raf.readChar());
+                for (int i = 0; i < MOVIE_PATH_SIZE; i++)
                     path.append(raf.readChar());
-                for (int i = 0; i < SONG_ARTIST_SIZE; i++)
-                    artist.append(raf.readChar());
+                for (int i = 0; i < MOVIE_RATING_SIZE; i++)
+                    rating.append(raf.readChar());
                 int category_id = raf.readInt();
-                if (songName.toString().trim().toLowerCase().contains(searchQuery.trim().toLowerCase()) || path.toString().trim().toLowerCase().contains(searchQuery.trim().toLowerCase()))
-                    tmp.add(new Movie(song_id, songName.toString().trim(), artist.toString().trim(), path.toString().trim(), category_id, getGenres().get(category_id)));
+                if (movieName.toString().trim().toLowerCase().contains(searchQuery.trim().toLowerCase()) || path.toString().trim().toLowerCase().contains(searchQuery.trim().toLowerCase()))
+                    tmp.add(new Movie(movie_id, movieName.toString().trim(), rating.toString().trim(), path.toString().trim(), category_id, getGenres().get(category_id)));
             }
             return tmp;
         }
