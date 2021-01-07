@@ -50,17 +50,17 @@ public class MovieDBDAO implements MovieDAOInterface {
         List<Movie> temp = new ArrayList<>();
         try (var con = database.getConnection();
              Statement statement = con.createStatement()) {
-            ResultSet rs = statement.executeQuery("SELECT movie.*, category.category_name, rating.rating_amount FROM movie LEFT JOIN category ON movie.category_id = category.category_id LEFT JOIN rating ON movie.movie_id = rating.movie_id;");
+            ResultSet rs = statement.executeQuery("SELECT movie.*, category.category_name FROM movie LEFT JOIN category ON movie.category_id = category.category_id;");
 
             while (rs.next()) {
                 int movie_id = rs.getInt("movie_id");
                 String movie_title = rs.getString("movie_title");
-                String movie_artist = rs.getString("rating_amount");
                 String movie_filepath = rs.getString("movie_filepath");
+                String movie_rating = rs.getString("movie_rating");
                 int category_id = rs.getInt("category_id");
                 String category_name = rs.getString("category_name");
                 double movie_length = rs.getDouble("movie_length");
-                temp.add(new Movie(movie_id, movie_title, movie_artist, movie_filepath, category_id, category_name));
+                temp.add(new Movie(movie_id, movie_title, movie_rating, movie_filepath, category_id, category_name, movie_length));
             }
             return temp;
         } catch (SQLNonTransientConnectionException | NullPointerException e) {
@@ -80,15 +80,16 @@ public class MovieDBDAO implements MovieDAOInterface {
     public void createMovie(Movie movie) throws SQLException {
         var sql = "";
         switch (database.getConnectionType()) {
-            case (0) -> sql = "INSERT INTO [dbo].[movie] ([movie_title], [movie_filepath], [movie_length], [category_id]) VALUES (?,?,?,?)";
-            case (1) -> sql = "INSERT INTO movie (movie_title, movie_filepath, movie_length, category_id) VALUES(?,?,?,?);";
+            case (0) -> sql = "INSERT INTO [dbo].[movie] ([movie_title], [movie_filepath], [movie_length], [movie_rating], [category_id]) VALUES (?,?,?,?,?)";
+            case (1) -> sql = "INSERT INTO movie (movie_title, movie_filepath, movie_length, movie_rating, category_id) VALUES(?,?,?,?,?);";
         }
         try (var con = database.getConnection();
              PreparedStatement st = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             st.setString(1, movie.getTitle());
             st.setString(2, movie.getFilePath());
-            st.setDouble(3, (movie.getDuration()));
-            st.setInt(4, movie.getCategoryId());
+            st.setDouble(3, movie.getDuration());
+            st.setDouble(4, Double.parseDouble(movie.getRating()));
+            st.setInt(5, movie.getCategoryId());
             st.executeUpdate();
         } catch (SQLNonTransientConnectionException | NullPointerException e) {
             movieManager.goLocal();
@@ -150,14 +151,15 @@ public class MovieDBDAO implements MovieDAOInterface {
      */
     @Override
     public void updateMovie(Movie modified) throws SQLException {
-        var sql = "UPDATE movie SET movie_title = ?, movie_filepath = ?, category_id=?, movie_length=? WHERE movie_id = ?;";
+        var sql = "UPDATE movie SET movie_title = ?, movie_filepath = ?, movie_rating = ?, category_id=?, movie_length=? WHERE movie_id = ?;";
         try (var con = database.getConnection();
              PreparedStatement st = con.prepareStatement(sql)) {
             st.setString(1, modified.getTitle());
             st.setString(2, modified.getFilePath());
-            st.setInt(3, modified.getCategoryId());
-            st.setDouble(4, modified.getDuration());
-            st.setInt(5, modified.getId());
+            st.setString(3, modified.getRating());
+            st.setInt(4, modified.getCategoryId());
+            st.setDouble(5, modified.getDuration());
+            st.setInt(6, modified.getId());
             st.executeUpdate();
         } catch (SQLNonTransientConnectionException | NullPointerException e) {
             movieManager.goLocal();

@@ -24,6 +24,8 @@ public class EditMovieController extends Component implements Initializable {
     @FXML
     ComboBox genreComboBox;
     @FXML
+    TextField ratingTextField;
+    @FXML
     Button saveButton;
 
     private MainViewController mainViewController;
@@ -174,7 +176,8 @@ public class EditMovieController extends Component implements Initializable {
                 selectedMovie.setTitle(titleTextField.getText());
                 selectedMovie.setFilePath(filePathTextField.getText());
                 selectedMovie.setCategoryId(getCategoryIdFromName(selectedCategory));
-
+                var rating = Double.parseDouble(ratingTextField.getText().isEmpty() ? "0" : ratingTextField.getText());
+                selectedMovie.setRating(Double.toString(rating));
                 mainViewController.getMovieManager().updateMovie(selectedMovie);
                 close();
             }

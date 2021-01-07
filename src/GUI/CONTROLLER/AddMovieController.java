@@ -24,6 +24,8 @@ public class AddMovieController extends Component implements Initializable {
     @FXML
     ComboBox genreComboBox;
     @FXML
+    TextField ratingTextField;
+    @FXML
     Button addButton;
 
     private MainViewController mainViewController;
@@ -158,6 +160,9 @@ public class AddMovieController extends Component implements Initializable {
             if (movieToAdd != null) {
                 movieToAdd.setTitle(titleTextField.getText());
                 movieToAdd.setCategoryId(getCategoryIdFromName(selectedCategory));
+
+                var rating = Double.parseDouble(ratingTextField.getText().isEmpty() ? "0" : ratingTextField.getText());
+                movieToAdd.setRating(Double.toString(rating));
                 mainViewController.getMovieManager().createMovie(movieToAdd);
                 mainViewController.reloadMovieTable();
                 close();

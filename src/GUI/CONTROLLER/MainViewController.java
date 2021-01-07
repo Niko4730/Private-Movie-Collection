@@ -444,7 +444,7 @@ public class MainViewController implements Initializable {
     public void bulkAddButton() {
         FileChooser fileChooser = new FileChooser();
         windowStage = new Stage();
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("MP3-Files", "*.mp3"));
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("MP4-files", "*.mp4"));
         try {
             List<File> selectedFiles = new ArrayList<>(fileChooser.showOpenMultipleDialog(windowStage));
             try {
@@ -457,7 +457,7 @@ public class MainViewController implements Initializable {
                 e.printStackTrace();
             }
         } catch (RuntimeException e) {
-            System.out.println("No file selected");
+            System.out.println("No file selected.");
         }
     }
 

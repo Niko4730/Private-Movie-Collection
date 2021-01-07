@@ -143,7 +143,7 @@ public class CategoryDBDAO implements CategoryDAOInterface {
     @Override
     public List<Movie> loadMoviesFromCategory(int category_id) throws SQLException {
         var temp = new ArrayList<Movie>();
-        var sql = "SELECT category.category_name, movie.*, rating.rating_amount FROM category, category_movie LEFT JOIN movie ON category_movie.movie_id = movie.movie_id LEFT JOIN rating ON movie.movie_id = rating.movie_id WHERE category.category_id = ?;";
+        var sql = "SELECT category.category_name, movie.* FROM category, category_movie LEFT JOIN movie ON category_movie.movie_id = movie.movie_id WHERE category.category_id = ?;";
         try (var con = database.getConnection();
              PreparedStatement st = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             st.setInt(1, category_id);
@@ -152,12 +152,12 @@ public class CategoryDBDAO implements CategoryDAOInterface {
             while (rs.next()) {
                 int movie_id = rs.getInt("movie_id");
                 String movie_title = rs.getString("movie_title");
-                String movie_artist = rs.getString("rating_amount");
+                String movie_rating = rs.getString("movie_rating");
                 String movie_filepath = rs.getString("movie_filepath");
                 category_id = rs.getInt("category_id");
                 String category_name = rs.getString("category_name");
                 if (movie_filepath != null)
-                    temp.add(new Movie(movie_id, movie_title, movie_artist, movie_filepath, category_id, category_name));
+                    temp.add(new Movie(movie_id, movie_title, movie_rating, movie_filepath, category_id, category_name));
             }
             return temp;
         } catch (SQLNonTransientConnectionException | NullPointerException e) {
