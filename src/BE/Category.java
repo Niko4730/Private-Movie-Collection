@@ -13,7 +13,7 @@ public class Category {
     private ObjectProperty<Integer> categorySize = new SimpleObjectProperty<>();
 
     public void setPlaylistSize(Integer playlistSize) {
-        this.playlistSize.set(playlistSize);
+        this.categorySize.set(playlistSize);
     }
 
     /**

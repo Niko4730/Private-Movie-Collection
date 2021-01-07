@@ -22,8 +22,6 @@ public class EditMovieController extends Component implements Initializable {
     @FXML
     TextField titleTextField;
     @FXML
-    TextField artistTextField;
-    @FXML
     ComboBox genreComboBox;
     @FXML
     Button saveButton;
@@ -94,7 +92,6 @@ public class EditMovieController extends Component implements Initializable {
             selectedMovie = movie;
             titleTextField.setText(selectedMovie.getTitle());
             filePathTextField.setText(selectedMovie.getFilePath());
-            artistTextField.setText(selectedMovie.getRating());
             genreComboBox.getSelectionModel().select(selectedMovie.getCategoryName());
         }
     }
@@ -149,7 +146,6 @@ public class EditMovieController extends Component implements Initializable {
                                 var title = !modifiedMovie.getTitle().isBlank() ? modifiedMovie.getTitle() : fileNameNoExt;
                                 titleTextField.setText(title);
                                 filePathTextField.setText(filePath);
-                                artistTextField.setText(artist);
                                 System.out.println("Media initialized.");
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -177,7 +173,6 @@ public class EditMovieController extends Component implements Initializable {
             if (selectedMovie != null) {
                 selectedMovie.setTitle(titleTextField.getText());
                 selectedMovie.setFilePath(filePathTextField.getText());
-                selectedMovie.setRating(artistTextField.getText());
                 selectedMovie.setCategoryId(getCategoryIdFromName(selectedCategory));
 
                 mainViewController.getMovieManager().updateMovie(selectedMovie);

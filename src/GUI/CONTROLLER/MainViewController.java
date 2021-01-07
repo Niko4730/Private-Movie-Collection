@@ -312,7 +312,7 @@ public class MainViewController implements Initializable {
      * @throws IOException If something went wrong
      */
     private void dialog(String labelFieldText, String dialogTitleText, String titleFieldText, int mode) throws IOException {
-        FXMLLoader loader = new FXMLLoader(Main.class.getResource("DIALOGUE/AddPlaylist.fxml"));
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("DIALOGUE/AddCategory.fxml"));
         AnchorPane dialog = loader.load();
         AddCategoryController controller = loader.getController();
         controller.setMainController(this);
@@ -406,7 +406,7 @@ public class MainViewController implements Initializable {
      * Adds a new movie
      */
     public void newMovieButton() {
-        FXMLLoader loader = new FXMLLoader(Main.class.getResource("DIALOGUE/AddSong.fxml"));
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("DIALOGUE/AddMovie.fxml"));
         AnchorPane dialog = null;
         try {
             dialog = loader.load();
@@ -466,7 +466,7 @@ public class MainViewController implements Initializable {
      */
     public void editMovieButton() {
         if (selectedMovie != null) {
-            FXMLLoader loader = new FXMLLoader(Main.class.getResource("DIALOGUE/EditSong.fxml"));
+            FXMLLoader loader = new FXMLLoader(Main.class.getResource("DIALOGUE/EditMovie.fxml"));
             AnchorPane dialog = null;
             try {
                 dialog = loader.load();

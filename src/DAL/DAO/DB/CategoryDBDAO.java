@@ -30,7 +30,7 @@ public class CategoryDBDAO implements CategoryDAOInterface {
     public CategoryDBDAO() throws SQLException {
         database = DbConnectionHandler.getInstance();
         if (database.getConnection().isClosed()) {
-            throw new SQLException("no connection to database");
+            throw new SQLException("no connection to database.");
         }
     }
 
@@ -143,7 +143,7 @@ public class CategoryDBDAO implements CategoryDAOInterface {
     @Override
     public List<Movie> loadMoviesFromCategory(int category_id) throws SQLException {
         var temp = new ArrayList<Movie>();
-        var sql = "SELECT movie.*, category.category_name FROM category LEFT OUTER JOIN category_movie ON  category.category_id = category_movie.category_id LEFT OUTER JOIN movie ON category_movie.movie_id = movie.movie_id LEFT OUTER JOIN category ON  movie.category_id = category.category_id WHERE category.category_id = ?;";
+        var sql = "SELECT category.category_name, movie.*, rating.rating_amount FROM category, category_movie LEFT JOIN movie ON category_movie.movie_id = movie.movie_id LEFT JOIN rating ON movie.movie_id = rating.movie_id WHERE category.category_id = ?;";
         try (var con = database.getConnection();
              PreparedStatement st = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             st.setInt(1, category_id);
@@ -152,7 +152,7 @@ public class CategoryDBDAO implements CategoryDAOInterface {
             while (rs.next()) {
                 int movie_id = rs.getInt("movie_id");
                 String movie_title = rs.getString("movie_title");
-                String movie_artist = rs.getString("movie_artist");
+                String movie_artist = rs.getString("rating_amount");
                 String movie_filepath = rs.getString("movie_filepath");
                 category_id = rs.getInt("category_id");
                 String category_name = rs.getString("category_name");
@@ -171,7 +171,7 @@ public class CategoryDBDAO implements CategoryDAOInterface {
      * Tries to add a song to a playlist
      *
      * @param category_id the id of the playlist you want to add a song to.
-     * @param movie_id     the id of the song you want to add to the playlist.
+     * @param movie_id    the id of the song you want to add to the playlist.
      * @throws SQLException if it cannot connect to the database or something went wrong.
      */
     @Override
@@ -179,7 +179,7 @@ public class CategoryDBDAO implements CategoryDAOInterface {
         var sql = "";
         switch (database.getConnectionType()) {
             case 0 -> sql = "INSERT INTO [dbo].[category_movie] ([category_id],[movie_id]) VALUES (?,?);";
-            case 1 -> sql = "INSERT INTO category_movie (category_id,movie_id) VALUES (?,?);";
+            case 1 -> sql = "INSERT INTO category_movie (category_id, movie_id) VALUES (?,?);";
         }
         try (var con = database.getConnection();
              PreparedStatement st = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -195,7 +195,7 @@ public class CategoryDBDAO implements CategoryDAOInterface {
      * Tries to delete a movie with movie_id from a category in the database, does nothing if no match found.
      *
      * @param category_id the id of the category you want to remove a movie from.
-     * @param movie_id     the id of the movie you want to remove from the category.
+     * @param movie_id    the id of the movie you want to remove from the category.
      * @throws SQLException if it cannot connect to the database or something went wrong.
      */
     @Override
@@ -261,7 +261,6 @@ public class CategoryDBDAO implements CategoryDAOInterface {
         }
     }
 
-
     /**
      * Get the total duration of a given category id.
      *
@@ -270,7 +269,7 @@ public class CategoryDBDAO implements CategoryDAOInterface {
      * @throws SQLException if something went wrong.
      */
     public double getTotalDurationOfCategory(int category_id) throws SQLException {
-        String sql = "SELECT movie.*, category.category_name FROM category LEFT OUTER JOIN category_movie ON  category.category_id = category_movie.category_id LEFT OUTER JOIN movie ON category_movie.movie_id = movie.movie_id LEFT OUTER JOIN category ON  movie.category_id = category.category_id WHERE category.category_id = ?;";
+        String sql = "SELECT movie.*, category.category_name FROM category LEFT JOIN category_movie ON category.category_id = category_movie.category_id LEFT JOIN movie ON category_movie.movie_id = movie.movie_id WHERE category.category_id = ?;";
         double totalDuration = 0;
         try (var con = database.getConnection();
              PreparedStatement st = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
