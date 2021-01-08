@@ -166,13 +166,17 @@ public class MainViewController implements Initializable {
             this.selectedCategory = (Category) newValue;
             if (selectedCategory != null) {
                 try {
-                    if (CATEGORY_MANAGER.loadMoviesInCategory(selectedCategory.getCategoryId()) != null)
-                        this.categoryMovies = FXCollections.observableArrayList(CATEGORY_MANAGER.loadMoviesInCategory(selectedCategory.getCategoryId()));
+                    var moviesInCat=CATEGORY_MANAGER.loadMoviesInCategory(selectedCategory.getCategoryId());
+                    if (!moviesInCat.isEmpty())
+                        this.categoryMovies = FXCollections.observableArrayList(moviesInCat);
+                    else
+                        categoryMovies.clear();
                     moviesInCategoryTable.setItems(categoryMovies);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
+
         }));
     }
 
@@ -271,7 +275,8 @@ public class MainViewController implements Initializable {
     private void reloadMoviesInCategory() {
         try {
             int index = moviesInCategoryTable.getSelectionModel().getFocusedIndex();
-            this.moviesInCategoryTable.setItems(FXCollections.observableList(CATEGORY_MANAGER.loadMoviesInCategory(selectedCategory.getCategoryId())));
+            this.categoryMovies=FXCollections.observableList(CATEGORY_MANAGER.loadMoviesInCategory(selectedCategory.getCategoryId()));
+            this.moviesInCategoryTable.setItems(categoryMovies);
             moviesInCategoryTable.getSelectionModel().select(index);
         } catch (Exception exception) {
             System.out.println("could not load movie in the category table");

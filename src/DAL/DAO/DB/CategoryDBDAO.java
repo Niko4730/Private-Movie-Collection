@@ -147,10 +147,11 @@ public class CategoryDBDAO implements CategoryDAOInterface {
     @Override
     public List<Movie> loadMoviesFromCategory(int category_id) throws SQLException {
         var temp = new ArrayList<Movie>();
-        var sql = "SELECT category.category_name, movie.* FROM category, category_movie LEFT JOIN movie ON category_movie.movie_id = movie.movie_id WHERE category.category_id = ?;";
+        var sql = "SELECT category.*, movie.* FROM category,category_movie LEFT JOIN movie ON category_movie.movie_id = movie.movie_id WHERE category_movie.category_id = ? AND category.category_id= ? ;";
         try (var con = database.getConnection();
              PreparedStatement st = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             st.setInt(1, category_id);
+            st.setInt(2, category_id);
             st.execute();
             ResultSet rs = st.getResultSet();
             while (rs.next()) {
