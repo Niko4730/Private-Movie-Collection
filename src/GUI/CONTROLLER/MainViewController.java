@@ -7,11 +7,13 @@ import GUI.Main;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -19,10 +21,15 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class MainViewController implements Initializable {
@@ -498,7 +505,8 @@ public class MainViewController implements Initializable {
                 MOVIE_MANAGER.deleteMovie(selectedMovie.getId());
                 movies.remove(selectedMovie);
             } catch (Exception e) {
-                e.printStackTrace();
+                InputAlert.showMessageBox("No movie selected", "Cannot delete something that doesn't exist!", "Please select a movie.", Alert.AlertType.ERROR);
+
             }
             load();
         } else {
@@ -605,10 +613,27 @@ public class MainViewController implements Initializable {
     }
 
     public void viewMovieOrWhatever() {
+
     }
+
+
 
     public void imgChange() {
         movieImg.setImage(new Image(""));
         System.out.println("WOW THE IMAGE CHANGED... or is yet to be implemented");
+    }
+
+    public void searchOnIMDB() {
+        String query = selectedMovie==null?selectedMovieInCategory.getTitle():selectedMovie.getTitle();
+        query=query.replaceAll(" ", "_");
+        if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+            try {
+                Desktop.getDesktop().browse(new URI("https://www.imdb.com/find?q=" + query + "&ref_=nv_sr_sm"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
