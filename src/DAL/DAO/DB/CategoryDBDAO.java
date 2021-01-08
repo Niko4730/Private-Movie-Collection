@@ -75,18 +75,22 @@ public class CategoryDBDAO implements CategoryDAOInterface {
      * @throws SQLException if it cant get connection to the database or something went wrong.
      */
     @Override
-    public void createCategory(String name) throws SQLException {
+    public int createCategory(String name) throws SQLException {
         var sql = "";
         switch (database.getConnectionType()) {
             case 0 -> sql = "INSERT INTO [dbo].[category] ([category_name]) VALUES(?);";
-            case 1 -> sql = "INSERT INTO category (cateogory_name) VALUES(?);";
+            case 1 -> sql = "INSERT INTO category (category_name) VALUES(?);";
         }
         try (var con = database.getConnection();
              PreparedStatement st = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             st.setString(1, name);
             st.executeUpdate();
+            var keys = st.getGeneratedKeys();
+            keys.next();
+            return keys.getInt(1);
         } catch (SQLNonTransientConnectionException e) {
             categoryManager.goLocal();
+            return -1;
         }
     }
 

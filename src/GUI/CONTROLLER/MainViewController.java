@@ -7,7 +7,6 @@ import GUI.Main;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -204,7 +203,8 @@ public class MainViewController implements Initializable {
     public void reloadMovieTable() {
         try {
             int index = movieTable.getSelectionModel().getFocusedIndex();
-            this.movieTable.setItems(FXCollections.observableList(MOVIE_MANAGER.loadMovies()));
+            this.movies=FXCollections.observableList(MOVIE_MANAGER.loadMovies());
+            this.movieTable.setItems(movies);
             movieTable.getSelectionModel().select(index);
         } catch (Exception exception) {
             System.out.println("could not load movie table");
@@ -230,7 +230,8 @@ public class MainViewController implements Initializable {
     private void reloadCategoryTable() {
         try {
             int index = categoryTable.getSelectionModel().getFocusedIndex();
-            this.categoryTable.setItems(FXCollections.observableList(CATEGORY_MANAGER.loadCategories()));
+            this.categories=FXCollections.observableList(CATEGORY_MANAGER.loadCategories());
+            this.categoryTable.setItems(categories);
             categoryTable.getSelectionModel().select(index);
         } catch (Exception exception) {
             System.out.println("could not load category table");
@@ -262,7 +263,7 @@ public class MainViewController implements Initializable {
      */
     public void clearSearchButton() {
         searchField.setText("");
-        search();
+        this.movieTable.setItems(movies);
     }
 
     /**
@@ -279,8 +280,8 @@ public class MainViewController implements Initializable {
      */
     public void addCategory(Category category) {
         try {
-            CATEGORY_MANAGER.createCategory(category.getCategoryName());
-            reloadCategoryTable();
+            category.setCategoryId(CATEGORY_MANAGER.createCategory(category.getCategoryName()));
+            categories.add(category);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -369,7 +370,7 @@ public class MainViewController implements Initializable {
                 }
                 CATEGORY_MANAGER.addMoviesToCategory(selectedCategory.getCategoryId(), selectedMovie.getId());
                 reloadMoviesInCategory();
-                reloadCategoryTable();
+                selectedCategory.setCategorySize(selectedCategory.getCategorySize().getValue()+1);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -401,7 +402,7 @@ public class MainViewController implements Initializable {
                 int index = moviesInCategoryTable.getSelectionModel().getFocusedIndex();
                 CATEGORY_MANAGER.deleteMovieFromCategory(selectedCategory.getCategoryId(), selectedMovieInCategory.getId());
                 categoryMovies.remove(selectedMovie);
-                selectedCategory.setPlaylistSize(selectedCategory.getCategorySize().getValue()-1);
+                selectedCategory.setCategorySize(selectedCategory.getCategorySize().getValue()-1);
                 moviesInCategoryTable.getSelectionModel().select(index > 0 ? index - 1 : index);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -437,11 +438,13 @@ public class MainViewController implements Initializable {
      *
      * @param movie the movie
      */
-    public void createMovie(Movie movie) {
+    public int createMovie(Movie movie) {
         try {
-            MOVIE_MANAGER.createMovie(movie);
+            movies.add(movie);
+            return MOVIE_MANAGER.createMovie(movie);
         } catch (Exception e) {
             e.printStackTrace();
+            return -1;
         }
     }
 

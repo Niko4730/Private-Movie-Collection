@@ -77,7 +77,7 @@ public class MovieDBDAO implements MovieDAOInterface {
      * @throws SQLException
      */
     @Override
-    public void createMovie(Movie movie) throws SQLException {
+    public int createMovie(Movie movie) throws SQLException {
         var sql = "";
         switch (database.getConnectionType()) {
             case (0) -> sql = "INSERT INTO [dbo].[movie] ([movie_title], [movie_filepath], [movie_length], [movie_rating], [category_id]) VALUES (?,?,?,?,?)";
@@ -91,8 +91,12 @@ public class MovieDBDAO implements MovieDAOInterface {
             st.setDouble(4, Double.parseDouble(movie.getRating()));
             st.setInt(5, movie.getCategoryId());
             st.executeUpdate();
+            var keys = st.getGeneratedKeys();
+            keys.next();
+            return keys.getInt(1);
         } catch (SQLNonTransientConnectionException | NullPointerException e) {
             movieManager.goLocal();
+            return -1;
         }
     }
 

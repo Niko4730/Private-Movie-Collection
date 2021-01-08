@@ -27,6 +27,7 @@
                <center>
                   <GridPane alignment="TOP_RIGHT" maxWidth="104.0" minWidth="104.0" prefHeight="26.0" prefWidth="104.0" BorderPane.alignment="CENTER_RIGHT">
                      <columnConstraints>
+                        <ColumnConstraints hgrow="NEVER" maxWidth="52.0" minWidth="52.0" prefWidth="52.0" />
                         <ColumnConstraints hgrow="NEVER" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" />
                         <ColumnConstraints hgrow="NEVER" maxWidth="26.0" minWidth="26.0" prefWidth="26.0" />
                         <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" />
@@ -38,7 +39,7 @@
                         <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" vgrow="NEVER" />
                      </rowConstraints>
                      <children>
-                        <AnchorPane minHeight="26.0" minWidth="26.0" GridPane.columnIndex="5">
+                        <AnchorPane minHeight="26.0" minWidth="26.0" GridPane.columnIndex="6">
                            <children>
                               <ImageView fitHeight="25.0" fitWidth="25.0" layoutY="6.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <image>
@@ -54,7 +55,7 @@
                               <Insets />
                            </GridPane.margin>
                         </AnchorPane>
-                        <AnchorPane minHeight="26.0" minWidth="26.0" GridPane.columnIndex="4">
+                        <AnchorPane minHeight="26.0" minWidth="26.0" GridPane.columnIndex="5">
                            <children>
                               <ImageView fx:id="maximizeBtn" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <image>
@@ -67,7 +68,7 @@
                               <Insets />
                            </GridPane.margin>
                         </AnchorPane>
-                        <AnchorPane minHeight="26.0" minWidth="26.0" GridPane.columnIndex="3">
+                        <AnchorPane minHeight="26.0" minWidth="26.0" GridPane.columnIndex="4">
                            <children>
                               <ImageView fitHeight="25.0" fitWidth="25.0" layoutX="-87.0" layoutY="-62.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <image>
@@ -84,12 +85,12 @@
                               <Insets />
                            </GridPane.margin>
                         </AnchorPane>
-                        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2">
+                        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3">
                            <children>
                               <Label layoutX="26.0" layoutY="4.0" text="Show All movies" AnchorPane.leftAnchor="0.0" />
                            </children>
                         </AnchorPane>
-                        <AnchorPane GridPane.columnIndex="1">
+                        <AnchorPane GridPane.columnIndex="2">
                            <children>
                               <CheckBox mnemonicParsing="false" onAction="#hideAllMoviesTable">
                                  <padding>
@@ -98,7 +99,12 @@
                               </CheckBox>
                            </children>
                         </AnchorPane>
-                        <Button mnemonicParsing="false" onAction="#searchOnIMDB" text="Search On IMDB">
+                        <Button mnemonicParsing="false" onAction="#searchOnIMDB" text="Search On IMDB" GridPane.columnIndex="1">
+                           <font>
+                              <Font size="11.0" />
+                           </font>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#load" text="Reload">
                            <font>
                               <Font size="11.0" />
                            </font>

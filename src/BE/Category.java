@@ -12,7 +12,7 @@ public class Category {
     protected SimpleStringProperty categoryDurationStringProperty;
     private ObjectProperty<Integer> categorySize = new SimpleObjectProperty<>();
 
-    public void setPlaylistSize(Integer playlistSize) {
+    public void setCategorySize(Integer playlistSize) {
         this.categorySize.set(playlistSize);
     }
 
@@ -34,7 +34,7 @@ public class Category {
      */
     public Category(int id, String categoryName) {
         initialize();
-        setPlaylistId(id);
+        setCategoryId(id);
         setCategoryName(categoryName);
     }
 
@@ -46,7 +46,7 @@ public class Category {
      */
     public Category(int id, String categoryName, double totalDuration) {
         initialize();
-        setPlaylistId(id);
+        setCategoryId(id);
         setCategoryName(categoryName);
         setCategoryDurationProperty(totalDuration);
         setCategoryDurationStringProperty(totalDuration);
@@ -103,7 +103,7 @@ public class Category {
      *
      * @param categoryId new value of id
      */
-    public void setPlaylistId(int categoryId) {
+    public void setCategoryId(int categoryId) {
         this.categoryId = categoryId;
     }
 
