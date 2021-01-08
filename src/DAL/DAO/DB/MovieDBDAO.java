@@ -176,7 +176,7 @@ public class MovieDBDAO implements MovieDAOInterface {
     public List<Movie> searchMovie(String searchQuery) {
         List<Movie> resultMovies = new ArrayList<>();
         try (var connection = database.getConnection()) {
-            String sql = "SELECT movie.movie_id, movie.movie_title, movie.movie_filepath, category.category_name, rating.rating_amount FROM movie LEFT JOIN rating ON movie.movie_id = rating.movie_id LEFT JOIN category ON movie.category_id = category.category_id WHERE LOWER(movie_title) LIKE LOWER(?) OR movie.movie_id LIKE LOWER(?) OR LOWER(movie_filepath) LIKE LOWER(?) OR LOWER(rating_amount) LIKE LOWER(?);";
+            String sql = "SELECT movie.movie_id, movie.movie_title, movie.movie_filepath, movie.movie_rating, category.category_name FROM movie LEFT JOIN category ON movie.category_id = category.category_id WHERE LOWER(movie_title) LIKE LOWER(?) OR movie.movie_id LIKE LOWER(?) OR LOWER(movie_filepath) LIKE LOWER(?) OR LOWER(movie_rating) LIKE LOWER(?);";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, "%" + searchQuery + "%");
             preparedStatement.setString(2, "%" + searchQuery + "%");
@@ -187,9 +187,10 @@ public class MovieDBDAO implements MovieDAOInterface {
                 while (resultSet.next()) {
                     var id = resultSet.getInt("movie_id");
                     var name = resultSet.getString("movie_title");
-                    var rating = resultSet.getString("rating_amount");
+                    var rating = resultSet.getString("movie_rating");
+                    var category = resultSet.getString("category_name");
                     var path = resultSet.getString("movie_filepath");
-                    var movie = new Movie(id, name, rating, path, "not done yet");
+                    var movie = new Movie(id, name, rating, path, category);
                     resultMovies.add(movie);
                 }
                 return resultMovies;

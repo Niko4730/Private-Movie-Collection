@@ -5,7 +5,9 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.MapChangeListener;
+import javafx.scene.control.Alert;
 import javafx.scene.media.Media;
+import javafx.scene.media.MediaException;
 import javafx.scene.media.MediaPlayer;
 
 
@@ -201,32 +203,38 @@ public class Movie {
      * Gets the value of the metadata.
      */
     public void getMeta() {
-        if (getFilePath() != null) {
-            var file = new File(getFilePath());
-            if (file.exists()) {
-                media = new Media(file.toURI().toString());
-                var mediaPlayer = new MediaPlayer(media);
-                mediaPlayer.setOnReady(() -> {
-                    var duration = media.getDuration();
-                    setDuration(duration.toMinutes());
-                    setDurationString(String.format("%02d", (int) duration.toMinutes()) + ":" + String.format("%02d", ((int) duration.toSeconds() % 60)));
-                });
+        try {
+            if (getFilePath() != null) {
+                var file = new File(getFilePath());
+                if (file.exists()) {
+                    media = new Media(file.toURI().toString());
+                    var mediaPlayer = new MediaPlayer(media);
+                    mediaPlayer.setOnReady(() -> {
+                        var duration = media.getDuration();
+                        setDuration(duration.toMinutes());
+                        setDurationString(String.format("%02d", (int) duration.toMinutes()) + ":" + String.format("%02d", ((int) duration.toSeconds() % 60)));
+                    });
 
-                media.getMetadata().addListener((MapChangeListener.Change<? extends String, ? extends Object> c) -> {
-                    if (c.wasAdded()) {
-                        if ("rating".equals(c.getKey()) && getRating()!=null && getRating().isEmpty()) {
-                            setRating(c.getValueAdded().toString());
+                    media.getMetadata().addListener((MapChangeListener.Change<? extends String, ? extends Object> c) -> {
+                        if (c.wasAdded()) {
+                            if ("rating".equals(c.getKey()) && getRating() != null && getRating().isEmpty()) {
+                                setRating(c.getValueAdded().toString());
+                            }
+                            if ("title".equals(c.getKey()) && getTitle().isEmpty()) {
+                                setTitle(c.getValueAdded().toString());
+                            }
+                            if ("album".equals(c.getKey())) {
+                                //album = c.getValueAdded().toString();
+                            }
                         }
-                        if ("title".equals(c.getKey()) && getTitle().isEmpty()) {
-                            setTitle(c.getValueAdded().toString());
-                        }
-                        if ("album".equals(c.getKey())) {
-                            //album = c.getValueAdded().toString();
-                        }
-                    }
-                    isInitialized = true;
-                });
+                        isInitialized = true;
+                    });
+                }
             }
+        } catch (MediaException e) {
+            InputAlert.showMessageBox("Unsupported movie file", "Unsupported movie file detected.",
+                    "The selected movie file is not supported. Mp4 is the only supported video format.",
+                    Alert.AlertType.ERROR);
         }
     }
 
@@ -258,8 +266,7 @@ public class Movie {
         this.id.set(id);
     }
 
-    public void setRatingId(int id)
-    {
+    public void setRatingId(int id) {
         this.ratingId.set(id);
     }
 
@@ -330,7 +337,6 @@ public class Movie {
     }
 
 
-
     /**
      * Gets the artist property
      *
@@ -339,7 +345,6 @@ public class Movie {
     public StringProperty ratingProperty() {
         return this.rating;
     }
-
 
 
     /**
