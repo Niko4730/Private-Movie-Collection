@@ -452,11 +452,8 @@ public class MainViewController implements Initializable {
                 int index = moviesInCategoryTable.getSelectionModel().getFocusedIndex();
                 CATEGORY_MANAGER.deleteMovieFromCategory(selectedCategory.getCategoryId(), selectedMovieInCategory.getId());
                 categoryMovies.remove(selectedMovie);
-<<<<<<< HEAD
                 selectedCategory.setCategorySize(selectedCategory.getCategorySize().getValue()-1);
-=======
-                selectedCategory.setPlaylistSize(selectedCategory.getCategorySize().getValue() - 1);
->>>>>>> upstream/main
+
                 moviesInCategoryTable.getSelectionModel().select(index > 0 ? index - 1 : index);
             } catch (Exception e) {
                 e.printStackTrace();
