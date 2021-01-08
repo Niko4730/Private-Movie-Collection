@@ -19,7 +19,7 @@ public class Main extends Application {
         MainViewController mainViewController=loader.getController();
         mainViewController.setMain(this);
         primaryStage.initStyle(StageStyle.TRANSPARENT);
-        primaryStage.setTitle("MyTunes");
+        primaryStage.setTitle("Private Movie Collection");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
     }
