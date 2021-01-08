@@ -12,6 +12,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -19,10 +20,13 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class MainViewController implements Initializable {
@@ -72,7 +76,7 @@ public class MainViewController implements Initializable {
     private boolean isMaximized = false;
     private static final CategoryManager CATEGORY_MANAGER = new CategoryManager();
     private static final MovieManager MOVIE_MANAGER = new MovieManager();
-    private static final MusicPlayer musicPlayer = new MusicPlayer();
+    private static final MoviePlayer MOVIE_PLAYER = new MoviePlayer();
     private static final ConvenientUtils CONVENIENT_UTILS = new ConvenientUtils();
 
     /**
@@ -189,6 +193,21 @@ public class MainViewController implements Initializable {
                 this.moviesInCategoryTable.getSelectionModel().clearSelection();
             }
         }));
+
+        // Play the selected video in the default media player.
+        /** References:
+         /* https://stackoverflow.com/questions/16437951/playing-streaming-video-using-default-media-player
+         /* https://stackoverflow.com/questions/26563390/detect-doubleclick-on-row-of-tableview-javafx
+         */
+        this.movieTable.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2 && selectedMovie != null) {
+                try {
+                    Desktop.getDesktop().open(new File(selectedMovie.getFilePath()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     /**
@@ -394,7 +413,7 @@ public class MainViewController implements Initializable {
                 int index = moviesInCategoryTable.getSelectionModel().getFocusedIndex();
                 CATEGORY_MANAGER.deleteMovieFromCategory(selectedCategory.getCategoryId(), selectedMovieInCategory.getId());
                 categoryMovies.remove(selectedMovie);
-                selectedCategory.setPlaylistSize(selectedCategory.getCategorySize().getValue()-1);
+                selectedCategory.setPlaylistSize(selectedCategory.getCategorySize().getValue() - 1);
                 moviesInCategoryTable.getSelectionModel().select(index > 0 ? index - 1 : index);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -546,13 +565,13 @@ public class MainViewController implements Initializable {
             y.set(mouseEvent1.getSceneY());
             mouseEvent1.consume();
             int offset = 5;
-                viewAnchorPane.setOnMouseReleased(mouseEvent2 -> {
-                    if (y.get() > viewAnchorPane.getHeight() - offset || x.get() > viewAnchorPane.getWidth() - offset) {
+            viewAnchorPane.setOnMouseReleased(mouseEvent2 -> {
+                if (y.get() > viewAnchorPane.getHeight() - offset || x.get() > viewAnchorPane.getWidth() - offset) {
                     main.getPrimaryStage().setHeight(viewAnchorPane.getHeight() + (mouseEvent2.getSceneY() - y.get()));
                     main.getPrimaryStage().setWidth(viewAnchorPane.getWidth() + (mouseEvent2.getSceneX() - x.get()));
                     mouseEvent2.consume();
-                    }
-                });
+                }
+            });
         });
     }
 
@@ -574,20 +593,19 @@ public class MainViewController implements Initializable {
     }
 
     public void hideAllMoviesTable() {
-        if(allMoviesShown){
-        allMovies.setVisible(false);
-        allMovies.setMinWidth(0);
-        allMovies.setPrefWidth(0);
-        allMovies.setMaxWidth(0);
-        }
-        else{
+        if (allMoviesShown) {
+            allMovies.setVisible(false);
+            allMovies.setMinWidth(0);
+            allMovies.setPrefWidth(0);
+            allMovies.setMaxWidth(0);
+        } else {
             allMovies.setVisible(true);
 
             allMovies.setMinWidth(205);
             allMovies.setPrefWidth(400);
             allMovies.setMaxWidth(5000);
         }
-        allMoviesShown=!allMoviesShown;
+        allMoviesShown = !allMoviesShown;
     }
 
     private void hideLowerPane() {
@@ -597,7 +615,7 @@ public class MainViewController implements Initializable {
         lowerPane.setPrefHeight(0);
     }
 
-    private void showLowerPane(){
+    private void showLowerPane() {
         lowerPane.setVisible(true);
         lowerPane.setMaxHeight(215);
         lowerPane.setMinHeight(215);
