@@ -23,9 +23,9 @@ public class CategoryLocalDAO implements CategoryDAOInterface {
     }
 
     /**
-     * Tries to make a playlist with the given name.
+     * Tries to make a category with the given name.
      *
-     * @param name the name of the playlist.
+     * @param name the name of the category.
      * @throws IOException if something went wrong.
      */
     @Override
