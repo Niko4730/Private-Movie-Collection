@@ -12,7 +12,7 @@
  Target Server Version : 15002000
  File Encoding         : 65001
 
- Date: 07/01/2021 13:10:22
+ Date: 08/01/2021 12:03:33
 */
 
 
@@ -42,7 +42,7 @@ GO
 
 CREATE TABLE [dbo].[category_movie] (
   [category_id] int  NOT NULL,
-  [movie_id] int  NULL
+  [movie_id] int  NOT NULL
 )
 GO
 
@@ -61,7 +61,7 @@ CREATE TABLE [dbo].[movie] (
   [movie_id] int  IDENTITY(1,1) NOT NULL,
   [movie_title] nvarchar(255) COLLATE Danish_Norwegian_CI_AS  NULL,
   [movie_filepath] nvarchar(255) COLLATE Danish_Norwegian_CI_AS  NULL,
-  [movie_lastview] int  NULL,
+  [movie_lastview] nvarchar(255) COLLATE Danish_Norwegian_CI_AS  NULL,
   [movie_length] float(53)  NULL,
   [movie_rating] float(53)  NULL,
   [category_id] int  NULL
@@ -95,15 +95,6 @@ CREATE NONCLUSTERED INDEX [movie_id]
 ON [dbo].[category_movie] (
   [movie_id] ASC
 )
-GO
-
-
--- ----------------------------
--- Primary Key structure for table category_movie
--- ----------------------------
-ALTER TABLE [dbo].[category_movie] ADD CONSTRAINT [PK__movie_co__D54EE9B40D76EDDB] PRIMARY KEY CLUSTERED ([category_id])
-WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)  
-ON [PRIMARY]
 GO
 
 

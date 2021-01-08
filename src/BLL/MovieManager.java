@@ -122,6 +122,6 @@ public class MovieManager {
      * @throws Exception    if something went wrong
      */
     public Map<Integer, String> getGenres() throws Exception {
-        return movieDAO.getGenres();
+        return movieDAO.getCategories();
     }
 }
