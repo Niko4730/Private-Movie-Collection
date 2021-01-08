@@ -179,8 +179,8 @@
                                  <center>
                                     <TableView fx:id="categoryTable">
                                        <columns>
-                                          <TableColumn fx:id="categoryNameColumn" editable="false" minWidth="75.0" prefWidth="-1.0" text="Name" />
-                                          <TableColumn fx:id="categoryAmountOfMoviesColumn" editable="false" maxWidth="100.0" minWidth="25.0" prefWidth="25.0" resizable="false" text="#" />
+                                          <TableColumn fx:id="categoryNameColumn" editable="false" minWidth="75.0" prefWidth="215.0" text="Name" />
+                                          <TableColumn fx:id="categoryAmountOfMoviesColumn" editable="false" maxWidth="100.0" minWidth="25.0" prefWidth="60.0" text="#" />
                                        </columns>
                                        <columnResizePolicy>
                                           <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -196,8 +196,8 @@
                                  <center>
                                     <TableView fx:id="moviesInCategoryTable">
                                        <columns>
-                                          <TableColumn fx:id="ratingMovieInCategoryColumn" maxWidth="25.0" minWidth="25.0" prefWidth="25.0" resizable="false" text="★" />
-                                          <TableColumn fx:id="CategoryMoviesColumn" editable="false" maxWidth="5500.0" minWidth="100.0" prefWidth="-1.0" text="Movies" />
+                                          <TableColumn fx:id="ratingMovieInCategoryColumn" editable="false" maxWidth="100.0" minWidth="25.0" prefWidth="43.0" text="★" />
+                                          <TableColumn fx:id="CategoryMoviesColumn" editable="false" maxWidth="5500.0" minWidth="100.0" prefWidth="255.0" text="Movies" />
                                        </columns>
                                        <columnResizePolicy>
                                           <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -253,9 +253,10 @@
                                        <center>
                                           <TableView fx:id="movieTable">
                                              <columns>
-                                                <TableColumn fx:id="movieTableRatingColumn" editable="false" maxWidth="25.0" minWidth="25.0" prefWidth="25.0" resizable="false" text="★" />
-                                                <TableColumn fx:id="movieTableTitleColumn" editable="false" minWidth="100.0" prefWidth="-1.0" text="Title" />
-                                                <TableColumn fx:id="movieTableTimeColumn" editable="false" maxWidth="500.0" minWidth="50.0" prefWidth="50.0" text="Time" />
+                                                <TableColumn fx:id="movieTableRatingColumn" maxWidth="100.0" minWidth="25.0" prefWidth="43.0" text="★" />
+                                                <TableColumn fx:id="movieTableTitleColumn" editable="false" minWidth="100.0" prefWidth="282.0" text="Title" />
+                                                <TableColumn fx:id="movieTablelastViewColumn" editable="false" prefWidth="95.0" text="Last viewed" />
+                                                <TableColumn fx:id="movieTableTimeColumn" editable="false" maxWidth="500.0" minWidth="50.0" prefWidth="87.0" text="Time" />
                                              </columns>
                                              <columnResizePolicy>
                                                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

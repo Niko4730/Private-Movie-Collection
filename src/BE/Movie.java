@@ -1,15 +1,15 @@
 package BE;
 
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.collections.MapChangeListener;
+import javafx.scene.control.Alert;
 import javafx.scene.media.Media;
+import javafx.scene.media.MediaException;
 import javafx.scene.media.MediaPlayer;
 
 
 import java.io.File;
+import java.util.Date;
 
 public class Movie {
     private SimpleIntegerProperty id;
@@ -19,6 +19,7 @@ public class Movie {
     protected SimpleDoubleProperty duration;
     protected SimpleStringProperty durationString;
     protected StringProperty filePath;
+    protected SimpleStringProperty lastView;
     protected SimpleIntegerProperty categoryId;
     protected SimpleStringProperty categoryName;
     protected Media media;
@@ -31,6 +32,7 @@ public class Movie {
         this.rating = new SimpleStringProperty("");
         this.ratingId = new SimpleIntegerProperty(-1);
         this.filePath = new SimpleStringProperty("");
+        this.lastView = new SimpleStringProperty("");
         this.categoryId = new SimpleIntegerProperty(-1);
         this.categoryName = new SimpleStringProperty("");
         duration = new SimpleDoubleProperty();
@@ -44,33 +46,31 @@ public class Movie {
     /**
      * Initialize a new Song instance.
      *
-     * @param id       The song id
-     * @param title    The song title
+     * @param id       The movie id
+     * @param title    The movie title
      * @param filePath The filepath of the song
      */
     public Movie(int id, String title, String filePath) {
         initialize();
-        this.id = new SimpleIntegerProperty(id);
-        this.title = new SimpleStringProperty(title);
-        this.rating = new SimpleStringProperty();
-        this.filePath = new SimpleStringProperty(filePath);
-        this.categoryId = new SimpleIntegerProperty(-1);
+
+        setId(id);
+        setTitle(title);
+        setFilePath(filePath);
+        setFilePath(filePath);
         getMeta();
     }
 
     /**
      * Initialize a new Song instance.
      *
-     * @param title    The song title
+     * @param title    The movie title
      * @param filePath The filepath of the song
      */
     public Movie(String title, String filePath) {
         initialize();
-        this.id = new SimpleIntegerProperty(-1);
-        this.title = new SimpleStringProperty(title);
-        this.rating = new SimpleStringProperty();
-        this.filePath = new SimpleStringProperty(filePath);
-        this.categoryId = new SimpleIntegerProperty(-1);
+
+        setTitle(title);
+        setFilePath(filePath);
         getMeta();
     }
 
@@ -84,13 +84,11 @@ public class Movie {
      */
     public Movie(int id, String title, String filePath, String categoryName) {
         initialize();
-        this.id = new SimpleIntegerProperty(id);
-        this.title = new SimpleStringProperty(title);
-        this.rating = new SimpleStringProperty();
-        this.filePath = new SimpleStringProperty(filePath);
-        this.categoryId = new SimpleIntegerProperty(-1);
-        this.categoryName = new SimpleStringProperty(categoryName);
-        duration = new SimpleDoubleProperty();
+
+        setId(id);
+        setTitle(title);
+        setFilePath(filePath);
+        setCategoryName(categoryName);
         getMeta();
     }
 
@@ -106,12 +104,12 @@ public class Movie {
      */
     public Movie(int id, String title, String rating, String filePath, String categoryName) {
         initialize();
-        this.id = new SimpleIntegerProperty(id);
-        this.title = new SimpleStringProperty(title);
-        this.rating = new SimpleStringProperty(rating);
-        this.filePath = new SimpleStringProperty(filePath);
-        this.categoryId = new SimpleIntegerProperty(-1);
-        this.categoryName = new SimpleStringProperty(categoryName);
+
+        setId(id);
+        setTitle(title);
+        setFilePath(filePath);
+        setRating(rating);
+        setCategoryName(categoryName);
         getMeta();
     }
 
@@ -126,12 +124,32 @@ public class Movie {
     public Movie(int id, String title, String filePath, String rating, int categoryId) {
         initialize();
 
-        this.id = new SimpleIntegerProperty(id);
-        this.title = new SimpleStringProperty(title);
-        this.rating = new SimpleStringProperty(rating);
-        this.filePath = new SimpleStringProperty(filePath);
-        this.categoryId = new SimpleIntegerProperty(categoryId);
-        this.categoryName = new SimpleStringProperty();
+        setId(id);
+        setTitle(title);
+        setFilePath(filePath);
+        setRating(rating);
+        setCategoryId(categoryId);
+        getMeta();
+    }
+
+    /**
+     * Initialize a new Song instance.
+     *
+     * @param id       song id
+     * @param title    song title
+     * @param rating   song artist
+     * @param filePath song filepath
+     */
+    public Movie(int id, String title, String filePath, String lastView, String rating, int categoryId, double duration) {
+        initialize();
+
+        setId(id);
+        setTitle(title);
+        setFilePath(filePath);
+        setLastView(lastView);
+        setRating(rating);
+        setCategoryId(categoryId);
+        setDuration(duration);
         getMeta();
     }
 
@@ -145,13 +163,13 @@ public class Movie {
      */
     public Movie(int id, String title, String filePath, String rating, int categoryId, double duration) {
         initialize();
-        this.id = new SimpleIntegerProperty(id);
-        this.title = new SimpleStringProperty(title);
-        this.rating = new SimpleStringProperty(rating);
-        this.filePath = new SimpleStringProperty(filePath);
-        this.categoryId = new SimpleIntegerProperty(categoryId);
-        this.categoryName = new SimpleStringProperty();
-        this.duration = new SimpleDoubleProperty(duration);
+
+        setId(id);
+        setTitle(title);
+        setFilePath(filePath);
+        setRating(rating);
+        setCategoryId(categoryId);
+        setDuration(duration);
         getMeta();
     }
 
@@ -166,12 +184,13 @@ public class Movie {
      */
     public Movie(int id, String title, String rating, String filePath, int categoryId, String categoryName) {
         initialize();
-        this.id = new SimpleIntegerProperty(id);
-        this.title = new SimpleStringProperty(title);
-        this.rating = new SimpleStringProperty(rating);
-        this.filePath = new SimpleStringProperty(filePath);
-        this.categoryId = new SimpleIntegerProperty(categoryId);
-        this.categoryName = new SimpleStringProperty(categoryName);
+
+        setId(id);
+        setTitle(title);
+        setFilePath(filePath);
+        setRating(rating);
+        setCategoryId(categoryId);
+        setCategoryName(categoryName);
         getMeta();
     }
 
@@ -186,47 +205,78 @@ public class Movie {
      */
     public Movie(int id, String title, String rating, String filePath, int categoryId, String categoryName, double duration) {
         initialize();
-        this.id = new SimpleIntegerProperty(id);
-        this.title = new SimpleStringProperty(title);
-        this.rating = new SimpleStringProperty(rating);
-        this.filePath = new SimpleStringProperty(filePath);
-        this.categoryId = new SimpleIntegerProperty(categoryId);
-        this.categoryName = new SimpleStringProperty(categoryName);
-        this.duration = new SimpleDoubleProperty(duration);
+
+        setId(id);
+        setTitle(title);
+        setFilePath(filePath);
+        setRating(rating);
+        setCategoryId(categoryId);
+        setCategoryName(categoryName);
+        setDuration(duration);
         getMeta();
     }
+
+    /**
+     * Initialize a new Song instance.
+     *
+     * @param id           song id
+     * @param title        song title
+     * @param rating       song artist
+     * @param filePath     song filepath
+     * @param categoryName song categoryName
+     */
+    public Movie(int id, String title, String rating, String filePath, String lastView, int categoryId, String categoryName, double duration) {
+        initialize();
+
+        setId(id);
+        setTitle(title);
+        setFilePath(filePath);
+        setLastView(lastView);
+        setRating(rating);
+        setCategoryId(categoryId);
+        setCategoryName(categoryName);
+        setDuration(duration);
+        getMeta();
+    }
+
 
 
     /**
      * Gets the value of the metadata.
      */
     public void getMeta() {
-        if (getFilePath() != null) {
-            var file = new File(getFilePath());
-            if (file.exists()) {
-                media = new Media(file.toURI().toString());
-                var mediaPlayer = new MediaPlayer(media);
-                mediaPlayer.setOnReady(() -> {
-                    var duration = media.getDuration();
-                    setDuration(duration.toMinutes());
-                    setDurationString(String.format("%02d", (int) duration.toMinutes()) + ":" + String.format("%02d", ((int) duration.toSeconds() % 60)));
-                });
+        try {
+            if (getFilePath() != null) {
+                var file = new File(getFilePath());
+                if (file.exists()) {
+                    media = new Media(file.toURI().toString());
+                    var mediaPlayer = new MediaPlayer(media);
+                    mediaPlayer.setOnReady(() -> {
+                        var duration = media.getDuration();
+                        setDuration(duration.toMinutes());
+                        setDurationString(String.format("%02d", (int) duration.toMinutes()) + ":" + String.format("%02d", ((int) duration.toSeconds() % 60)));
+                    });
 
-                media.getMetadata().addListener((MapChangeListener.Change<? extends String, ? extends Object> c) -> {
-                    if (c.wasAdded()) {
-                        if ("rating".equals(c.getKey()) && getRating()!=null && getRating().isEmpty()) {
-                            setRating(c.getValueAdded().toString());
+                    media.getMetadata().addListener((MapChangeListener.Change<? extends String, ? extends Object> c) -> {
+                        if (c.wasAdded()) {
+                            if ("rating".equals(c.getKey()) && getRating() != null && getRating().isEmpty()) {
+                                setRating(c.getValueAdded().toString());
+                            }
+                            if ("title".equals(c.getKey()) && getTitle().isEmpty()) {
+                                setTitle(c.getValueAdded().toString());
+                            }
+                            if ("album".equals(c.getKey())) {
+                                //album = c.getValueAdded().toString();
+                            }
                         }
-                        if ("title".equals(c.getKey()) && getTitle().isEmpty()) {
-                            setTitle(c.getValueAdded().toString());
-                        }
-                        if ("album".equals(c.getKey())) {
-                            //album = c.getValueAdded().toString();
-                        }
-                    }
-                    isInitialized = true;
-                });
+                        isInitialized = true;
+                    });
+                }
             }
+        } catch (MediaException e) {
+            InputAlert.showMessageBox("Unsupported movie file", "Unsupported movie file detected.",
+                    "The selected movie file is not supported. Mp4 is the only supported video format.",
+                    Alert.AlertType.ERROR);
         }
     }
 
@@ -258,8 +308,7 @@ public class Movie {
         this.id.set(id);
     }
 
-    public void setRatingId(int id)
-    {
+    public void setRatingId(int id) {
         this.ratingId.set(id);
     }
 
@@ -330,7 +379,6 @@ public class Movie {
     }
 
 
-
     /**
      * Gets the artist property
      *
@@ -339,7 +387,6 @@ public class Movie {
     public StringProperty ratingProperty() {
         return this.rating;
     }
-
 
 
     /**
@@ -385,6 +432,42 @@ public class Movie {
      */
     public void setFilePath(String filePath) {
         this.filePath.setValue(filePath);
+    }
+
+    /**
+     * Get the last view property.
+     *
+     * @return
+     */
+    public StringProperty lastViewProperty() {
+        return this.lastView;
+    }
+
+    /**
+     * Get the last view in epoch.
+     *
+     * @return
+     */
+    public String getLastView() {
+        return this.lastView.get();
+    }
+
+    /**
+     * Get the last view epoch as a Date object.
+     *
+     * @return
+     */
+    public Date getLastViewAsDate() {
+        return new Date(getLastView());
+    }
+
+    /**
+     * Set the last view in epoch.
+     *
+     * @param epoch
+     */
+    public void setLastView(String epoch) {
+        lastView.set(epoch);
     }
 
     /**

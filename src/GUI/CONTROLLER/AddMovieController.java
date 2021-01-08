@@ -9,6 +9,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.File;
 import java.net.URL;
@@ -81,6 +82,7 @@ public class AddMovieController extends Component implements Initializable {
 
             Thread songAdderThread = null;
             JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setFileFilter(new FileNameExtensionFilter("Mp4 file", "mp4"));
             int result = fileChooser.showOpenDialog(this);
             if (result == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
@@ -88,10 +90,6 @@ public class AddMovieController extends Component implements Initializable {
                 var fileName = selectedFile.getName();
                 var fileNameNoExt = fileName.lastIndexOf('.') > 0 ? fileName.substring(0, fileName.lastIndexOf('.')) : fileName;
                 var filePath = selectedFile.getAbsolutePath();
-
-                // Some disclaimer.
-                if (fileName.endsWith(".m4a"))
-                    System.out.println("Note: M4a meta tags for some reason can't seem to read properly. Fields may be empty.");
 
                 movieToAdd = new Movie();
                 movieToAdd.setFilePath(filePath);

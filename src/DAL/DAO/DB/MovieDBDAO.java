@@ -8,6 +8,7 @@ import DAL.DB.DbConnectionHandler;
 import java.io.File;
 import java.io.RandomAccessFile;
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -56,11 +57,12 @@ public class MovieDBDAO implements MovieDAOInterface {
                 int movie_id = rs.getInt("movie_id");
                 String movie_title = rs.getString("movie_title");
                 String movie_filepath = rs.getString("movie_filepath");
+                String movie_lastview = rs.getString("movie_lastview");
                 String movie_rating = rs.getString("movie_rating");
                 int category_id = rs.getInt("category_id");
                 String category_name = rs.getString("category_name");
                 double movie_length = rs.getDouble("movie_length");
-                temp.add(new Movie(movie_id, movie_title, movie_rating, movie_filepath, category_id, category_name, movie_length));
+                temp.add(new Movie(movie_id, movie_title, movie_rating, movie_filepath, movie_lastview, category_id, category_name, movie_length));
             }
             return temp;
         } catch (SQLNonTransientConnectionException | NullPointerException e) {
@@ -116,12 +118,14 @@ public class MovieDBDAO implements MovieDAOInterface {
             st.executeUpdate();
             var resultSet = st.getResultSet();
             var id = resultSet.getInt("movie_id");
-            var name1 = resultSet.getString("movie_title");
+            var title = resultSet.getString("movie_title");
             var path = resultSet.getString("movie_filepath");
-            String rating = resultSet.getString("movie_rating");
+            var lastview = resultSet.getString("movie_lastview");
+
+            var rating = resultSet.getString("movie_rating");
             var category_id = resultSet.getInt("category_id");
             var duration = resultSet.getDouble("movie_length");
-            var movie = new Movie(id, name1, path, rating, category_id, duration);
+            var movie = new Movie(id, title, path, lastview, rating, category_id, duration);
             return movie;
         } catch (SQLNonTransientConnectionException | NullPointerException e) {
             movieManager.goLocal();
@@ -155,15 +159,16 @@ public class MovieDBDAO implements MovieDAOInterface {
      */
     @Override
     public void updateMovie(Movie modified) throws SQLException {
-        var sql = "UPDATE movie SET movie_title = ?, movie_filepath = ?, movie_rating = ?, category_id=?, movie_length=? WHERE movie_id = ?;";
+        var sql = "UPDATE movie SET movie_title = ?, movie_filepath = ?, movie_lastview = ?, movie_rating = ?, category_id=?, movie_length=? WHERE movie_id = ?;";
         try (var con = database.getConnection();
              PreparedStatement st = con.prepareStatement(sql)) {
             st.setString(1, modified.getTitle());
             st.setString(2, modified.getFilePath());
-            st.setString(3, modified.getRating());
-            st.setInt(4, modified.getCategoryId());
-            st.setDouble(5, modified.getDuration());
-            st.setInt(6, modified.getId());
+            st.setString(3, modified.getLastView());
+            st.setString(4, modified.getRating());
+            st.setInt(5, modified.getCategoryId());
+            st.setDouble(6, modified.getDuration());
+            st.setInt(7, modified.getId());
             st.executeUpdate();
         } catch (SQLNonTransientConnectionException | NullPointerException e) {
             movieManager.goLocal();
@@ -180,7 +185,7 @@ public class MovieDBDAO implements MovieDAOInterface {
     public List<Movie> searchMovie(String searchQuery) {
         List<Movie> resultMovies = new ArrayList<>();
         try (var connection = database.getConnection()) {
-            String sql = "SELECT movie.movie_id, movie.movie_title, movie.movie_filepath, category.category_name, rating.rating_amount FROM movie LEFT JOIN rating ON movie.movie_id = rating.movie_id LEFT JOIN category ON movie.category_id = category.category_id WHERE LOWER(movie_title) LIKE LOWER(?) OR movie.movie_id LIKE LOWER(?) OR LOWER(movie_filepath) LIKE LOWER(?) OR LOWER(rating_amount) LIKE LOWER(?);";
+            String sql = "SELECT movie.movie_id, movie.movie_title, movie.movie_filepath, movie.movie_rating, category.category_name FROM movie LEFT JOIN category ON movie.category_id = category.category_id WHERE LOWER(movie_title) LIKE LOWER(?) OR movie.movie_id LIKE LOWER(?) OR LOWER(movie_filepath) LIKE LOWER(?) OR LOWER(movie_rating) LIKE LOWER(?);";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, "%" + searchQuery + "%");
             preparedStatement.setString(2, "%" + searchQuery + "%");
@@ -191,9 +196,10 @@ public class MovieDBDAO implements MovieDAOInterface {
                 while (resultSet.next()) {
                     var id = resultSet.getInt("movie_id");
                     var name = resultSet.getString("movie_title");
-                    var rating = resultSet.getString("rating_amount");
+                    var rating = resultSet.getString("movie_rating");
+                    var category = resultSet.getString("category_name");
                     var path = resultSet.getString("movie_filepath");
-                    var movie = new Movie(id, name, rating, path, "not done yet");
+                    var movie = new Movie(id, name, rating, path, category);
                     resultMovies.add(movie);
                 }
                 return resultMovies;
@@ -215,7 +221,7 @@ public class MovieDBDAO implements MovieDAOInterface {
      * @throws Exception if something went wrong
      */
     @Override
-    public Map<Integer, String> getGenres() throws Exception {
+    public Map<Integer, String> getCategories() throws Exception {
         HashMap<Integer, String> temp = new HashMap<>();
         try (var con = database.getConnection();
              Statement statement = con.createStatement()) {

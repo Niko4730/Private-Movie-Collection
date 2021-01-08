@@ -59,7 +59,7 @@ public class MovieLocalDAO implements MovieDAOInterface {
                     artist.append(raf.readChar());
                 int category_id = raf.readInt();
                 if (!movieName.toString().equals(emptyNameValue) && !path.toString().equals(emptyPathValue))
-                    tmp.add(new Movie(song_id, movieName.toString().trim(), artist.toString().trim(), path.toString().trim(), category_id, getGenres().get(category_id)));
+                    tmp.add(new Movie(song_id, movieName.toString().trim(), artist.toString().trim(), path.toString().trim(), category_id, getCategories().get(category_id)));
             }
             return tmp;
         } catch (FileNotFoundException e) {
@@ -138,7 +138,7 @@ public class MovieLocalDAO implements MovieDAOInterface {
                     rating.append(raf.readChar());
                 int category_id = raf.readInt();
                 if (movieName.toString().trim().equals(name))
-                    return new Movie(movie_id, movieName.toString().trim(), rating.toString().trim(), path.toString().trim(), category_id, getGenres().get(category_id));
+                    return new Movie(movie_id, movieName.toString().trim(), rating.toString().trim(), path.toString().trim(), category_id, getCategories().get(category_id));
             }
             return null;
         }
@@ -166,7 +166,7 @@ public class MovieLocalDAO implements MovieDAOInterface {
                     rating.append(raf.readChar());
                 int category_id = raf.readInt();
                 if (movie_id == id)
-                    return new Movie(movie_id, movieName.toString().trim(), rating.toString().trim(), path.toString().trim(), category_id, getGenres().get(category_id));
+                    return new Movie(movie_id, movieName.toString().trim(), rating.toString().trim(), path.toString().trim(), category_id, getCategories().get(category_id));
             }
             return null;
         }
@@ -252,7 +252,7 @@ public class MovieLocalDAO implements MovieDAOInterface {
                     rating.append(raf.readChar());
                 int category_id = raf.readInt();
                 if (movieName.toString().trim().toLowerCase().contains(searchQuery.trim().toLowerCase()) || path.toString().trim().toLowerCase().contains(searchQuery.trim().toLowerCase()))
-                    tmp.add(new Movie(movie_id, movieName.toString().trim(), rating.toString().trim(), path.toString().trim(), category_id, getGenres().get(category_id)));
+                    tmp.add(new Movie(movie_id, movieName.toString().trim(), rating.toString().trim(), path.toString().trim(), category_id, getCategories().get(category_id)));
             }
             return tmp;
         }
@@ -265,7 +265,7 @@ public class MovieLocalDAO implements MovieDAOInterface {
      * @throws  Exception if something went wrong
      */
     @Override
-    public Map<Integer, String> getGenres() throws Exception {
+    public Map<Integer, String> getCategories() throws Exception {
         File file = new File("Data/category.data");
         Map<Integer, String> tmp = new HashMap<Integer, String>();
         tmp.put(-1, "");

@@ -70,5 +70,5 @@ public interface MovieDAOInterface {
      * @return  a map of the genres
      * @throws  Exception if something went wrong
      */
-    Map<Integer, String> getGenres() throws Exception;
+    Map<Integer, String> getCategories() throws Exception;
 }
