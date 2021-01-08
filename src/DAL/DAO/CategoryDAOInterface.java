@@ -28,7 +28,7 @@ public interface CategoryDAOInterface {
      * @param   name the name of the category
      * @throws  Exception if something went wrong.
      */
-    void createCategory(String name) throws Exception;
+    int createCategory(String name) throws Exception;
 
     /**
      * Gets a category

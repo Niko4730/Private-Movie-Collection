@@ -24,6 +24,8 @@ import javafx.stage.Stage;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
@@ -164,13 +166,17 @@ public class MainViewController implements Initializable {
             this.selectedCategory = (Category) newValue;
             if (selectedCategory != null) {
                 try {
-                    if (CATEGORY_MANAGER.loadMoviesInCategory(selectedCategory.getCategoryId()) != null)
-                        this.categoryMovies = FXCollections.observableArrayList(CATEGORY_MANAGER.loadMoviesInCategory(selectedCategory.getCategoryId()));
+                    var moviesInCat=CATEGORY_MANAGER.loadMoviesInCategory(selectedCategory.getCategoryId());
+                    if (!moviesInCat.isEmpty())
+                        this.categoryMovies = FXCollections.observableArrayList(moviesInCat);
+                    else
+                        categoryMovies.clear();
                     moviesInCategoryTable.setItems(categoryMovies);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
+
         }));
     }
 
@@ -255,7 +261,8 @@ public class MainViewController implements Initializable {
     public void reloadMovieTable() {
         try {
             int index = movieTable.getSelectionModel().getFocusedIndex();
-            this.movieTable.setItems(FXCollections.observableList(MOVIE_MANAGER.loadMovies()));
+            this.movies=FXCollections.observableList(MOVIE_MANAGER.loadMovies());
+            this.movieTable.setItems(movies);
             movieTable.getSelectionModel().select(index);
         } catch (Exception exception) {
             System.out.println("could not load movie table");
@@ -268,7 +275,8 @@ public class MainViewController implements Initializable {
     private void reloadMoviesInCategory() {
         try {
             int index = moviesInCategoryTable.getSelectionModel().getFocusedIndex();
-            this.moviesInCategoryTable.setItems(FXCollections.observableList(CATEGORY_MANAGER.loadMoviesInCategory(selectedCategory.getCategoryId())));
+            this.categoryMovies=FXCollections.observableList(CATEGORY_MANAGER.loadMoviesInCategory(selectedCategory.getCategoryId()));
+            this.moviesInCategoryTable.setItems(categoryMovies);
             moviesInCategoryTable.getSelectionModel().select(index);
         } catch (Exception exception) {
             System.out.println("could not load movie in the category table");
@@ -281,7 +289,8 @@ public class MainViewController implements Initializable {
     private void reloadCategoryTable() {
         try {
             int index = categoryTable.getSelectionModel().getFocusedIndex();
-            this.categoryTable.setItems(FXCollections.observableList(CATEGORY_MANAGER.loadCategories()));
+            this.categories=FXCollections.observableList(CATEGORY_MANAGER.loadCategories());
+            this.categoryTable.setItems(categories);
             categoryTable.getSelectionModel().select(index);
         } catch (Exception exception) {
             System.out.println("could not load category table");
@@ -313,7 +322,7 @@ public class MainViewController implements Initializable {
      */
     public void clearSearchButton() {
         searchField.setText("");
-        search();
+        this.movieTable.setItems(movies);
     }
 
     /**
@@ -330,8 +339,8 @@ public class MainViewController implements Initializable {
      */
     public void addCategory(Category category) {
         try {
-            CATEGORY_MANAGER.createCategory(category.getCategoryName());
-            reloadCategoryTable();
+            category.setCategoryId(CATEGORY_MANAGER.createCategory(category.getCategoryName()));
+            categories.add(category);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -420,7 +429,7 @@ public class MainViewController implements Initializable {
                 }
                 CATEGORY_MANAGER.addMoviesToCategory(selectedCategory.getCategoryId(), selectedMovie.getId());
                 reloadMoviesInCategory();
-                reloadCategoryTable();
+                selectedCategory.setCategorySize(selectedCategory.getCategorySize().getValue()+1);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -453,7 +462,6 @@ public class MainViewController implements Initializable {
                 CATEGORY_MANAGER.deleteMovieFromCategory(selectedCategory.getCategoryId(), selectedMovieInCategory.getId());
                 categoryMovies.remove(selectedMovie);
                 selectedCategory.setCategorySize(selectedCategory.getCategorySize().getValue()-1);
-
                 moviesInCategoryTable.getSelectionModel().select(index > 0 ? index - 1 : index);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -489,11 +497,13 @@ public class MainViewController implements Initializable {
      *
      * @param movie the movie
      */
-    public void createMovie(Movie movie) {
+    public int createMovie(Movie movie) {
         try {
-            MOVIE_MANAGER.createMovie(movie);
+            movies.add(movie);
+            return MOVIE_MANAGER.createMovie(movie);
         } catch (Exception e) {
             e.printStackTrace();
+            return -1;
         }
     }
 
@@ -557,7 +567,8 @@ public class MainViewController implements Initializable {
                 MOVIE_MANAGER.deleteMovie(selectedMovie.getId());
                 movies.remove(selectedMovie);
             } catch (Exception e) {
-                e.printStackTrace();
+                InputAlert.showMessageBox("No movie selected", "Cannot delete something that doesn't exist!", "Please select a movie.", Alert.AlertType.ERROR);
+
             }
             load();
         } else {
@@ -663,10 +674,27 @@ public class MainViewController implements Initializable {
     }
 
     public void viewMovieOrWhatever() {
+
     }
+
+
 
     public void imgChange() {
         movieImg.setImage(new Image(""));
         System.out.println("WOW THE IMAGE CHANGED... or is yet to be implemented");
+    }
+
+    public void searchOnIMDB() {
+        String query = selectedMovie==null?selectedMovieInCategory.getTitle():selectedMovie.getTitle();
+        query=query.replaceAll(" ", "_");
+        if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+            try {
+                Desktop.getDesktop().browse(new URI("https://www.imdb.com/find?q=" + query + "&ref_=nv_sr_sm"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

@@ -29,7 +29,7 @@ public class CategoryLocalDAO implements CategoryDAOInterface {
      * @throws IOException if something went wrong.
      */
     @Override
-    public void createCategory(String name) throws IOException {
+    public int createCategory(String name) throws IOException {
         String formattedName = String.format("%-" + CATEGORYNAMESIZE + "s", name).substring(0, CATEGORYNAMESIZE);
         try (RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_CATEGORY_PATH), "rw")) {
             while (raf.getFilePointer() < raf.length()) {
@@ -38,9 +38,10 @@ public class CategoryLocalDAO implements CategoryDAOInterface {
                 for (int i = 0; i < CATEGORYNAMESIZE; i++) {
                     categoryName.append(raf.readChar());
                     if (categoryName.toString().equals(emptyValue)) {
-                        raf.seek(raf.getFilePointer() - CATEGORYNAMESIZE * 2);
+                        raf.seek(raf.getFilePointer() - CATEGORYNAMESIZE * 2-4);
+                        var cat_id=raf.readInt();
                         raf.writeChars(formattedName);
-                        return;
+                        return cat_id;
                     }
                 }
             }
@@ -49,6 +50,7 @@ public class CategoryLocalDAO implements CategoryDAOInterface {
             raf.seek(raf.length());
             raf.writeInt(index);
             raf.writeChars(formattedName);
+            return index;
         }
     }
 

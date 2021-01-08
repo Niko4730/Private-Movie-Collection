@@ -161,8 +161,7 @@ public class AddMovieController extends Component implements Initializable {
 
                 var rating = Double.parseDouble(ratingTextField.getText().isEmpty() ? "0" : ratingTextField.getText().replaceAll(",", "."));
                 movieToAdd.setRating(Double.toString(rating));
-                mainViewController.getMovieManager().createMovie(movieToAdd);
-                mainViewController.reloadMovieTable();
+                movieToAdd.setId(mainViewController.createMovie(movieToAdd));
                 close();
             }
         } catch (Exception e) {

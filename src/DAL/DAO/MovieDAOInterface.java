@@ -28,7 +28,7 @@ public interface MovieDAOInterface {
      * @param   movie the new song
      * @throws  Exception If something went wrong
      */
-    void createMovie(Movie movie) throws Exception;
+    int createMovie(Movie movie) throws Exception;
 
     /**
      * Gets a song

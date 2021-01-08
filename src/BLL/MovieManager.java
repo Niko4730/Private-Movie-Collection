@@ -70,8 +70,8 @@ public class MovieManager {
      * @param movie          the new song
      * @throws Exception    if something went wrong
      */
-    public void createMovie(Movie movie) throws Exception {
-        movieDAO.createMovie(movie);
+    public int createMovie(Movie movie) throws Exception {
+        return movieDAO.createMovie(movie);
     }
 
     /**

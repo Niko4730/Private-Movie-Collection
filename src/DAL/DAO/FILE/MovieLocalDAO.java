@@ -75,7 +75,7 @@ public class MovieLocalDAO implements MovieDAOInterface {
      * @throws  IOException if something went wrong.
      */
     @Override
-    public void createMovie(Movie movie) throws IOException {
+    public int createMovie(Movie movie) throws IOException {
         String formattedName = String.format("%-" + MOVIE_NAME_SIZE + "s", movie.getTitle()).substring(0, MOVIE_NAME_SIZE);
         String formattedPath = String.format("%-" + MOVIE_PATH_SIZE + "s", movie.getFilePath()).substring(0, MOVIE_PATH_SIZE);
         String formattedRating = String.format("%-" + MOVIE_RATING_SIZE + "s", movie.getRating() == null ? "" : movie.getRating()).substring(0, MOVIE_PATH_SIZE);
@@ -94,12 +94,13 @@ public class MovieLocalDAO implements MovieDAOInterface {
                 for (int i = 0; i < MOVIE_NAME_SIZE; i++)
                     movieName.append(raf.readChar());
                 if (movieName.toString().equals(emptyNameValue)) {
-                    raf.seek(raf.getFilePointer() - MOVIE_NAME_SIZE * 2);
+                    raf.seek(raf.getFilePointer() - MOVIE_NAME_SIZE * 2 -4);
+                    var movie_id=raf.readInt();
                     raf.writeChars(formattedName);
                     raf.writeChars(formattedPath);
                     raf.writeChars(formattedRating);
                     raf.writeInt(movie.getCategoryId());
-                    return;
+                    return movie_id;
                 } else raf.skipBytes(MOVIE_PATH_SIZE * 2 + MOVIE_RATING_SIZE * 2 + 4);
             }
             raf.seek(raf.length() - (MOVIE_NAME_SIZE * 2) - (MOVIE_PATH_SIZE * 2) - (MOVIE_RATING_SIZE * 2) - 8);
@@ -110,6 +111,7 @@ public class MovieLocalDAO implements MovieDAOInterface {
             raf.writeChars(formattedPath);
             raf.writeChars(formattedRating);
             raf.writeInt(movie.getCategoryId());
+            return index;
         }
     }
 
