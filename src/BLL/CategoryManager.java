@@ -120,10 +120,10 @@ public class CategoryManager {
     }
 
     /**
-     * Sends information to delete a song from category
+     * Sends information to delete a movie from category
      *
-     * @param category_id the id of the playlist
-     * @param movie_id    the id of the song
+     * @param category_id the id of the category
+     * @param movie_id    the id of the movie
      * @throws Exception if something went wrong.
      */
     public void deleteMovieFromCategory(int category_id, int movie_id) throws Exception {
@@ -131,9 +131,9 @@ public class CategoryManager {
     }
 
     /**
-     * Sends information to update playlist
+     * Sends information to update category
      *
-     * @param category the playlist
+     * @param category the category
      * @throws Exception if something went wrong.
      */
     public void updateCategory(Category category) throws Exception {
