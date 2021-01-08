@@ -195,7 +195,7 @@ public class MainViewController implements Initializable {
             if (event.getClickCount() == 2 && selectedMovieInCategory != null) {
                 try {
                     var lastView_date = new Date(System.currentTimeMillis());
-                    String pattern = "MM-dd-yyyy  HH:mm:ss";
+                    String pattern = "dd/MM/yyyy  HH:mm:ss";
                     var simpleDateFormat = new SimpleDateFormat(pattern);
                     String date = simpleDateFormat.format(lastView_date);
 
@@ -233,7 +233,7 @@ public class MainViewController implements Initializable {
             if (event.getClickCount() == 2 && selectedMovie != null) {
                 try {
                     var lastView_date = new Date(System.currentTimeMillis());
-                    String pattern = "MM-dd-yyyy  HH:mm:ss";
+                    String pattern = "dd/MM/yyyy  HH:mm:ss";
                     var simpleDateFormat = new SimpleDateFormat(pattern);
                     String date = simpleDateFormat.format(lastView_date);
 
