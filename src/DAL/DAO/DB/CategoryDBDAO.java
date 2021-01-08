@@ -79,7 +79,7 @@ public class CategoryDBDAO implements CategoryDAOInterface {
         var sql = "";
         switch (database.getConnectionType()) {
             case 0 -> sql = "INSERT INTO [dbo].[category] ([category_name]) VALUES(?);";
-            case 1 -> sql = "INSERT INTO category (cateogory_name) VALUES(?);";
+            case 1 -> sql = "INSERT INTO category (category_name) VALUES(?);";
         }
         try (var con = database.getConnection();
              PreparedStatement st = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {

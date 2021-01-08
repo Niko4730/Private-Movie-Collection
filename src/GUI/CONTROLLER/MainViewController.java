@@ -25,6 +25,8 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -64,6 +66,9 @@ public class MainViewController implements Initializable {
     private TableColumn<Movie, String> movieTableRatingColumn;
     @FXML
     private TableColumn<Movie, String> movieTableTimeColumn;
+    @FXML
+    private TableColumn<Movie, String> movieTablelastViewColumn;
+
     private Movie selectedMovie;
     private Movie selectedMovieInCategory;
     private Category selectedCategory;
@@ -142,6 +147,7 @@ public class MainViewController implements Initializable {
         movieTableTitleColumn.setCellValueFactory(cellData -> cellData.getValue().titleProperty());
         movieTableRatingColumn.setCellValueFactory(cellData -> cellData.getValue().ratingProperty());
         movieTableTimeColumn.setCellValueFactory(cellData -> cellData.getValue().durationStringProperty());
+        movieTablelastViewColumn.setCellValueFactory(cellData -> cellData.getValue().lastViewProperty());
 
         CategoryMoviesColumn.setCellValueFactory(cellData -> cellData.getValue() == null ? new SimpleStringProperty("") : cellData.getValue().titleProperty());
         ratingMovieInCategoryColumn.setCellValueFactory(cellData -> cellData.getValue() == null ? new SimpleStringProperty("") : cellData.getValue().ratingProperty());
@@ -168,7 +174,6 @@ public class MainViewController implements Initializable {
         }));
     }
 
-
     /**
      * Changes selected movie in the category to the movie clicked on the moviesInCategoryTable
      */
@@ -180,6 +185,30 @@ public class MainViewController implements Initializable {
                 this.movieTable.getSelectionModel().clearSelection();
             }
         }));
+
+        // Play the selected video in the default media player.
+        /** References:
+         /* https://stackoverflow.com/questions/16437951/playing-streaming-video-using-default-media-player
+         /* https://stackoverflow.com/questions/26563390/detect-doubleclick-on-row-of-tableview-javafx
+         */
+        this.moviesInCategoryTable.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2 && selectedMovieInCategory != null) {
+                try {
+                    var lastView_date = new Date(System.currentTimeMillis());
+                    String pattern = "MM-dd-yyyy  HH:mm:ss";
+                    var simpleDateFormat = new SimpleDateFormat(pattern);
+                    String date = simpleDateFormat.format(lastView_date);
+
+                    selectedMovieInCategory.setLastView(date);
+                    getMovieManager().updateMovie(selectedMovieInCategory);
+                    Desktop.getDesktop().open(new File(selectedMovieInCategory.getFilePath()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     /**
@@ -194,6 +223,7 @@ public class MainViewController implements Initializable {
             }
         }));
 
+
         // Play the selected video in the default media player.
         /** References:
          /* https://stackoverflow.com/questions/16437951/playing-streaming-video-using-default-media-player
@@ -202,8 +232,17 @@ public class MainViewController implements Initializable {
         this.movieTable.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2 && selectedMovie != null) {
                 try {
+                    var lastView_date = new Date(System.currentTimeMillis());
+                    String pattern = "MM-dd-yyyy  HH:mm:ss";
+                    var simpleDateFormat = new SimpleDateFormat(pattern);
+                    String date = simpleDateFormat.format(lastView_date);
+
+                    selectedMovie.setLastView(date);
+                    getMovieManager().updateMovie(selectedMovie);
                     Desktop.getDesktop().open(new File(selectedMovie.getFilePath()));
                 } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
