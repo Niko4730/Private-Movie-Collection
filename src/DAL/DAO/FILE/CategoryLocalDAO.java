@@ -14,8 +14,8 @@ public class CategoryLocalDAO implements CategoryDAOInterface {
     private static final int CATEGORYNAMESIZE = 100;
     private static final String emptyValue = String.format("%-" + CATEGORYNAMESIZE + "s", -1);
     private static final int emptyIntValue = -1;
-    private static final String LOCAL_CATEGORY_PATH = "Data/localPlaylists.data";
-    private static final String LOCAL_CATEGORY_MOVIE = "Data/localPlaylist_song.data";
+    private static final String LOCAL_CATEGORY_PATH = "Data/localCategory.data";
+    private static final String LOCAL_CATEGORY_MOVIE = "Data/localCategory_movie.data";
 
     @Override
     public void setCategoryManager(CategoryManager categoryManager) {
