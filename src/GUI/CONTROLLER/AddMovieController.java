@@ -85,7 +85,7 @@ public class AddMovieController extends Component implements Initializable {
             fileChooser.setFileFilter(new FileNameExtensionFilter("Mp4 file", "mp4"));
             int result = fileChooser.showOpenDialog(this);
             if (result == JFileChooser.APPROVE_OPTION) {
-                File selectedFile = fileChooser.getSelectedFile();
+                File selectedFile = fileChooser.getSelectedFile().getAbsoluteFile();
 
                 var fileName = selectedFile.getName();
                 var fileNameNoExt = fileName.lastIndexOf('.') > 0 ? fileName.substring(0, fileName.lastIndexOf('.')) : fileName;

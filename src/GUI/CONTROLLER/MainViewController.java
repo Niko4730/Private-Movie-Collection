@@ -504,19 +504,21 @@ public class MainViewController implements Initializable {
     public int createMovie(Movie movie) {
         try {
             for(Movie movie1:movies){
-                if(CONVENIENT_UTILS.titleDiff(movie.getTitle(),movie1.getTitle())< CHAR_SIMILARITY_LIM) {
+                if(CONVENIENT_UTILS.titleDiff(movie.getTitle(),movie1.getTitle()) < CHAR_SIMILARITY_LIM) {
                 var result = InputAlert.showMessageBox("Are you sure?", "There is a movie, that looks similar", movie.getTitle() + " looks an awful lot like " + movie1.getTitle(), Alert.AlertType.CONFIRMATION);
                 if(result.get() == ButtonType.OK){
                     movies.add(movie);
                     return MOVIE_MANAGER.createMovie(movie);
                 }
+                else return -1;
             }
             }
+            movies.add(movie);
+            return MOVIE_MANAGER.createMovie(movie);
         } catch (Exception e) {
             e.printStackTrace();
             return -1;
         }
-        return -1;
     }
 
     /**
@@ -686,7 +688,22 @@ public class MainViewController implements Initializable {
     }
 
     public void viewMovieOrWhatever() {
+        if (selectedMovie != null) {
+            try {
+                var lastView_date = new Date(System.currentTimeMillis());
+                String pattern = "dd/MM/yyyy  HH:mm:ss";
+                var simpleDateFormat = new SimpleDateFormat(pattern);
+                String date = simpleDateFormat.format(lastView_date);
 
+                selectedMovie.setLastView(date);
+                getMovieManager().updateMovie(selectedMovie);
+                Desktop.getDesktop().open(new File(selectedMovie.getFilePath()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 
