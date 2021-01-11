@@ -85,6 +85,8 @@ public class MainViewController implements Initializable {
     private static final MovieManager MOVIE_MANAGER = new MovieManager();
     private static final MoviePlayer MOVIE_PLAYER = new MoviePlayer();
     private static final ConvenientUtils CONVENIENT_UTILS = new ConvenientUtils();
+    private static final InputAlert INPUT_ALERT = new InputAlert();
+    private static final int CHAR_SIMILARITY_LIM = 5;
 
     /**
      * Constructor
@@ -169,8 +171,10 @@ public class MainViewController implements Initializable {
                     var moviesInCat=CATEGORY_MANAGER.loadMoviesInCategory(selectedCategory.getCategoryId());
                     if (!moviesInCat.isEmpty())
                         this.categoryMovies = FXCollections.observableArrayList(moviesInCat);
-                    else
+                    else{
+                        if(categoryMovies!=null)
                         categoryMovies.clear();
+                    }
                     moviesInCategoryTable.setItems(categoryMovies);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -494,17 +498,25 @@ public class MainViewController implements Initializable {
 
     /**
      * Creates a movie
-     *
+     * Also checks if the movies looks similar to other movies contained in the movies list
      * @param movie the movie
      */
     public int createMovie(Movie movie) {
         try {
-            movies.add(movie);
-            return MOVIE_MANAGER.createMovie(movie);
+            for(Movie movie1:movies){
+                if(CONVENIENT_UTILS.titleDiff(movie.getTitle(),movie1.getTitle())< CHAR_SIMILARITY_LIM) {
+                var result = InputAlert.showMessageBox("Are you sure?", "There is a movie, that looks similar", movie.getTitle() + " looks an awful lot like " + movie1.getTitle(), Alert.AlertType.CONFIRMATION);
+                if(result.get() == ButtonType.OK){
+                    movies.add(movie);
+                    return MOVIE_MANAGER.createMovie(movie);
+                }
+            }
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return -1;
         }
+        return -1;
     }
 
     /**
