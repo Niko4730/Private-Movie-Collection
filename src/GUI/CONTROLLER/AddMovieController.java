@@ -89,7 +89,7 @@ public class AddMovieController extends Component implements Initializable {
 
                 var fileName = selectedFile.getName();
                 var fileNameNoExt = fileName.lastIndexOf('.') > 0 ? fileName.substring(0, fileName.lastIndexOf('.')) : fileName;
-                var filePath = selectedFile.getAbsolutePath();
+                var filePath = selectedFile.getAbsolutePath().contains("\\Data\\")?selectedFile.getAbsolutePath().substring(selectedFile.getAbsolutePath().indexOf("Data\\")):selectedFile.getAbsolutePath();
 
                 movieToAdd = new Movie();
                 movieToAdd.setFilePath(filePath);
