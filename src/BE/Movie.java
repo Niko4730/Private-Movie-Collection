@@ -44,11 +44,11 @@ public class Movie {
     }
 
     /**
-     * Initialize a new Song instance.
+     * Initialize a new movie instance.
      *
      * @param id       The movie id
      * @param title    The movie title
-     * @param filePath The filepath of the song
+     * @param filePath The filepath of the movie
      */
     public Movie(int id, String title, String filePath) {
         initialize();
@@ -61,10 +61,10 @@ public class Movie {
     }
 
     /**
-     * Initialize a new Song instance.
+     * Initialize a new movie instance.
      *
      * @param title    The movie title
-     * @param filePath The filepath of the song
+     * @param filePath The filepath of the movie
      */
     public Movie(String title, String filePath) {
         initialize();
@@ -75,12 +75,12 @@ public class Movie {
     }
 
     /**
-     * Initialize a new Song instance.
+     * Initialize a new movie instance.
      *
-     * @param id           song id
-     * @param title        song title
-     * @param filePath     song filepath
-     * @param categoryName song category
+     * @param id           movie id
+     * @param title        movie title
+     * @param filePath     movie filepath
+     * @param categoryName movie category
      */
     public Movie(int id, String title, String filePath, String categoryName) {
         initialize();
@@ -94,13 +94,13 @@ public class Movie {
 
 
     /**
-     * Initialize a new Song instance.
+     * Initialize a new movie instance.
      *
-     * @param id           song id
-     * @param title        song title
-     * @param rating       song artist
-     * @param filePath     song filepath
-     * @param categoryName song categoryName
+     * @param id           movie id
+     * @param title        movie title
+     * @param rating       movie artist
+     * @param filePath     movie filepath
+     * @param categoryName movie categoryName
      */
     public Movie(int id, String title, String rating, String filePath, String categoryName) {
         initialize();
@@ -114,12 +114,12 @@ public class Movie {
     }
 
     /**
-     * Initialize a new Song instance.
+     * Initialize a new movie instance.
      *
-     * @param id       song id
-     * @param title    song title
-     * @param rating   song artist
-     * @param filePath song filepath
+     * @param id       movie id
+     * @param title    movie title
+     * @param rating   movie artist
+     * @param filePath movie filepath
      */
     public Movie(int id, String title, String filePath, String rating, int categoryId) {
         initialize();
@@ -133,12 +133,12 @@ public class Movie {
     }
 
     /**
-     * Initialize a new Song instance.
+     * Initialize a new movie instance.
      *
-     * @param id       song id
-     * @param title    song title
-     * @param rating   song artist
-     * @param filePath song filepath
+     * @param id       movie id
+     * @param title    movie title
+     * @param rating   movie artist
+     * @param filePath movie filepath
      */
     public Movie(int id, String title, String filePath, String lastView, String rating, int categoryId, double duration) {
         initialize();
@@ -154,12 +154,12 @@ public class Movie {
     }
 
     /**
-     * Initialize a new Song instance.
+     * Initialize a new movie instance.
      *
-     * @param id       song id
-     * @param title    song title
-     * @param rating   song artist
-     * @param filePath song filepath
+     * @param id       movie id
+     * @param title    movie title
+     * @param rating   movie artist
+     * @param filePath movie filepath
      */
     public Movie(int id, String title, String filePath, String rating, int categoryId, double duration) {
         initialize();
@@ -174,13 +174,13 @@ public class Movie {
     }
 
     /**
-     * Initialize a new Song instance.
+     * Initialize a new movie instance.
      *
-     * @param id           song id
-     * @param title        song title
-     * @param rating       song artist
-     * @param filePath     song filepath
-     * @param categoryName song categoryName
+     * @param id           movie id
+     * @param title        movie title
+     * @param rating       movie artist
+     * @param filePath     movie filepath
+     * @param categoryName movie categoryName
      */
     public Movie(int id, String title, String rating, String filePath, int categoryId, String categoryName) {
         initialize();
@@ -195,13 +195,13 @@ public class Movie {
     }
 
     /**
-     * Initialize a new Song instance.
+     * Initialize a new movie instance.
      *
-     * @param id           song id
-     * @param title        song title
-     * @param rating       song artist
-     * @param filePath     song filepath
-     * @param categoryName song categoryName
+     * @param id           movie id
+     * @param title        movie title
+     * @param rating       movie artist
+     * @param filePath     movie filepath
+     * @param categoryName movie categoryName
      */
     public Movie(int id, String title, String rating, String filePath, int categoryId, String categoryName, double duration) {
         initialize();
@@ -217,13 +217,13 @@ public class Movie {
     }
 
     /**
-     * Initialize a new Song instance.
+     * Initialize a new movie instance.
      *
-     * @param id           song id
-     * @param title        song title
-     * @param rating       song artist
-     * @param filePath     song filepath
-     * @param categoryName song categoryName
+     * @param id           movie id
+     * @param title        movie title
+     * @param rating       movie artist
+     * @param filePath     movie filepath
+     * @param categoryName movie categoryName
      */
     public Movie(int id, String title, String rating, String filePath, String lastView, int categoryId, String categoryName, double duration) {
         initialize();
@@ -293,7 +293,7 @@ public class Movie {
     /**
      * Gets the id property
      *
-     * @return the id property of the song
+     * @return the id property of the movie
      */
     public SimpleIntegerProperty idProperty() {
         return this.id;
@@ -302,7 +302,7 @@ public class Movie {
     /**
      * Sets the id
      *
-     * @param id the new id of the song
+     * @param id the new id of the movie
      */
     public void setId(int id) {
         this.id.set(id);
@@ -324,7 +324,7 @@ public class Movie {
     /**
      * Gets the categoryIdProperty
      *
-     * @return the category id property of the song
+     * @return the category id property of the movie
      */
     public SimpleIntegerProperty categoryIdProperty() {
         return this.categoryId;
@@ -333,7 +333,7 @@ public class Movie {
     /**
      * Sets the category id
      *
-     * @param id the id of the song
+     * @param id the id of the movie
      */
     public void setCategoryId(int id) {
         this.categoryId.set(id);
@@ -482,7 +482,7 @@ public class Movie {
     /**
      * Gets the category name property
      *
-     * @return the category name property of the song
+     * @return the category name property of the movie
      */
     public SimpleStringProperty categoryNameProperty() {
         return this.categoryName;
@@ -499,7 +499,7 @@ public class Movie {
     }
 
     /**
-     * Get the media associated with this Song.
+     * Get the media associated with this movie.
      *
      * @return
      */
@@ -508,7 +508,7 @@ public class Movie {
     }
 
     /**
-     * Is the song ready? Must be checked before adding or editing songs to ensure all meta tags get loaded properly.
+     * Is the movie ready? Must be checked before adding or editing movies to ensure all meta tags get loaded properly.
      *
      * @return
      */

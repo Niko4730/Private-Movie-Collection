@@ -41,9 +41,9 @@ public class MovieDBDAO implements MovieDAOInterface {
     }
 
     /**
-     * Tries to load all songs.
+     * Tries to load all movies.
      *
-     * @return all songs on the database or if there are no songs on the database an empty list.
+     * @return all movies on the database or if there are no movies on the database an empty list.
      * @throws SQLException if it cant get connection to the database or something went wrong.
      */
     @Override
@@ -73,9 +73,9 @@ public class MovieDBDAO implements MovieDAOInterface {
 
 
     /**
-     * tries to create a song.
+     * tries to create a movie.
      *
-     * @param movie the song.
+     * @param movie the movie.
      * @throws SQLException
      */
     @Override
@@ -103,10 +103,10 @@ public class MovieDBDAO implements MovieDAOInterface {
     }
 
     /**
-     * Tries to find a song with the given name.
+     * Tries to find a movie with the given name.
      *
-     * @param name the name of the song.
-     * @return A song with the name.
+     * @param name the name of the movie.
+     * @return A movie with the name.
      * @throws SQLException if it cant get connection to the database or something went wrong.
      */
     @Override
@@ -134,9 +134,9 @@ public class MovieDBDAO implements MovieDAOInterface {
     }
 
     /**
-     * Tries to delete a song with the given id.
+     * Tries to delete a movie with the given id.
      *
-     * @param id the id of the song.
+     * @param id the id of the movie.
      * @throws SQLException if it cant get connection to the database or something went wrong.
      */
     @Override
@@ -152,9 +152,9 @@ public class MovieDBDAO implements MovieDAOInterface {
     }
 
     /**
-     * Tries to update a Song.
+     * Tries to update a movie.
      *
-     * @param modified the modified version of the song.
+     * @param modified the modified version of the movie.
      * @throws SQLException if it cant get connection to the database or something went wrong.
      */
     @Override
@@ -176,10 +176,10 @@ public class MovieDBDAO implements MovieDAOInterface {
     }
 
     /**
-     * Tries to find a list of songs that contain search
+     * Tries to find a list of movies that contain search
      *
      * @param searchQuery the search string
-     * @return A list containing songs that match, or an empty list if no song matches.
+     * @return A list containing movies that match, or an empty list if no movie matches.
      */
     @Override
     public List<Movie> searchMovie(String searchQuery) {
