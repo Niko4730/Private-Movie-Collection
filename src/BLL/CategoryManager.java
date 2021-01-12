@@ -109,7 +109,7 @@ public class CategoryManager {
     }
 
     /**
-     * Sends information to add a song to category
+     * Sends information to add a movie to category
      *
      * @param category_id the id of the category
      * @param movie_id    the id of the movie

@@ -26,7 +26,7 @@ public class MovieLocalDAO implements MovieDAOInterface {
     private static final String emptyRatingValue = String.format("%-" + MOVIE_RATING_SIZE + "s", emptyIntValue);
 
     /**
-     * sets the song manager.
+     * sets the movie manager.
      *
      * @param movieManager
      */
@@ -36,9 +36,9 @@ public class MovieLocalDAO implements MovieDAOInterface {
     }
 
     /**
-     * Loads all songs in the files, makes sure the songs are not equal to the emptyValue
+     * Loads all movies in the files, makes sure the movies are not equal to the emptyValue
      *
-     * @return  A list of songs if there are any in the file or a empty list if there are no songs in the file.
+     * @return  A list of movies if there are any in the file or a empty list if there are no movies in the file.
      * @throws  IOException if something went wrong.
      */
     @Override
@@ -47,7 +47,7 @@ public class MovieLocalDAO implements MovieDAOInterface {
         List<Movie> tmp = new ArrayList<>();
         try (RandomAccessFile raf = new RandomAccessFile(file, "r")) {
             while (raf.getFilePointer() < raf.length()) {
-                int song_id = raf.readInt();
+                int movie_id = raf.readInt();
                 StringBuilder movieName = new StringBuilder();
                 StringBuilder path = new StringBuilder();
                 StringBuilder artist = new StringBuilder();
@@ -59,7 +59,7 @@ public class MovieLocalDAO implements MovieDAOInterface {
                     artist.append(raf.readChar());
                 int category_id = raf.readInt();
                 if (!movieName.toString().equals(emptyNameValue) && !path.toString().equals(emptyPathValue))
-                    tmp.add(new Movie(song_id, movieName.toString().trim(), artist.toString().trim(), path.toString().trim(), category_id, getCategories().get(category_id)));
+                    tmp.add(new Movie(movie_id, movieName.toString().trim(), artist.toString().trim(), path.toString().trim(), category_id, getCategories().get(category_id)));
             }
             return tmp;
         } catch (FileNotFoundException e) {
@@ -69,9 +69,9 @@ public class MovieLocalDAO implements MovieDAOInterface {
     }
 
     /**
-     * Tries to create a song, overwrites empty values if such exist. Auto increments and adds song if no emptyValues found.
+     * Tries to create a movie, overwrites empty values if such exist. Auto increments and adds movie if no emptyValues found.
      *
-     * @param   movie the song.
+     * @param   movie the movie.
      * @throws  IOException if something went wrong.
      */
     @Override
@@ -116,10 +116,10 @@ public class MovieLocalDAO implements MovieDAOInterface {
     }
 
     /**
-     * Finds a song in the file.
+     * Finds a movie in the file.
      *
-     * @param   name the name of the song you want to get
-     * @return  A song that has the given name.
+     * @param   name the name of the movie you want to get
+     * @return  A movie that has the given name.
      * @throws  IOException if something went wrong.
      */
     @Override
@@ -145,10 +145,10 @@ public class MovieLocalDAO implements MovieDAOInterface {
     }
 
     /**
-     * Finds a song in the file.
+     * Finds a movie in the file.
      *
-     * @param   id the id of the song you want to get
-     * @return  A song that has the given name.
+     * @param   id the id of the movie you want to get
+     * @return  A movie that has the given name.
      * @throws  IOException if something went wrong.
      */
     public Movie getMovie(int id) throws Exception {
@@ -173,9 +173,9 @@ public class MovieLocalDAO implements MovieDAOInterface {
     }
 
     /**
-     * Overwrites a song with matching id with emptyValues. Also overwrites the song matches from playlists with emptyIntValue
+     * Overwrites a movie with matching id with emptyValues. Also overwrites the movie matches from playlists with emptyIntValue
      *
-     * @param   id the id of the song you want to delete.
+     * @param   id the id of the movie you want to delete.
      * @throws  IOException if something went wrong.
      */
     @Override
@@ -204,9 +204,9 @@ public class MovieLocalDAO implements MovieDAOInterface {
     }
 
     /**
-     * Overwrites the song with the new values in modified.
+     * Overwrites the movie with the new values in modified.
      *
-     * @param   modified the modified song
+     * @param   modified the modified movie
      * @throws  IOException if something went wrong.
      */
     @Override
@@ -227,10 +227,10 @@ public class MovieLocalDAO implements MovieDAOInterface {
     }
 
     /**
-     * Searches for a song in the file
+     * Searches for a movie in the file
      *
      * @param   searchQuery the string you are searching for
-     * @return  A list of songs containing all matches, a empty list if no matches.
+     * @return  A list of movies containing all matches, a empty list if no matches.
      * @throws  IOException if something went wrong.
      */
     @Override

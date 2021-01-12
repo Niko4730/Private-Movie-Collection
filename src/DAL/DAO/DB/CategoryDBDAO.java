@@ -37,7 +37,7 @@ public class CategoryDBDAO implements CategoryDAOInterface {
     /**
      * Tries to load the movies from the database.
      *
-     * @return A list of the movies in the database or a empty list if the database has no songs.
+     * @return A list of the movies in the database or a empty list if the database has no movies.
      * @throws SQLException if it cant get connection to the database or something went wrong.
      */
     @Override
@@ -140,8 +140,8 @@ public class CategoryDBDAO implements CategoryDAOInterface {
     /**
      * Tries to load movies from a category, by looking for id matches
      *
-     * @param category_id the id of the category whose songs you are looking for.
-     * @return a list of songs if theres a positive match for the category, an empty category otherwise.
+     * @param category_id the id of the category whose movies you are looking for.
+     * @return a list of movies if theres a positive match for the category, an empty category otherwise.
      * @throws SQLException if it cannot connect to the database or something went wrong.
      */
     @Override
@@ -173,10 +173,10 @@ public class CategoryDBDAO implements CategoryDAOInterface {
 
 
     /**
-     * Tries to add a song to a playlist
+     * Tries to add a movies to a playlist
      *
-     * @param category_id the id of the playlist you want to add a song to.
-     * @param movie_id    the id of the song you want to add to the playlist.
+     * @param category_id the id of the playlist you want to add a movies to.
+     * @param movie_id    the id of the movies you want to add to the playlist.
      * @throws SQLException if it cannot connect to the database or something went wrong.
      */
     @Override
