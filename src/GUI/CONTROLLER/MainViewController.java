@@ -483,7 +483,7 @@ public class MainViewController implements Initializable {
             dialog = loader.load();
             AddMovieController controller = loader.getController();
             controller.setMainController(this);
-            controller.setGenreComboBox(MOVIE_MANAGER.getGenres());
+            controller.setGenreComboBox(MOVIE_MANAGER.getCategories());
             windowStage = new Stage();
             windowStage.setScene(new Scene(dialog));
             windowStage.initModality(Modality.APPLICATION_MODAL);
@@ -553,7 +553,7 @@ public class MainViewController implements Initializable {
                 dialog = loader.load();
                 EditMovieController controller = loader.getController();
                 controller.setMainController(this);
-                controller.setGenreComboBox(MOVIE_MANAGER.getGenres());
+                controller.setGenreComboBox(MOVIE_MANAGER.getCategories());
                 controller.setSelectedMovie(selectedMovie);
                 windowStage = new Stage();
                 windowStage.setScene(new Scene(dialog));
