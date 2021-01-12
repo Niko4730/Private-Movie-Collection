@@ -37,9 +37,9 @@ public class MovieManager {
     }
 
     /**
-     * Sets the value of songDAO
+     * Sets the value of movieDAO
      *
-     * @param movieDAO new value of songDAO
+     * @param movieDAO new value of movieDAO
      */
     public void setMovieDAO(MovieDAOInterface movieDAO) {
         MovieManager.movieDAO = movieDAO;
@@ -55,9 +55,9 @@ public class MovieManager {
     }
 
     /**
-     * Loads songs
+     * Loads movies
      *
-     * @return              a list of the songs
+     * @return              a list of the movies
      * @throws Exception    if something went wrong
      */
     public List<Movie> loadMovies() throws Exception {
@@ -65,9 +65,9 @@ public class MovieManager {
     }
 
     /**
-     * Sends information to create a song
+     * Sends information to create a movies
      *
-     * @param movie          the new song
+     * @param movie          the new movies
      * @throws Exception    if something went wrong
      */
     public int createMovie(Movie movie) throws Exception {
@@ -75,10 +75,10 @@ public class MovieManager {
     }
 
     /**
-     * Gets the value of song name
+     * Gets the value of movies name
      *
-     * @param   name new value of song name
-     * @return  the value of song name
+     * @param   name new value of movies name
+     * @return  the value of movies name
      * @throws Exception if something went wrong
      */
     public Movie getMovie(String name) throws Exception {
@@ -86,9 +86,9 @@ public class MovieManager {
     }
 
     /**
-     * Sends information to update song
+     * Sends information to update movies
      *
-     * @param modified      the modified song
+     * @param modified      the modified movies
      * @throws Exception    if something went wrong
      */
     public void updateMovie(Movie modified) throws Exception {
@@ -96,9 +96,9 @@ public class MovieManager {
     }
 
     /**
-     * Sends information to delete song
+     * Sends information to delete movies
      *
-     * @param id            the song id
+     * @param id            the movies id
      * @throws Exception    if something went wrong
      */
     public void deleteMovie(int id) throws Exception {
@@ -106,7 +106,7 @@ public class MovieManager {
     }
 
     /**
-     * Searches trough the songs
+     * Searches trough the movies
      *
      * @param search        the searchQuery
      * @return              the list that contains the search query

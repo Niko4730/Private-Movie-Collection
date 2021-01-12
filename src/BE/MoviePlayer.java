@@ -28,18 +28,18 @@ public class MoviePlayer {
     }
 
     /**
-     * Get the id of song
+     * Get the id of movie
      *
-     * @return the value of song.
+     * @return the value of movie.
      */
     public Movie getMovie() {
         return movie;
     }
 
     /**
-     * Set the value of song
+     * Set the value of movie
      *
-     * @param movie new value of song
+     * @param movie new value of movie
      */
     public void setMovie(Movie movie) {
         if (movie != null && this.movie != movie) {
