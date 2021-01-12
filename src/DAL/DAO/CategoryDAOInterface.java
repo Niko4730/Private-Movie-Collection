@@ -10,7 +10,7 @@ public interface CategoryDAOInterface {
     /**
      * Sets the categoryManager
      *
-     * @param categoryManager the playlistManager
+     * @param categoryManager the categoryManager
      */
     void setCategoryManager(CategoryManager categoryManager);
 
@@ -50,10 +50,10 @@ public interface CategoryDAOInterface {
     void deleteCategory(Category category) throws Exception;
 
     /**
-     * Loads the songs on the category
+     * Loads the movies on the category
      *
      * @param   category_id the id of the category
-     * @return  A list of songs on the category
+     * @return  A list of movies on the category
      * @throws  Exception if something went wrong.
      */
     List<Movie> loadMoviesFromCategory(int category_id) throws Exception;
@@ -62,17 +62,17 @@ public interface CategoryDAOInterface {
      * Adds a movie to the category
      *
      * @param   category_id the category you want to add a movie to
-     * @param   movie_id the song you want to add
+     * @param   movie_id the movie you want to add
      * @throws  Exception if something went wrong.
      */
 
     void AddMovieToCategory(int category_id,int movie_id) throws Exception;
 
     /**
-     * Removes a song from the category
+     * Removes a movie from the category
      *
      * @param   category_id the id of the category you want to remove the movie from
-     * @param   movie_id the id of the song you want to remove
+     * @param   movie_id the id of the movie you want to remove
      * @throws  Exception if something went wrong.
      */
 

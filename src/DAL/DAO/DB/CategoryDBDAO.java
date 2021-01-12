@@ -37,7 +37,7 @@ public class CategoryDBDAO implements CategoryDAOInterface {
     /**
      * Tries to load the movies from the database.
      *
-     * @return A list of the movies in the database or a empty list if the database has no songs.
+     * @return A list of the movies in the database or a empty list if the database has no movies.
      * @throws SQLException if it cant get connection to the database or something went wrong.
      */
     @Override
@@ -140,8 +140,8 @@ public class CategoryDBDAO implements CategoryDAOInterface {
     /**
      * Tries to load movies from a category, by looking for id matches
      *
-     * @param category_id the id of the category whose songs you are looking for.
-     * @return a list of songs if theres a positive match for the category, an empty category otherwise.
+     * @param category_id the id of the category whose movies you are looking for.
+     * @return a list of movies if theres a positive match for the category, an empty category otherwise.
      * @throws SQLException if it cannot connect to the database or something went wrong.
      */
     @Override
@@ -173,10 +173,10 @@ public class CategoryDBDAO implements CategoryDAOInterface {
 
 
     /**
-     * Tries to add a song to a playlist
+     * Tries to add a movies to a category
      *
-     * @param category_id the id of the playlist you want to add a song to.
-     * @param movie_id    the id of the song you want to add to the playlist.
+     * @param category_id the id of the category you want to add a movies to.
+     * @param movie_id    the id of the movies you want to add to the category.
      * @throws SQLException if it cannot connect to the database or something went wrong.
      */
     @Override
@@ -225,13 +225,13 @@ public class CategoryDBDAO implements CategoryDAOInterface {
      */
     @Override
     public void updateCategory(Category category) throws SQLException {
-        String sql = "UPDATE playlist SET playlist_name=? WHERE playlist_id=?;";
+        String sql = "UPDATE category SET category_name=? WHERE category_id=?;";
         try (var con = database.getConnection();
              PreparedStatement preparedStatement = con.prepareStatement(sql)) {
             preparedStatement.setString(1, category.getCategoryName());
             preparedStatement.setInt(2, category.getCategoryId());
             if (preparedStatement.executeUpdate() != 1) {
-                System.out.println("Could not update playlist: " + category.toString());
+                System.out.println("Could not update category: " + category.toString());
             }
         } catch (SQLNonTransientConnectionException | NullPointerException e) {
             categoryManager.goLocal();

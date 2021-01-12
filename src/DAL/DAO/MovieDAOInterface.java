@@ -8,49 +8,49 @@ import java.util.Map;
 
 public interface MovieDAOInterface {
     /**
-     * Sets the song manager
+     * Sets the movie manager
      *
-     * @param movieManager the song manager
+     * @param movieManager the movie manager
      */
     void setMovieManager(MovieManager movieManager);
 
     /**
-     * Loads all songs
+     * Loads all movies
      *
-     * @return  A list of songs
+     * @return  A list of movies
      * @throws  Exception If something went wrong
      */
     List<Movie> loadMovies() throws Exception;
 
     /**
-     * Creates a new song
+     * Creates a new movie
      *
-     * @param   movie the new song
+     * @param   movie the new movie
      * @throws  Exception If something went wrong
      */
     int createMovie(Movie movie) throws Exception;
 
     /**
-     * Gets a song
+     * Gets a movie
      *
-     * @param   name the name of teh song you wanted
-     * @return  the song
+     * @param   name the name of teh movie you wanted
+     * @return  the movie
      * @throws  Exception If something went wrong
      */
     Movie getMovie(String name) throws Exception;
 
     /**
-     * Deletes a song
+     * Deletes a movie
      *
-     * @param   id the id of the song you want to delete
+     * @param   id the id of the movie you want to delete
      * @throws  Exception If something went wrong
      */
     void deleteMovie(int id) throws Exception;
 
     /**
-     * modifies a song
+     * modifies a movie
      *
-     * @param   modified     the modified song
+     * @param   modified     the modified movie
      * @throws  Exception    if something went wrong
      */
     void updateMovie(Movie modified) throws Exception;
@@ -59,7 +59,7 @@ public interface MovieDAOInterface {
      * Searches for a string
      *
      * @param   searchQuery     the string you are searching
-     * @return                  a list of songs, that matches the searchQuery
+     * @return                  a list of movies, that matches the searchQuery
      * @throws  Exception       if something went wrong
      */
     List<Movie> searchMovie(String searchQuery) throws Exception;
