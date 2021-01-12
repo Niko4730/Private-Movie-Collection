@@ -173,10 +173,10 @@ public class CategoryDBDAO implements CategoryDAOInterface {
 
 
     /**
-     * Tries to add a movies to a playlist
+     * Tries to add a movies to a category
      *
-     * @param category_id the id of the playlist you want to add a movies to.
-     * @param movie_id    the id of the movies you want to add to the playlist.
+     * @param category_id the id of the category you want to add a movies to.
+     * @param movie_id    the id of the movies you want to add to the category.
      * @throws SQLException if it cannot connect to the database or something went wrong.
      */
     @Override
@@ -225,13 +225,13 @@ public class CategoryDBDAO implements CategoryDAOInterface {
      */
     @Override
     public void updateCategory(Category category) throws SQLException {
-        String sql = "UPDATE playlist SET playlist_name=? WHERE playlist_id=?;";
+        String sql = "UPDATE category SET category_name=? WHERE category_id=?;";
         try (var con = database.getConnection();
              PreparedStatement preparedStatement = con.prepareStatement(sql)) {
             preparedStatement.setString(1, category.getCategoryName());
             preparedStatement.setInt(2, category.getCategoryId());
             if (preparedStatement.executeUpdate() != 1) {
-                System.out.println("Could not update playlist: " + category.toString());
+                System.out.println("Could not update category: " + category.toString());
             }
         } catch (SQLNonTransientConnectionException | NullPointerException e) {
             categoryManager.goLocal();

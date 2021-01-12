@@ -55,8 +55,8 @@ public class CategoryLocalDAO implements CategoryDAOInterface {
     }
 
     /**
-     * Tries to load categories, ignores playlists with emptyValue, creates file if the file does not exist.
-     * makes sure there is a file to overwrite, when creating a playlist.
+     * Tries to load categories, ignores categories with emptyValue, creates file if the file does not exist.
+     * makes sure there is a file to overwrite, when creating a category.
      *
      * @return A list of categories, an empty list if no categories exist.
      * @throws IOException if something went wrong.
@@ -110,7 +110,7 @@ public class CategoryLocalDAO implements CategoryDAOInterface {
     /**
      * Tries to overwrite a category with emptyValue, and deletes movies all movies from the category.
      *
-     * @param category the playlist.
+     * @param category the category.
      * @throws IOException if something went wrong.
      */
     @Override
@@ -146,7 +146,7 @@ public class CategoryLocalDAO implements CategoryDAOInterface {
     }
 
     /**
-     * Tries to load movies from the playlist with category id.
+     * Tries to load movies from the category with category id.
      *
      * @param category_id the id of the category you want to load.
      * @return A list of Movies in the Category, a empty list if there and no movies in the category.

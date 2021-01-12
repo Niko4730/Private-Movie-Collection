@@ -173,7 +173,7 @@ public class MovieLocalDAO implements MovieDAOInterface {
     }
 
     /**
-     * Overwrites a movie with matching id with emptyValues. Also overwrites the movie matches from playlists with emptyIntValue
+     * Overwrites a movie with matching id with emptyValues. Also overwrites the movie matches from categories with emptyIntValue
      *
      * @param   id the id of the movie you want to delete.
      * @throws  IOException if something went wrong.

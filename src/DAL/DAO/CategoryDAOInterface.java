@@ -10,7 +10,7 @@ public interface CategoryDAOInterface {
     /**
      * Sets the categoryManager
      *
-     * @param categoryManager the playlistManager
+     * @param categoryManager the categoryManager
      */
     void setCategoryManager(CategoryManager categoryManager);
 
