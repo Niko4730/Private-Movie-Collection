@@ -8,10 +8,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class MovieLocalDAO implements MovieDAOInterface {
     private MovieManager movieManager;
@@ -38,8 +38,8 @@ public class MovieLocalDAO implements MovieDAOInterface {
     /**
      * Loads all movies in the files, makes sure the movies are not equal to the emptyValue
      *
-     * @return  A list of movies if there are any in the file or a empty list if there are no movies in the file.
-     * @throws  IOException if something went wrong.
+     * @return A list of movies if there are any in the file or a empty list if there are no movies in the file.
+     * @throws IOException if something went wrong.
      */
     @Override
     public List<Movie> loadMovies() throws Exception {
@@ -71,8 +71,8 @@ public class MovieLocalDAO implements MovieDAOInterface {
     /**
      * Tries to create a movie, overwrites empty values if such exist. Auto increments and adds movie if no emptyValues found.
      *
-     * @param   movie the movie.
-     * @throws  IOException if something went wrong.
+     * @param movie the movie.
+     * @throws IOException if something went wrong.
      */
     @Override
     public int createMovie(Movie movie) throws IOException {
@@ -94,8 +94,8 @@ public class MovieLocalDAO implements MovieDAOInterface {
                 for (int i = 0; i < MOVIE_NAME_SIZE; i++)
                     movieName.append(raf.readChar());
                 if (movieName.toString().equals(emptyNameValue)) {
-                    raf.seek(raf.getFilePointer() - MOVIE_NAME_SIZE * 2 -4);
-                    var movie_id=raf.readInt();
+                    raf.seek(raf.getFilePointer() - MOVIE_NAME_SIZE * 2 - 4);
+                    var movie_id = raf.readInt();
                     raf.writeChars(formattedName);
                     raf.writeChars(formattedPath);
                     raf.writeChars(formattedRating);
@@ -118,9 +118,9 @@ public class MovieLocalDAO implements MovieDAOInterface {
     /**
      * Finds a movie in the file.
      *
-     * @param   name the name of the movie you want to get
-     * @return  A movie that has the given name.
-     * @throws  IOException if something went wrong.
+     * @param name the name of the movie you want to get
+     * @return A movie that has the given name.
+     * @throws IOException if something went wrong.
      */
     @Override
     public Movie getMovie(String name) throws Exception {
@@ -147,9 +147,9 @@ public class MovieLocalDAO implements MovieDAOInterface {
     /**
      * Finds a movie in the file.
      *
-     * @param   id the id of the movie you want to get
-     * @return  A movie that has the given name.
-     * @throws  IOException if something went wrong.
+     * @param id the id of the movie you want to get
+     * @return A movie that has the given name.
+     * @throws IOException if something went wrong.
      */
     public Movie getMovie(int id) throws Exception {
         try (RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_MOVIE_PATH), "r")) {
@@ -175,8 +175,8 @@ public class MovieLocalDAO implements MovieDAOInterface {
     /**
      * Overwrites a movie with matching id with emptyValues. Also overwrites the movie matches from categories with emptyIntValue
      *
-     * @param   id the id of the movie you want to delete.
-     * @throws  IOException if something went wrong.
+     * @param id the id of the movie you want to delete.
+     * @throws IOException if something went wrong.
      */
     @Override
     public void deleteMovie(int id) throws IOException {
@@ -206,8 +206,8 @@ public class MovieLocalDAO implements MovieDAOInterface {
     /**
      * Overwrites the movie with the new values in modified.
      *
-     * @param   modified the modified movie
-     * @throws  IOException if something went wrong.
+     * @param modified the modified movie
+     * @throws IOException if something went wrong.
      */
     @Override
     public void updateMovie(Movie modified) throws IOException {
@@ -229,9 +229,9 @@ public class MovieLocalDAO implements MovieDAOInterface {
     /**
      * Searches for a movie in the file
      *
-     * @param   searchQuery the string you are searching for
-     * @return  A list of movies containing all matches, a empty list if no matches.
-     * @throws  IOException if something went wrong.
+     * @param searchQuery the string you are searching for
+     * @return A list of movies containing all matches, a empty list if no matches.
+     * @throws IOException if something went wrong.
      */
     @Override
     public List<Movie> searchMovie(String searchQuery) throws Exception {
@@ -261,8 +261,8 @@ public class MovieLocalDAO implements MovieDAOInterface {
     /**
      * gets the map of genres
      *
-     * @return  a map of genres
-     * @throws  Exception if something went wrong
+     * @return a map of genres
+     * @throws Exception if something went wrong
      */
     @Override
     public Map<Integer, String> getCategories() throws Exception {
@@ -282,4 +282,37 @@ public class MovieLocalDAO implements MovieDAOInterface {
         return tmp;
     }
 
+    /**
+     * Gets all movies that's older than 2 years with a rating below 6.
+     *
+     * @return The old movies.
+     */
+    public List<Movie> getOldMovies() {
+        List<Movie> resultMovies = new ArrayList<>();
+        try {
+            List<Movie> temp = new ArrayList<>();
+            if (temp.size() > 0) {
+                String pattern = "dd/MM/yyyy  HH:mm:ss";
+                var dateFormatter = new SimpleDateFormat(pattern);
+                var currentDate = new Date();
+                var currentYear = currentDate.getYear();
+
+                for (int i = 0; i < temp.size(); i++) {
+                    var movie = temp.get(i);
+                    var lastView = movie.getLastView();
+                    var lastViewDate = dateFormatter.parse(lastView);
+                    var lastViewYear = lastViewDate.getYear();
+                    var rating = Double.parseDouble(movie.getRating());
+                    if (rating < 6 && lastViewYear + 2 < currentYear) {
+                        if (!resultMovies.contains(movie)) resultMovies.add(movie);
+                        System.out.println(String.format("Movie: %s is over two years old!", movie.getTitle()));
+                    }
+                }
+            }
+            return resultMovies;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

@@ -8,8 +8,10 @@ import DAL.DB.DbConnectionHandler;
 import java.io.File;
 import java.io.RandomAccessFile;
 import java.sql.*;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -238,5 +240,35 @@ public class MovieDBDAO implements MovieDAOInterface {
             movieManager.goLocal();
             return temp;
         }
+    }
+
+    public List<Movie> getOldMovies() {
+        List<Movie> resultMovies = new ArrayList<>();
+        try {
+            var temp = loadMovies();
+            if (temp.size() > 0) {
+                String pattern = "dd/MM/yyyy  HH:mm:ss";
+                var dateFormatter = new SimpleDateFormat(pattern);
+                var currentDate = new Date();
+                var currentYear = currentDate.getYear();
+
+                for (int i = 0; i < temp.size(); i++) {
+                    var movie = temp.get(i);
+                    var lastView = movie.getLastView();
+                    var lastViewDate = dateFormatter.parse(lastView);
+                    var lastViewYear = lastViewDate.getYear();
+                    var rating = Double.parseDouble(movie.getRating());
+                    if (rating < 6 && lastViewYear + 2 < currentYear) {
+                        if (!resultMovies.contains(movie)) resultMovies.add(movie);
+                        System.out.println(String.format("Movie: %s is over two years old!", movie.getTitle()));
+                    }
+                }
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return resultMovies;
     }
 }

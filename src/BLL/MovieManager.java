@@ -5,6 +5,7 @@ import DAL.DAO.DB.MovieDBDAO;
 import DAL.DAO.FILE.MovieLocalDAO;
 import DAL.DAO.MovieDAOInterface;
 import GUI.CONTROLLER.MainViewController;
+
 import java.util.List;
 import java.util.Map;
 
@@ -57,8 +58,8 @@ public class MovieManager {
     /**
      * Loads movies
      *
-     * @return              a list of the movies
-     * @throws Exception    if something went wrong
+     * @return a list of the movies
+     * @throws Exception if something went wrong
      */
     public List<Movie> loadMovies() throws Exception {
         return movieDAO.loadMovies();
@@ -67,8 +68,8 @@ public class MovieManager {
     /**
      * Sends information to create a movies
      *
-     * @param movie          the new movies
-     * @throws Exception    if something went wrong
+     * @param movie the new movies
+     * @throws Exception if something went wrong
      */
     public int createMovie(Movie movie) throws Exception {
         return movieDAO.createMovie(movie);
@@ -77,8 +78,8 @@ public class MovieManager {
     /**
      * Gets the value of movies name
      *
-     * @param   name new value of movies name
-     * @return  the value of movies name
+     * @param name new value of movies name
+     * @return the value of movies name
      * @throws Exception if something went wrong
      */
     public Movie getMovie(String name) throws Exception {
@@ -88,8 +89,8 @@ public class MovieManager {
     /**
      * Sends information to update movies
      *
-     * @param modified      the modified movies
-     * @throws Exception    if something went wrong
+     * @param modified the modified movies
+     * @throws Exception if something went wrong
      */
     public void updateMovie(Movie modified) throws Exception {
         movieDAO.updateMovie(modified);
@@ -98,8 +99,8 @@ public class MovieManager {
     /**
      * Sends information to delete movies
      *
-     * @param id            the movies id
-     * @throws Exception    if something went wrong
+     * @param id the movies id
+     * @throws Exception if something went wrong
      */
     public void deleteMovie(int id) throws Exception {
         movieDAO.deleteMovie(id);
@@ -108,9 +109,9 @@ public class MovieManager {
     /**
      * Searches trough the movies
      *
-     * @param search        the searchQuery
-     * @return              the list that contains the search query
-     * @throws Exception    if something went wrong
+     * @param search the searchQuery
+     * @return the list that contains the search query
+     * @throws Exception if something went wrong
      */
     public List<Movie> searchMovie(String search) throws Exception {
         return movieDAO.searchMovie(search);
@@ -118,10 +119,20 @@ public class MovieManager {
 
     /**
      * Gets the map of genres
-     * @return              the map
-     * @throws Exception    if something went wrong
+     *
+     * @return the map
+     * @throws Exception if something went wrong
      */
     public Map<Integer, String> getCategories() throws Exception {
         return movieDAO.getCategories();
+    }
+
+    /**
+     * Gets all movies that's older than 2 years with a rating below 6.
+     *
+     * @return The old movies.
+     */
+    public List<Movie> getOldMovies() {
+        return movieDAO.getOldMovies();
     }
 }
