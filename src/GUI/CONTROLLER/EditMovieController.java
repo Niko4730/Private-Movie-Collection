@@ -95,6 +95,7 @@ public class EditMovieController extends Component implements Initializable {
             selectedMovie = movie;
             titleTextField.setText(selectedMovie.getTitle());
             filePathTextField.setText(selectedMovie.getFilePath());
+            ratingTextField.setText(selectedMovie.getRating());
             genreComboBox.getSelectionModel().select(selectedMovie.getCategoryName());
         }
     }
