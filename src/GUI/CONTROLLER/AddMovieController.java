@@ -1,7 +1,9 @@
 package GUI.CONTROLLER;
 
+import BE.Category;
 import BE.Movie;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -13,8 +15,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.File;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 public class AddMovieController extends Component implements Initializable {
@@ -89,7 +89,7 @@ public class AddMovieController extends Component implements Initializable {
 
                 var fileName = selectedFile.getName();
                 var fileNameNoExt = fileName.lastIndexOf('.') > 0 ? fileName.substring(0, fileName.lastIndexOf('.')) : fileName;
-                var filePath = selectedFile.getAbsolutePath().contains("\\Data\\")?selectedFile.getAbsolutePath().substring(selectedFile.getAbsolutePath().indexOf("Data\\")):selectedFile.getAbsolutePath();
+                var filePath = selectedFile.getAbsolutePath().contains("\\Data\\") ? selectedFile.getAbsolutePath().substring(selectedFile.getAbsolutePath().indexOf("Data\\")) : selectedFile.getAbsolutePath();
 
                 movieToAdd = new Movie();
                 movieToAdd.setFilePath(filePath);
@@ -164,6 +164,7 @@ public class AddMovieController extends Component implements Initializable {
                 int id = mainViewController.createMovie(movieToAdd);
                 if (id != -1) movieToAdd.setId(id);
                 mainViewController.reloadMovieTable();
+                mainViewController.addMovieToCategory(movieToAdd.getCategoryId(), movieToAdd.getId());
                 close();
             }
         } catch (Exception e) {

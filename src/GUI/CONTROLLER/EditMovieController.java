@@ -1,11 +1,14 @@
 package GUI.CONTROLLER;
 
+import BE.Category;
 import BE.Movie;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
 import javax.swing.*;
@@ -18,6 +21,8 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public class EditMovieController extends Component implements Initializable {
+    @FXML
+    Label dialogTitleField;
     @FXML
     TextField filePathTextField;
     @FXML
@@ -32,12 +37,16 @@ public class EditMovieController extends Component implements Initializable {
     private MainViewController mainViewController;
     private Movie selectedMovie;
     private Movie modifiedMovie;
-    private Map<Integer, String> genres;
+    private ObservableList<Category> categories;
     private String selectedCategory;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         selectedCategory();
+    }
+
+    public void setDialogTitleField(String title){
+        this.dialogTitleField.setText(title);
     }
 
     /**
@@ -51,14 +60,15 @@ public class EditMovieController extends Component implements Initializable {
     }
 
     /**
-     * Assign the genre combo box to have the specified hash map genres.
+     * Assign the genre combo box to have the categories.
      *
-     * @param genres The genres to add.
+     * @param categories The categories to add.
      */
-    public void setGenreComboBox(Map<Integer, String> genres) {
-        this.genres = new HashMap<>(genres);
+    public void setGenreComboBox(ObservableList<Category> categories) {
+        this.categories = mainViewController.getCategories();
         genreComboBox.getItems().clear();
-        genreComboBox.getItems().addAll(genres.values());
+        for(Category cat : categories)
+            genreComboBox.getItems().add(cat.getCategoryName());
     }
 
     /**
@@ -77,9 +87,9 @@ public class EditMovieController extends Component implements Initializable {
      * @return the category id
      */
     private int getCategoryIdFromName(String categoryName) {
-        for (var category : genres.entrySet()) {
-            if (category.getValue() == categoryName) {
-                return category.getKey();
+        for (var category : categories) {
+            if (category.getCategoryName() == categoryName) {
+                return category.getCategoryId();
             }
         }
         return -1;
@@ -176,6 +186,7 @@ public class EditMovieController extends Component implements Initializable {
                 var rating = Double.parseDouble(ratingTextField.getText().isEmpty() ? "0" : ratingTextField.getText().replaceAll(",", "."));
                 selectedMovie.setRating(Double.toString(rating));
                 mainViewController.getMovieManager().updateMovie(selectedMovie);
+                mainViewController.addMovieToCategory(selectedMovie.getCategoryId(), selectedMovie.getId());
                 close();
             }
         } catch (Exception e) {

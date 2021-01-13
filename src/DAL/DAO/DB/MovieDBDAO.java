@@ -232,25 +232,6 @@ public class MovieDBDAO implements MovieDAOInterface {
                 if (!temp.containsKey(category_id)) {
                     temp.put(category_id, category_name);
                 }
-                try (RandomAccessFile raf = new RandomAccessFile(new File("Data/Category.data"), "rw")) {
-                    category_name = String.format("%-50s", category_name).substring(0, 50);
-                    while (raf.getFilePointer() < raf.length()) {
-                        int categoryId = raf.readInt();
-                        String categoryName = "";
-                        for (int i = 0; i < 50; i++)
-                            categoryName += raf.readChar();
-                        if (categoryId == category_id && !category_name.equals(categoryName)) {
-                            raf.seek(raf.getFilePointer() - categoryName.length() * 2);
-                            raf.writeChars(category_name);
-                            break;
-                        } else if (categoryId == category_id)
-                            break;
-                    }
-                    if (raf.getFilePointer() == raf.length()) {
-                        raf.writeInt(category_id);
-                        raf.writeChars(category_name);
-                    }
-                }
             }
             return temp;
         } catch (SQLNonTransientConnectionException | NullPointerException e) {

@@ -59,7 +59,7 @@ public class MovieLocalDAO implements MovieDAOInterface {
                     rating.append(raf.readChar());
                 int category_id = raf.readInt();
                 if (!movieName.toString().equals(emptyNameValue) && !path.toString().equals(emptyPathValue))
-                    tmp.add(new Movie(song_id, movieName.toString().trim(), rating.toString().trim(), path.toString().trim(), category_id, getCategories().get(category_id)));
+                    tmp.add(new Movie(movie_id, movieName.toString().trim(), rating.toString().trim(), path.toString().trim(), category_id, getCategories().get(category_id)));
             }
             return tmp;
         } catch (FileNotFoundException e) {
@@ -266,13 +266,13 @@ public class MovieLocalDAO implements MovieDAOInterface {
      */
     @Override
     public Map<Integer, String> getCategories() throws Exception {
-        File file = new File("Data/category.data");
+        File file = new File("Data/localCategory.data");
         Map<Integer, String> tmp = new HashMap<Integer, String>();
         tmp.put(-1, "");
         try (RandomAccessFile raf = new RandomAccessFile(file, "r")) {
             while(raf.getFilePointer()<raf.length()){
             StringBuilder categoryName = new StringBuilder();
-            for(int i = 0 ; i<50 ; i++)
+            for(int i = 0 ; i<100 ; i++)
             categoryName.append(raf.readChar());
             tmp.put(raf.readInt(), categoryName.toString().trim());
         }
