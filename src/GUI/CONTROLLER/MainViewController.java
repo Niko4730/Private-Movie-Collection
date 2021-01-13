@@ -507,7 +507,7 @@ public class MainViewController implements Initializable {
             dialog = loader.load();
             AddMovieController controller = loader.getController();
             controller.setMainController(this);
-            controller.setGenreComboBox(categories);
+            controller.setCategoryComboBox(categories);
             windowStage = new Stage();
             windowStage.setScene(new Scene(dialog));
             windowStage.initModality(Modality.APPLICATION_MODAL);
@@ -704,6 +704,9 @@ public class MainViewController implements Initializable {
         );
     }
 
+    /**
+     * Changes the size and visibility of allMovies table
+     */
     public void hideAllMoviesTable() {
         if (allMoviesShown) {
             allMovies.setVisible(false);
@@ -720,6 +723,9 @@ public class MainViewController implements Initializable {
         allMoviesShown = !allMoviesShown;
     }
 
+    /**
+     * Hides the lower pane
+     */
     private void hideLowerPane() {
         lowerPane.setVisible(false);
         lowerPane.setMaxHeight(0);
@@ -727,6 +733,9 @@ public class MainViewController implements Initializable {
         lowerPane.setPrefHeight(0);
     }
 
+    /**
+     * Shows the lower pane
+     */
     private void showLowerPane() {
         lowerPane.setVisible(true);
         lowerPane.setMaxHeight(215);
@@ -734,7 +743,10 @@ public class MainViewController implements Initializable {
         lowerPane.setPrefHeight(215);
     }
 
-    public void viewMovieOrWhatever() {
+    /**
+     *  Opens the selected movie on the standard media player
+     */
+    public void viewMovie() {
         if (selectedMovie != null) {
             try {
                 var lastView_date = new Date(System.currentTimeMillis());
@@ -753,12 +765,17 @@ public class MainViewController implements Initializable {
         }
     }
 
-
+    /**
+     * Not yet implemented :D
+     */
     public void imgChange() {
         movieImg.setImage(new Image(""));
         System.out.println("WOW THE IMAGE CHANGED... or is yet to be implemented");
     }
 
+    /**
+     * Opens a window with the movie title as query
+     */
     public void searchOnIMDB() {
         String query = selectedMovie == null ? selectedMovieInCategory.getTitle() : selectedMovie.getTitle();
         query = query.replaceAll(" ", "_");

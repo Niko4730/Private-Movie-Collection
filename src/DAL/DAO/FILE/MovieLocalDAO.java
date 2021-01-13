@@ -259,9 +259,9 @@ public class MovieLocalDAO implements MovieDAOInterface {
     }
 
     /**
-     * gets the map of genres
+     * gets the map of categories
      *
-     * @return a map of genres
+     * @return a map of categories
      * @throws Exception if something went wrong
      */
     @Override

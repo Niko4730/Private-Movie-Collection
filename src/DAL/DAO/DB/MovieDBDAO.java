@@ -242,6 +242,10 @@ public class MovieDBDAO implements MovieDAOInterface {
         }
     }
 
+    /**
+     * Gets the old movies
+     * @return the old movies
+     */
     public List<Movie> getOldMovies() {
         List<Movie> resultMovies = new ArrayList<>();
         try {

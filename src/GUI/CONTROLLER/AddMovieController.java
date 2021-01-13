@@ -23,7 +23,7 @@ public class AddMovieController extends Component implements Initializable {
     @FXML
     TextField titleTextField;
     @FXML
-    ComboBox genreComboBox;
+    ComboBox categoryComboBox;
     @FXML
     TextField ratingTextField;
     @FXML
@@ -43,22 +43,22 @@ public class AddMovieController extends Component implements Initializable {
      * Initialize the combo box to listen to when a new item is selected.
      */
     private void selectedCategory() {
-        genreComboBox.getSelectionModel().selectedItemProperty().addListener(((observableValue, oldValue, newValue) -> {
+        categoryComboBox.getSelectionModel().selectedItemProperty().addListener(((observableValue, oldValue, newValue) -> {
             selectedCategory = (String) newValue;
             System.out.println("Selected category: " + selectedCategory);
         }));
     }
 
     /**
-     * Assign the genre combo box to have the specfied hash map genres.
+     * Assign the category combo box to have the specified categories.
      *
      * @param categories The genres to add.
      */
-    public void setGenreComboBox(ObservableList<Category> categories) {
+    public void setCategoryComboBox(ObservableList<Category> categories) {
         this.categories = categories;
-        genreComboBox.getItems().clear();
+        categoryComboBox.getItems().clear();
         for (Category cat : categories)
-            genreComboBox.getItems().add(cat.getCategoryName());
+            categoryComboBox.getItems().add(cat.getCategoryName());
     }
 
     /**
@@ -152,7 +152,7 @@ public class AddMovieController extends Component implements Initializable {
     }
 
     /**
-     * Add the new song to database.
+     * Add the new movie to database.
      */
     public void addMovie() {
         try {
