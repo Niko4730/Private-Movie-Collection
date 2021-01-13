@@ -108,7 +108,7 @@
                         <Insets left="8.0" />
                      </padding>
                   </Label>
-                  <ComboBox fx:id="genreComboBox" prefWidth="400.0" GridPane.rowIndex="1">
+                  <ComboBox fx:id="categoryComboBox" prefWidth="400.0" GridPane.rowIndex="1">
                      <GridPane.margin>
                         <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
                      </GridPane.margin>
