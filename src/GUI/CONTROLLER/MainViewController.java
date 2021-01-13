@@ -550,7 +550,7 @@ public class MainViewController implements Initializable {
         try {
             var catMov = CATEGORY_MANAGER.loadMoviesInCategory(cat_id);
             for (Movie mov : catMov)
-                if (mov.getId() == mov_id){
+                if (mov!=null && mov.getId() == mov_id){
                     System.out.println("Already in category");
                     return;
                 }

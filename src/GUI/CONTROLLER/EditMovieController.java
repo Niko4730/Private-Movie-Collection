@@ -65,7 +65,7 @@ public class EditMovieController extends Component implements Initializable {
      * @param categories The categories to add.
      */
     public void setGenreComboBox(ObservableList<Category> categories) {
-        this.categories = mainViewController.getCategories();
+        this.categories = categories;
         genreComboBox.getItems().clear();
         for(Category cat : categories)
             genreComboBox.getItems().add(cat.getCategoryName());
@@ -105,7 +105,6 @@ public class EditMovieController extends Component implements Initializable {
             selectedMovie = movie;
             titleTextField.setText(selectedMovie.getTitle());
             filePathTextField.setText(selectedMovie.getFilePath());
-            ratingTextField.setText(selectedMovie.getRating());
             genreComboBox.getSelectionModel().select(selectedMovie.getCategoryName());
         }
     }

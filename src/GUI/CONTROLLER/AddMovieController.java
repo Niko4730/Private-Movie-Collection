@@ -31,7 +31,7 @@ public class AddMovieController extends Component implements Initializable {
 
     private MainViewController mainViewController;
     private Movie movieToAdd;
-    private Map<Integer, String> genres;
+    private ObservableList<Category> categories;
     private String selectedCategory;
 
     @Override
@@ -52,12 +52,13 @@ public class AddMovieController extends Component implements Initializable {
     /**
      * Assign the genre combo box to have the specfied hash map genres.
      *
-     * @param genres The genres to add.
+     * @param categories The genres to add.
      */
-    public void setGenreComboBox(Map<Integer, String> genres) {
-        this.genres = new HashMap<>(genres);
+    public void setGenreComboBox(ObservableList<Category> categories) {
+        this.categories = categories;
         genreComboBox.getItems().clear();
-        genreComboBox.getItems().addAll(genres.values());
+        for (Category cat : categories)
+            genreComboBox.getItems().add(cat.getCategoryName());
     }
 
     /**
@@ -142,9 +143,9 @@ public class AddMovieController extends Component implements Initializable {
      * @return
      */
     private int getCategoryIdFromName(String categoryName) {
-        for (var category : genres.entrySet()) {
-            if (category.getValue() == categoryName) {
-                return category.getKey();
+        for (var category : categories) {
+            if (category.getCategoryName().equals(categoryName)) {
+                return category.getCategoryId();
             }
         }
         return -1;

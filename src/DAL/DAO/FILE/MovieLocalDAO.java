@@ -271,10 +271,11 @@ public class MovieLocalDAO implements MovieDAOInterface {
         tmp.put(-1, "");
         try (RandomAccessFile raf = new RandomAccessFile(file, "r")) {
             while(raf.getFilePointer()<raf.length()){
+                int cat_id = raf.readInt();
             StringBuilder categoryName = new StringBuilder();
             for(int i = 0 ; i<100 ; i++)
             categoryName.append(raf.readChar());
-            tmp.put(raf.readInt(), categoryName.toString().trim());
+            tmp.put(cat_id, categoryName.toString().trim());
         }
         }catch (FileNotFoundException e){
             file.createNewFile();
