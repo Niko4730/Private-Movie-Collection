@@ -139,6 +139,7 @@ public class MainViewController implements Initializable {
             reloadCategoryTable();
             this.movies = FXCollections.observableArrayList(MOVIE_MANAGER.loadMovies());
             reloadMovieTable();
+            getOldVideos();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -158,6 +159,21 @@ public class MainViewController implements Initializable {
 
         categoryNameColumn.setCellValueFactory(cellData -> cellData.getValue().getcategoryNameProperty());
         categoryAmountOfMoviesColumn.setCellValueFactory(cellData -> cellData.getValue().getCategorySize());
+    }
+
+    /**
+     * Gets all movies that's older than 2 years with a rating below 6.
+     *
+     * @return The old movies.
+     */
+    private void getOldVideos() {
+        var oldVideos = getMovieManager().getOldMovies();
+        var videCount = oldVideos.size();
+        if (videCount > 0) {
+            var properTitle = videCount < 2 ? String.format("%s old movie found", videCount) : String.format("%s old movies found", videCount);
+            var properContent = videCount < 2 ? String.format("%s old movie was found. Check it and see if it's worth having around?", videCount) : String.format("%s old movies were found. You should really clean up your collection.", videCount);
+            InputAlert.showMessageBox(properTitle, properTitle, properContent, videCount < 2 ? Alert.AlertType.INFORMATION : Alert.AlertType.WARNING);
+        }
     }
 
     /**
