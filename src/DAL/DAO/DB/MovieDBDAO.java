@@ -274,12 +274,17 @@ public class MovieDBDAO implements MovieDAOInterface {
                 for (int i = 0; i < temp.size(); i++) {
                     var movie = temp.get(i);
                     var lastView = movie.getLastView();
-                    var lastViewDate = dateFormatter.parse(lastView);
-                    var lastViewYear = lastViewDate.getYear();
-                    var rating = Double.parseDouble(movie.getRating());
-                    if (rating < 6 && lastViewYear + 2 < currentYear) {
-                        if (!resultMovies.contains(movie)) resultMovies.add(movie);
-                        System.out.println(String.format("Movie: %s is over two years old!", movie.getTitle()));
+
+                    // Don't do anything if no date is specified.
+                    if (!lastView.isBlank()) {
+                        var lastViewDate = dateFormatter.parse(lastView);
+                        var lastViewYear = lastViewDate.getYear();
+                        var rating = movie.getRating();
+                        var properRating = rating != null && !rating.isBlank() ? Double.parseDouble(rating) : 0;
+                        if (properRating < 6 && lastViewYear + 2 < currentYear) {
+                            if (!resultMovies.contains(movie)) resultMovies.add(movie);
+                            System.out.println(String.format("Movie: %s is over two years old!", movie.getTitle()));
+                        }
                     }
                 }
             }
