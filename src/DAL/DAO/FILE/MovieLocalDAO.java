@@ -18,7 +18,7 @@ public class MovieLocalDAO implements MovieDAOInterface {
     private static final String LOCAL_MOVIE_PATH = "Data/localMovies.data";
     private static final String LOCAL_CATEGORY_MOVIE = "Data/localCategory_movie.data";
     private static final int MOVIE_NAME_SIZE = 100;
-    private static final int MOVIE_PATH_SIZE = 100;
+    private static final int MOVIE_PATH_SIZE = 150;
     private static final int MOVIE_RATING_SIZE = 100;
     private static final int emptyIntValue = -1;
     private static final String emptyNameValue = String.format("%-" + MOVIE_NAME_SIZE + "s", emptyIntValue);
@@ -50,16 +50,16 @@ public class MovieLocalDAO implements MovieDAOInterface {
                 int movie_id = raf.readInt();
                 StringBuilder movieName = new StringBuilder();
                 StringBuilder path = new StringBuilder();
-                StringBuilder artist = new StringBuilder();
+                StringBuilder rating = new StringBuilder();
                 for (int i = 0; i < MOVIE_NAME_SIZE; i++)
                     movieName.append(raf.readChar());
                 for (int i = 0; i < MOVIE_PATH_SIZE; i++)
                     path.append(raf.readChar());
                 for (int i = 0; i < MOVIE_RATING_SIZE; i++)
-                    artist.append(raf.readChar());
+                    rating.append(raf.readChar());
                 int category_id = raf.readInt();
                 if (!movieName.toString().equals(emptyNameValue) && !path.toString().equals(emptyPathValue))
-                    tmp.add(new Movie(movie_id, movieName.toString().trim(), artist.toString().trim(), path.toString().trim(), category_id, getCategories().get(category_id)));
+                    tmp.add(new Movie(movie_id, movieName.toString().trim(), rating.toString().trim(), path.toString().trim(), category_id, getCategories().get(category_id)));
             }
             return tmp;
         } catch (FileNotFoundException e) {
@@ -78,7 +78,7 @@ public class MovieLocalDAO implements MovieDAOInterface {
     public int createMovie(Movie movie) throws IOException {
         String formattedName = String.format("%-" + MOVIE_NAME_SIZE + "s", movie.getTitle()).substring(0, MOVIE_NAME_SIZE);
         String formattedPath = String.format("%-" + MOVIE_PATH_SIZE + "s", movie.getFilePath()).substring(0, MOVIE_PATH_SIZE);
-        String formattedRating = String.format("%-" + MOVIE_RATING_SIZE + "s", movie.getRating() == null ? "" : movie.getRating()).substring(0, MOVIE_PATH_SIZE);
+        String formattedRating = String.format("%-" + MOVIE_RATING_SIZE + "s", movie.getRating() == null ? "" : movie.getRating()).substring(0, MOVIE_RATING_SIZE);
         try (RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_MOVIE_PATH), "rw")) {
             if (raf.length() == 0) {
                 raf.writeInt(1);
@@ -213,7 +213,7 @@ public class MovieLocalDAO implements MovieDAOInterface {
     public void updateMovie(Movie modified) throws IOException {
         String formattedName = String.format("%-" + MOVIE_NAME_SIZE + "s", modified.getTitle()).substring(0, MOVIE_NAME_SIZE);
         String formattedPath = String.format("%-" + MOVIE_PATH_SIZE + "s", modified.getFilePath()).substring(0, MOVIE_PATH_SIZE);
-        String formattedArtist = String.format("%-" + MOVIE_RATING_SIZE + "s", modified.getRating()).substring(0, MOVIE_PATH_SIZE);
+        String formattedArtist = String.format("%-" + MOVIE_RATING_SIZE + "s", modified.getRating()).substring(0, MOVIE_RATING_SIZE);
         try (RandomAccessFile raf = new RandomAccessFile(new File(LOCAL_MOVIE_PATH), "rw")) {
             while (raf.getFilePointer() < raf.length()) {
                 if (raf.readInt() == modified.getId()) {
@@ -259,24 +259,25 @@ public class MovieLocalDAO implements MovieDAOInterface {
     }
 
     /**
-     * gets the map of genres
+     * gets the map of categories
      *
-     * @return a map of genres
+     * @return a map of categories
      * @throws Exception if something went wrong
      */
     @Override
     public Map<Integer, String> getCategories() throws Exception {
-        File file = new File("Data/category.data");
+        File file = new File("Data/localCategory.data");
         Map<Integer, String> tmp = new HashMap<Integer, String>();
         tmp.put(-1, "");
         try (RandomAccessFile raf = new RandomAccessFile(file, "r")) {
-            while (raf.getFilePointer() < raf.length()) {
-                StringBuilder categoryName = new StringBuilder();
-                for (int i = 0; i < 50; i++)
-                    categoryName.append(raf.readChar());
-                tmp.put(raf.readInt(), categoryName.toString().trim());
-            }
-        } catch (FileNotFoundException e) {
+            while(raf.getFilePointer()<raf.length()){
+                int cat_id = raf.readInt();
+            StringBuilder categoryName = new StringBuilder();
+            for(int i = 0 ; i<100 ; i++)
+            categoryName.append(raf.readChar());
+            tmp.put(cat_id, categoryName.toString().trim());
+        }
+        }catch (FileNotFoundException e){
             file.createNewFile();
         }
         return tmp;

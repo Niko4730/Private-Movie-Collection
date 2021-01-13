@@ -105,6 +105,9 @@ public class MainViewController implements Initializable {
         return MOVIE_MANAGER;
     }
 
+    public ObservableList<Category> getCategories() {
+        return categories;
+    }
 
     /**
      * Sets the main
@@ -436,7 +439,7 @@ public class MainViewController implements Initializable {
      * Adds movie to the current category.
      */
     public void addToCategoryButton() {
-        if (selectedCategory != null) {
+        if (selectedCategory != null && selectedMovie != null) {
             try {
                 for (Movie movie : Collections.unmodifiableList(CATEGORY_MANAGER.loadMoviesInCategory(selectedCategory.getCategoryId()))) {
                     if (movie.getId() == selectedMovie.getId()) {
@@ -476,13 +479,18 @@ public class MainViewController implements Initializable {
      * Removes the selected movie from the current category.
      */
     public void removeFromCategoryButton() {
-        if (selectedCategory != null && selectedMovieInCategory != null) {
+        removeFromCategory(selectedCategory.getCategoryId(), selectedMovieInCategory);
+    }
+
+    public void removeFromCategory(int cat_id, Movie catMov) {
+        if (cat_id != -1 && catMov != null) {
             try {
-                int index = moviesInCategoryTable.getSelectionModel().getFocusedIndex();
-                CATEGORY_MANAGER.deleteMovieFromCategory(selectedCategory.getCategoryId(), selectedMovieInCategory.getId());
-                categoryMovies.remove(selectedMovie);
-                selectedCategory.setCategorySize(selectedCategory.getCategorySize().getValue() - 1);
-                moviesInCategoryTable.getSelectionModel().select(index > 0 ? index - 1 : index);
+                CATEGORY_MANAGER.deleteMovieFromCategory(cat_id, catMov.getId());
+                categoryMovies.removeAll(catMov);
+                for (Category cat : categories)
+                    if (cat.getCategoryId() == cat_id) {
+                        cat.setCategorySize(cat.getCategorySize().getValue() - 1);
+                    }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -499,7 +507,7 @@ public class MainViewController implements Initializable {
             dialog = loader.load();
             AddMovieController controller = loader.getController();
             controller.setMainController(this);
-            controller.setGenreComboBox(MOVIE_MANAGER.getCategories());
+            controller.setCategoryComboBox(categories);
             windowStage = new Stage();
             windowStage.setScene(new Scene(dialog));
             windowStage.initModality(Modality.APPLICATION_MODAL);
@@ -529,13 +537,34 @@ public class MainViewController implements Initializable {
                     }
                 }
             }
+            movies.add(movie);
             // If no similar movie found, just create it.
             return MOVIE_MANAGER.createMovie(movie);
         } catch (Exception e) {
             e.printStackTrace();
             return -1;
         }
-        //return -1;
+    }
+
+    public void addMovieToCategory(int cat_id, int mov_id) {
+        try {
+            var catMov = CATEGORY_MANAGER.loadMoviesInCategory(cat_id);
+            for (Movie mov : catMov)
+                if (mov!=null && mov.getId() == mov_id){
+                    System.out.println("Already in category");
+                    return;
+                }
+            CATEGORY_MANAGER.addMoviesToCategory(cat_id, mov_id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        reloadMoviesInCategory();
+        for (Category cat : categories) {
+            if (cat.getCategoryId() == cat_id) {
+                cat.setCategorySize(cat.getCategorySize().getValue() + 1);
+            }
+        }
+
     }
 
     /**
@@ -572,8 +601,9 @@ public class MainViewController implements Initializable {
                 dialog = loader.load();
                 EditMovieController controller = loader.getController();
                 controller.setMainController(this);
-                controller.setGenreComboBox(MOVIE_MANAGER.getCategories());
+                controller.setGenreComboBox(categories);
                 controller.setSelectedMovie(selectedMovie);
+                controller.setDialogTitleField("Edit Movie");
                 windowStage = new Stage();
                 windowStage.setScene(new Scene(dialog));
                 windowStage.initModality(Modality.APPLICATION_MODAL);
@@ -599,7 +629,7 @@ public class MainViewController implements Initializable {
                 movies.remove(selectedMovie);
             } catch (Exception e) {
                 InputAlert.showMessageBox("No movie selected", "Cannot delete something that doesn't exist!", "Please select a movie.", Alert.AlertType.ERROR);
-
+                e.printStackTrace();
             }
             load();
         } else {
@@ -674,6 +704,9 @@ public class MainViewController implements Initializable {
         );
     }
 
+    /**
+     * Changes the size and visibility of allMovies table
+     */
     public void hideAllMoviesTable() {
         if (allMoviesShown) {
             allMovies.setVisible(false);
@@ -690,6 +723,9 @@ public class MainViewController implements Initializable {
         allMoviesShown = !allMoviesShown;
     }
 
+    /**
+     * Hides the lower pane
+     */
     private void hideLowerPane() {
         lowerPane.setVisible(false);
         lowerPane.setMaxHeight(0);
@@ -697,6 +733,9 @@ public class MainViewController implements Initializable {
         lowerPane.setPrefHeight(0);
     }
 
+    /**
+     * Shows the lower pane
+     */
     private void showLowerPane() {
         lowerPane.setVisible(true);
         lowerPane.setMaxHeight(215);
@@ -704,16 +743,39 @@ public class MainViewController implements Initializable {
         lowerPane.setPrefHeight(215);
     }
 
-    public void viewMovieOrWhatever() {
+    /**
+     *  Opens the selected movie on the standard media player
+     */
+    public void viewMovie() {
+        if (selectedMovie != null) {
+            try {
+                var lastView_date = new Date(System.currentTimeMillis());
+                String pattern = "dd/MM/yyyy  HH:mm:ss";
+                var simpleDateFormat = new SimpleDateFormat(pattern);
+                String date = simpleDateFormat.format(lastView_date);
 
+                selectedMovie.setLastView(date);
+                getMovieManager().updateMovie(selectedMovie);
+                Desktop.getDesktop().open(new File(selectedMovie.getFilePath()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
-
+    /**
+     * Not yet implemented :D
+     */
     public void imgChange() {
         movieImg.setImage(new Image(""));
         System.out.println("WOW THE IMAGE CHANGED... or is yet to be implemented");
     }
 
+    /**
+     * Opens a window with the movie title as query
+     */
     public void searchOnIMDB() {
         String query = selectedMovie == null ? selectedMovieInCategory.getTitle() : selectedMovie.getTitle();
         query = query.replaceAll(" ", "_");

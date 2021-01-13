@@ -527,7 +527,7 @@ public class Movie {
     @Override
     public String toString() {
         return "Movie{" +
-                "rating=" + rating +
+                "rating = " + rating +
                 '}';
     }
 

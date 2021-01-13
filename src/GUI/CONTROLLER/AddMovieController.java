@@ -1,7 +1,9 @@
 package GUI.CONTROLLER;
 
+import BE.Category;
 import BE.Movie;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -13,8 +15,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.File;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 public class AddMovieController extends Component implements Initializable {
@@ -23,7 +23,7 @@ public class AddMovieController extends Component implements Initializable {
     @FXML
     TextField titleTextField;
     @FXML
-    ComboBox genreComboBox;
+    ComboBox categoryComboBox;
     @FXML
     TextField ratingTextField;
     @FXML
@@ -31,7 +31,7 @@ public class AddMovieController extends Component implements Initializable {
 
     private MainViewController mainViewController;
     private Movie movieToAdd;
-    private Map<Integer, String> genres;
+    private ObservableList<Category> categories;
     private String selectedCategory;
 
     @Override
@@ -43,21 +43,22 @@ public class AddMovieController extends Component implements Initializable {
      * Initialize the combo box to listen to when a new item is selected.
      */
     private void selectedCategory() {
-        genreComboBox.getSelectionModel().selectedItemProperty().addListener(((observableValue, oldValue, newValue) -> {
+        categoryComboBox.getSelectionModel().selectedItemProperty().addListener(((observableValue, oldValue, newValue) -> {
             selectedCategory = (String) newValue;
             System.out.println("Selected category: " + selectedCategory);
         }));
     }
 
     /**
-     * Assign the genre combo box to have the specfied hash map genres.
+     * Assign the category combo box to have the specified categories.
      *
-     * @param genres The genres to add.
+     * @param categories The genres to add.
      */
-    public void setGenreComboBox(Map<Integer, String> genres) {
-        this.genres = new HashMap<>(genres);
-        genreComboBox.getItems().clear();
-        genreComboBox.getItems().addAll(genres.values());
+    public void setCategoryComboBox(ObservableList<Category> categories) {
+        this.categories = categories;
+        categoryComboBox.getItems().clear();
+        for (Category cat : categories)
+            categoryComboBox.getItems().add(cat.getCategoryName());
     }
 
     /**
@@ -85,11 +86,11 @@ public class AddMovieController extends Component implements Initializable {
             fileChooser.setFileFilter(new FileNameExtensionFilter("Mp4 file", "mp4"));
             int result = fileChooser.showOpenDialog(this);
             if (result == JFileChooser.APPROVE_OPTION) {
-                File selectedFile = fileChooser.getSelectedFile();
+                File selectedFile = fileChooser.getSelectedFile().getAbsoluteFile();
 
                 var fileName = selectedFile.getName();
                 var fileNameNoExt = fileName.lastIndexOf('.') > 0 ? fileName.substring(0, fileName.lastIndexOf('.')) : fileName;
-                var filePath = selectedFile.getAbsolutePath();
+                var filePath = selectedFile.getAbsolutePath().contains("\\Data\\") ? selectedFile.getAbsolutePath().substring(selectedFile.getAbsolutePath().indexOf("Data\\")) : selectedFile.getAbsolutePath();
 
                 movieToAdd = new Movie();
                 movieToAdd.setFilePath(filePath);
@@ -142,16 +143,16 @@ public class AddMovieController extends Component implements Initializable {
      * @return
      */
     private int getCategoryIdFromName(String categoryName) {
-        for (var category : genres.entrySet()) {
-            if (category.getValue() == categoryName) {
-                return category.getKey();
+        for (var category : categories) {
+            if (category.getCategoryName().equals(categoryName)) {
+                return category.getCategoryId();
             }
         }
         return -1;
     }
 
     /**
-     * Add the new song to database.
+     * Add the new movie to database.
      */
     public void addMovie() {
         try {
@@ -164,6 +165,7 @@ public class AddMovieController extends Component implements Initializable {
                 int id = mainViewController.createMovie(movieToAdd);
                 if (id != -1) movieToAdd.setId(id);
                 mainViewController.reloadMovieTable();
+                mainViewController.addMovieToCategory(movieToAdd.getCategoryId(), movieToAdd.getId());
                 close();
             }
         } catch (Exception e) {
