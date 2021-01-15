@@ -529,12 +529,13 @@ public class MainViewController implements Initializable {
     public int createMovie(Movie movie) {
         try {
             for (Movie movie1 : movies) {
-                if (CONVENIENT_UTILS.titleDiff(movie.getTitle(), movie1.getTitle()) < CHAR_SIMILARITY_LIM) {
+                if (CONVENIENT_UTILS.titleDiff(movie.getTitle(), movie1.getTitle()) <= Math.min(movie.getTitle().length()/CHAR_SIMILARITY_LIM,CHAR_SIMILARITY_LIM)) {
                     var result = InputAlert.showMessageBox("Are you sure?", "There is a movie, that looks similar", movie.getTitle() + " looks an awful lot like " + movie1.getTitle(), Alert.AlertType.CONFIRMATION);
                     if (result.get() == ButtonType.OK) {
                         movies.add(movie);
                         return MOVIE_MANAGER.createMovie(movie);
                     }
+                    else return -1;
                 }
             }
             movies.add(movie);
