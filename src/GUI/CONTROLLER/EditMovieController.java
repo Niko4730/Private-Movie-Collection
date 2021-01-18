@@ -45,7 +45,7 @@ public class EditMovieController extends Component implements Initializable {
         selectedCategory();
     }
 
-    public void setDialogTitleField(String title){
+    public void setDialogTitleField(String title) {
         this.dialogTitleField.setText(title);
     }
 
@@ -67,7 +67,7 @@ public class EditMovieController extends Component implements Initializable {
     public void setGenreComboBox(ObservableList<Category> categories) {
         this.categories = categories;
         genreComboBox.getItems().clear();
-        for(Category cat : categories)
+        for (Category cat : categories)
             genreComboBox.getItems().add(cat.getCategoryName());
     }
 
@@ -105,6 +105,7 @@ public class EditMovieController extends Component implements Initializable {
             selectedMovie = movie;
             titleTextField.setText(selectedMovie.getTitle());
             filePathTextField.setText(selectedMovie.getFilePath());
+            ratingTextField.setText(selectedMovie.getRating());
             genreComboBox.getSelectionModel().select(selectedMovie.getCategoryName());
         }
     }
