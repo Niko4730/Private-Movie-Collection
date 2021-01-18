@@ -113,7 +113,7 @@ public class MovieDBDAO implements MovieDAOInterface {
      */
     @Override
     public Movie getMovie(String name) throws SQLException {
-        var sql = "SELECT FROM movie WHERE movie_name = ?;";
+        var sql = "SELECT * FROM movie WHERE movie_name = ?;";
         try (var con = database.getConnection();
              PreparedStatement st = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             st.setString(1, name);
